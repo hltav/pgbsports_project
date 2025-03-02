@@ -5,6 +5,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -36,7 +37,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   async findUserById(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number, // Use ParseIntPipe para garantir que 'id' seja um número
   ): Promise<Partial<GetUserDTO> | null> {
     return this.usersService.findUserById(id);
   }

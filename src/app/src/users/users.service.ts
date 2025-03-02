@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
 import {
@@ -62,7 +63,9 @@ export class UsersService {
 
   async findUserById(id: number): Promise<Partial<GetUserDTO> | null> {
     return this.prisma.user.findUnique({
-      where: { id },
+      where: {
+        id: id, // Certifique-se de que 'id' seja um número aqui
+      },
       select: {
         firstname: true,
         lastname: true,
@@ -72,7 +75,7 @@ export class UsersService {
     });
   }
 
-  async findOneByEmail(email: string): Promise<User | null> {
+  async findOneByEmail(@Query('email') email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         email: email,
