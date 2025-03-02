@@ -51,6 +51,7 @@ export class UsersService {
   async findAllUsers(): Promise<Partial<GetUserDTO>[]> {
     return this.prisma.user.findMany({
       select: {
+        id: true,
         firstname: true,
         lastname: true,
         nickname: true,
@@ -77,7 +78,6 @@ export class UsersService {
         email: email,
       },
     });
-
     return user;
   }
 
