@@ -16,24 +16,20 @@ export class AuthService {
     email: string,
     pass: string,
   ): Promise<{ accessToken: string; user: Omit<User, 'password'> }> {
-    console.log('Dados recebidos no signIn - identifier:', email); // Log para depuração
-    console.log('Dados recebidos no signIn - pass:', pass);
     const user = await this.usersService.findOneByEmail(email);
 
-    // Verifique se o usuário existe
+    // Verify the exist user
     if (!user) {
-      console.log('Usuário não encontrado');
-      throw new UnauthorizedException('Usuário não encontrado');
+      throw new UnauthorizedException('User not found');
     }
 
-    // Verifique se a senha está correta
+    // Verify the correct password
     const isPasswordValid = await bcrypt.compare(pass, user.password);
     if (!isPasswordValid) {
-      console.log('Senha incorreta');
-      throw new UnauthorizedException('Dados de Login Incorretos');
+      throw new UnauthorizedException('Incorrect login data');
     }
 
-    console.log('Login bem sucedido para usuário:', user);
+    console.log('User login successfully', user);
 
     const payload: JwtPayload = {
       sub: user.id,

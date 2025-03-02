@@ -9,14 +9,14 @@ import {
   GetUserDTO,
   UpdateUserDTO,
 } from '../../../libs/common/src/dto/user.dto';
-import { PrismaService } from 'src/libs/database/src/prisma/prisma.service';
+import { PrismaService } from '../../../libs/database/src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUser: CreateUserDTO): Promise<User> {
+  async create(createUser: CreateUserDTO): Promise<GetUserDTO> {
     const existingUser = await this.prisma.user.findFirst({
       where: {
         OR: [{ email: createUser.email }, { nickname: createUser.nickname }],
@@ -30,13 +30,22 @@ export class UsersService {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(createUser.password, saltRounds);
 
-    return this.prisma.user.create({
+    const newUser = await this.prisma.user.create({
       data: {
         ...createUser,
         password: hashedPassword,
         role: createUser.role || Role.USER,
       },
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        nickname: true,
+        email: true,
+      },
     });
+
+    return newUser;
   }
 
   async findAllUsers(): Promise<Partial<GetUserDTO>[]> {
@@ -63,26 +72,21 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string): Promise<User | null> {
-    console.log('Procurando usuário com email:', email);
-
     const user = await this.prisma.user.findUnique({
       where: {
         email: email,
       },
     });
 
-    console.log('Usuário encontrado:', user);
     return user;
   }
 
   async findOneByNicknameOrEmail(identifier: string): Promise<User | null> {
-    console.log('Procurando usuário com identifier:', identifier);
     const user = await this.prisma.user.findFirst({
       where: {
         OR: [{ nickname: identifier }, { email: identifier }],
       },
     });
-    console.log('Usuário encontrado:', user);
     return user;
   }
 
