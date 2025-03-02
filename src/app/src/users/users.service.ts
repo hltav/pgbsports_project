@@ -90,7 +90,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUser: Partial<UpdateUserDTO>): Promise<User> {
+  async update(
+    id: number,
+    updateUser: Partial<UpdateUserDTO>,
+  ): Promise<GetUserDTO> {
+    // Verifica se o usuário existe
     const user = await this.prisma.user.findUnique({
       where: { id: Number(id) },
     });
@@ -109,10 +113,19 @@ export class UsersService {
       );
     }
 
-    return this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id: Number(id) },
       data: dataToUpdate,
+      select: {
+        id: true,
+        firstname: true,
+        lastname: true,
+        nickname: true,
+        email: true,
+      },
     });
+
+    return updatedUser;
   }
 
   async delete(id: number): Promise<User> {

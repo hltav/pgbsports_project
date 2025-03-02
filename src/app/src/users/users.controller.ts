@@ -38,7 +38,7 @@ export class UsersController {
   async update(
     @Param('id') id: number,
     @Body() updateUser: Partial<UpdateUserDTO>,
-  ): Promise<User> {
+  ): Promise<GetUserDTO> {
     const updatedUser = await this.usersService.update(Number(id), updateUser);
 
     if (!updatedUser) {
