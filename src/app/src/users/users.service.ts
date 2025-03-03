@@ -1,53 +1,12 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-  Query,
-} from '@nestjs/common';
-import { Role, User } from '@prisma/client';
-import {
-  CreateUserDTO,
-  GetUserDTO,
-  UpdateUserDTO,
-} from '../../../libs/common/src/dto/user.dto';
+import { Injectable, NotFoundException, Query } from '@nestjs/common';
+import { User } from '@prisma/client';
+import { GetUserDTO, UpdateUserDTO } from '../../../libs/common/src';
 import { PrismaService } from '../../../libs/database/src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
-
-  async create(createUser: CreateUserDTO): Promise<GetUserDTO> {
-    const existingUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ email: createUser.email }, { nickname: createUser.nickname }],
-      },
-    });
-
-    if (existingUser) {
-      throw new ConflictException('Email or Nickname User already registered!');
-    }
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUser.password, saltRounds);
-
-    const newUser = await this.prisma.user.create({
-      data: {
-        ...createUser,
-        password: hashedPassword,
-        role: createUser.role || Role.USER,
-      },
-      select: {
-        id: true,
-        firstname: true,
-        lastname: true,
-        nickname: true,
-        email: true,
-      },
-    });
-
-    return newUser;
-  }
 
   async findAllUsers(): Promise<Partial<GetUserDTO>[]> {
     return this.prisma.user.findMany({
@@ -57,6 +16,7 @@ export class UsersService {
         lastname: true,
         nickname: true,
         email: true,
+        role: true,
       },
     });
   }
@@ -64,7 +24,7 @@ export class UsersService {
   async findUserById(id: number): Promise<Partial<GetUserDTO> | null> {
     return this.prisma.user.findUnique({
       where: {
-        id: id, // Certifique-se de que 'id' seja um número aqui
+        id: id,
       },
       select: {
         firstname: true,

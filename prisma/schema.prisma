@@ -29,3 +29,17 @@ enum Role {
   USER
   ADMIN
 }
+
+model Events {
+  id        Int      @id @default(autoincrement())
+  event     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MarketType {
+  id        Int      @id @default(autoincrement())
+  market    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

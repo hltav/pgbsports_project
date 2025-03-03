@@ -5,5 +5,6 @@ import { StatisticsController } from './statistics.controller';
 @Module({
   providers: [StatisticsService],
   controllers: [StatisticsController],
+  exports: [StatisticsService],
 })
 export class StatisticsModule {}

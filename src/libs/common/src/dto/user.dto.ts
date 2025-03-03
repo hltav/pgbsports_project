@@ -22,4 +22,5 @@ export class GetUserDTO {
   lastname: string;
   nickname: string;
   email: string;
+  role?: Role;
 }

@@ -6,7 +6,6 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
-  Post,
   Put,
   Query,
   UseGuards,
@@ -16,7 +15,6 @@ import { JwtAuthGuard } from '../../../libs/common/src/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../libs/common/src/guards/roles.guard';
 import { User } from '../../../libs/common/src/interface/user.interface';
 import {
-  CreateUserDTO,
   GetUserDTO,
   UpdateUserDTO,
 } from '../../../libs/common/src/dto/user.dto';
@@ -49,11 +47,6 @@ export class UsersController {
     @Query('email') email: string,
   ): Promise<GetUserDTO | null> {
     return this.usersService.findOneByEmail(email);
-  }
-
-  @Post()
-  async create(@Body() createUser: CreateUserDTO): Promise<GetUserDTO> {
-    return this.usersService.create(createUser);
   }
 
   @Put(':id')
