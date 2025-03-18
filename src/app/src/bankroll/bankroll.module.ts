@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
 import { BankrollService } from './bankroll.service';
+import { PrismaModule, PrismaService } from 'src/libs/database';
+import { BankrollController } from './bankroll.controller';
 
 @Module({
-  providers: [BankrollService],
+  imports: [PrismaModule],
+  providers: [BankrollService, PrismaService],
+  controllers: [BankrollController],
   exports: [BankrollService],
 })
 export class BankrollModule {}

@@ -30,16 +30,22 @@ enum Role {
   ADMIN
 }
 
-model Events {
-  id        Int      @id @default(autoincrement())
-  event     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Bankroll {
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  balance Float
+  events  Event[] // Relation with Event
 }
 
-model MarketType {
+model Event {
   id        Int      @id @default(autoincrement())
+  bankId    Int
+  bank      Bankroll @relation(fields: [bankId], references: [id]) //Relation with Bankroll
+  eventType String
+  event     String
   market    String
+  amount    Float
+  result    String   @default("pending")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
