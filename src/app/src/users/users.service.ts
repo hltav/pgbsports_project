@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { GetUserDTO, UpdateUserDTO } from '../../../libs/common/src';
 import { PrismaService } from '../../../libs/database/src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -8,8 +9,8 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findAllUsers(): Promise<Partial<GetUserDTO>[]> {
-    return this.prisma.user.findMany({
+  async findAllUsers(role?: Role): Promise<Partial<GetUserDTO>[]> {
+    const users = await this.prisma.user.findMany({
       select: {
         id: true,
         firstname: true,
@@ -17,24 +18,71 @@ export class UsersService {
         nickname: true,
         email: true,
         role: true,
+        clientData: {
+          include: {
+            address: true, // Inclui os dados do Address
+          },
+        },
       },
     });
+
+    // Mapeia os usuários para o formato do DTO
+    return users.map((user) => ({
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      nickname: user.nickname,
+      email: user.email,
+      role: user.role,
+      clientData: user.clientData
+        ? {
+            ...user.clientData,
+            address: user.clientData.address, // Inclui os dados do Address
+          }
+        : null,
+    }));
   }
 
-  async findUserById(id: number): Promise<Partial<GetUserDTO> | null> {
-    return this.prisma.user.findUnique({
-      where: {
-        id: id,
-      },
+  async findUserById(
+    id: number,
+    role?: Role,
+  ): Promise<Partial<GetUserDTO> | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
       select: {
+        id: true,
         firstname: true,
         lastname: true,
         nickname: true,
         email: true,
+        role: true,
+        clientData: {
+          include: {
+            address: true, // Inclui os dados do Address
+          },
+        },
       },
     });
-  }
 
+    if (!user) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      nickname: user.nickname,
+      email: user.email,
+      role: user.role,
+      clientData: user.clientData
+        ? {
+            ...user.clientData,
+            address: user.clientData.address, // Inclui os dados do Address
+          }
+        : null,
+    };
+  }
   async findOneByEmail(@Query('email') email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
       where: {

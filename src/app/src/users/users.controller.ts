@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -19,6 +20,7 @@ import {
   UpdateUserDTO,
 } from '../../../libs/common/src/dto/user.dto';
 import { Roles } from '../../../libs/common/src/decorator/roles.decorator';
+import { Request } from 'express';
 
 @Controller('users')
 export class UsersController {
@@ -27,8 +29,10 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
-  async index(): Promise<Partial<GetUserDTO>[]> {
-    return this.usersService.findAllUsers();
+  async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {
+    const user = req.user as User; // Faz o cast para User
+    const role = user?.role;
+    return this.usersService.findAllUsers(role);
   }
 
   @Get(':id')
@@ -36,8 +40,11 @@ export class UsersController {
   @Roles('ADMIN')
   async findUserById(
     @Param('id', ParseIntPipe) id: number, // Use ParseIntPipe para garantir que 'id' seja um número
+    @Req() req: Request,
   ): Promise<Partial<GetUserDTO> | null> {
-    return this.usersService.findUserById(id);
+    const user = req.user as User; // Faz o cast para User
+    const role = user?.role;
+    return this.usersService.findUserById(+id, role);
   }
 
   @Get('email')

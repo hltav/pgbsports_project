@@ -5,3 +5,5 @@ export * from './refresh-token.dto';
 export * from './user.dto';
 export * from './bankroll.dto';
 export * from './event.dto';
+export * from './create-address.dto';
+export * from './create-client-data.dto';

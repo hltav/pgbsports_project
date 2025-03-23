@@ -14,3 +14,5 @@ export * from './subscriptions/subscriptions.module';
 export * from './subscriptions/subscriptions.service';
 export * from './users/users.module';
 export * from './users/users.service';
+export * from './client-data/client-data.module';
+export * from './client-data/client-data.service';
