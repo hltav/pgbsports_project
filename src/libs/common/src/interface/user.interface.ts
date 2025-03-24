@@ -9,6 +9,4 @@ export interface User {
   password: string;
   accessToken?: string;
   role: Role;
-  createdAt: Date;
-  updatedAt: Date;
 }
