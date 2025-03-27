@@ -3,13 +3,12 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/libs/database';
 import {
   BankrollCreateDTO,
   BankrollUpdateDTO,
   GetBankrollDTO,
-} from 'src/libs/common/src';
-
+} from '../../../libs/common/src';
+import { PrismaService } from '../../../libs';
 @Injectable()
 export class BankrollService {
   constructor(private prisma: PrismaService) {}

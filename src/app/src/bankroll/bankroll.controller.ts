@@ -18,7 +18,7 @@ import {
   JwtAuthGuard,
   Roles,
   RolesGuard,
-} from 'src/libs/common/src';
+} from '../../../libs/common/src';
 
 @Controller('bankrolls')
 export class BankrollController {

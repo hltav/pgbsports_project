@@ -3,8 +3,8 @@ import {
   ClientData,
   CreateClientDataDto,
   UpdateClientDataDto,
-} from 'src/libs/common/src';
-import { PrismaService } from 'src/libs/database';
+} from '../../../libs/common/src';
+import { PrismaService } from '../../../libs';
 
 @Injectable()
 export class ClientDataService {

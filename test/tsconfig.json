@@ -1,0 +1,17 @@
+// test/tsconfig.json
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "../dist/test",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/libs/*": ["../src/libs/*"],
+      "src/*": ["../src/*"]
+    }
+  },
+  "include": ["**/*.spec.ts"],
+  "exclude": ["../node_modules"]
+}

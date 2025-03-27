@@ -5,15 +5,17 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '../../../libs/common/src/interface/jwt-payload.interface';
+
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../../../libs';
+
+import { MailerService } from '@nestjs-modules/mailer';
 import {
   CreateUserDTO,
+  ForgotPasswordDTO,
   GetUserDTO,
-} from '../../../libs/common/src/dto/user.dto';
-import { PrismaService } from '../../../libs/database/src/prisma/prisma.service';
-import { ForgotPasswordDTO } from '../../../libs/common/src/dto/forgot-password.dto';
-import { MailerService } from '@nestjs-modules/mailer';
+  JwtPayload,
+} from '../../../libs/common/src';
 
 @Injectable()
 export class AuthService {

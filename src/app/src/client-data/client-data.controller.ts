@@ -17,7 +17,7 @@ import {
   Roles,
   RolesGuard,
   UpdateClientDataDto,
-} from 'src/libs/common/src';
+} from '../../../libs/common/src';
 
 @Controller('client-data')
 export class ClientDataController {

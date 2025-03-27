@@ -1,0 +1,19 @@
+// src/libs/tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "../../dist/libs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["*", "../../../node_modules/*"]
+    }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["../../node_modules", "../../test"]
+}

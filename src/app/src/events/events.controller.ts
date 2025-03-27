@@ -19,7 +19,7 @@ import {
   Roles,
   RolesGuard,
   UpdateEventDTO,
-} from 'src/libs/common/src';
+} from '../../../libs/common/src';
 
 @Controller('events')
 export class EventsController {
