@@ -1,4 +1,4 @@
-import { PrismaService } from './../../../libs';
+import { PrismaService } from '../../../libs/database/src/prisma';;
 import { Test, TestingModule } from '@nestjs/testing';
 import { BankrollController } from './bankroll.controller';
 import { BankrollService } from './bankroll.service';

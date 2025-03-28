@@ -1,4 +1,4 @@
-import { PrismaService } from './../../../libs';
+import { PrismaService } from '../../../libs/database/src/prisma';;
 import { Test, TestingModule } from '@nestjs/testing';
 import { ClientDataController } from './client-data.controller';
 import { ClientDataService } from './client-data.service';

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { BankrollService } from './bankroll.service';
-import { PrismaModule, PrismaService } from '../../../libs';
+import { PrismaModule, PrismaService } from '../../../libs/database/src/prisma';
 import { BankrollController } from './bankroll.controller';
 
 @Module({

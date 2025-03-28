@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SubscriptionsController } from './subscriptions.controller';
-import { PrismaService } from './../../../libs';
+import { PrismaService } from '../../../libs/database/src/prisma';;
 import { SubscriptionsService } from './subscriptions.service';
 
 describe('SubscriptionsController', () => {

@@ -4,7 +4,7 @@ import {
   GetEventDTO,
   UpdateEventDTO,
 } from '../../../libs/common/src';
-import { PrismaService } from '../../../libs';
+import { PrismaService } from '../../../libs/database/src/prisma';
 
 @Injectable()
 export class EventsService {

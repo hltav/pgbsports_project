@@ -7,7 +7,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../../../libs';
+import { PrismaService } from '../../../libs/database/src/prisma';
 
 import { MailerService } from '@nestjs-modules/mailer';
 import {
