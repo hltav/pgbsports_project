@@ -4,6 +4,7 @@ import { Role, User } from '@prisma/client';
 import { GetUserDTO, UpdateUserDTO } from '../../../libs/common/src';
 import { PrismaService } from '../../../libs/database/src/prisma';
 import * as bcrypt from 'bcrypt';
+import { UserWithClientData } from '../../../libs/common/src/interface/userWithClientData';
 
 @Injectable()
 export class UsersService {
@@ -83,13 +84,19 @@ export class UsersService {
         : null,
     };
   }
-  async findOneByEmail(@Query('email') email: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: email,
+  async findOneByEmail(
+    @Query('email') email: string,
+  ): Promise<UserWithClientData | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+      include: {
+        clientData: {
+          include: {
+            address: true, // Incluindo o endereço completo
+          },
+        },
       },
     });
-    return user;
   }
 
   async findOneByNicknameOrEmail(identifier: string): Promise<User | null> {

@@ -10,4 +10,6 @@ export interface Address {
   country: string;
   clientDataId?: number;
   clientData?: ClientData;
+  createdAt: Date;
+  updatedAt: Date;
 }

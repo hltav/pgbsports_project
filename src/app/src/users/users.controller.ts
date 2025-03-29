@@ -58,7 +58,7 @@ export class UsersController {
 
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'USER')
+  @Roles('USER')
   async update(
     @Param('id') id: number,
     @Body() updateUser: Partial<UpdateUserDTO>,
@@ -74,7 +74,7 @@ export class UsersController {
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'USER')
+  @Roles('USER')
   async delete(@Param('id') id: number): Promise<User> {
     const deletedUser = await this.usersService.delete(Number(id));
 
