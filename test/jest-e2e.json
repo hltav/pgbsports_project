@@ -12,7 +12,7 @@
   },
   "moduleNameMapper": {
     "^src/libs/database$": "<rootDir>/src/libs/database/src/index.ts",
-    "^src/libs/common/src$": "<rootDir>/src/libs/common/src/index.ts",
+    "^src/libs/common/src$": "<rootDir>/src/libs/common/index.ts",
     "^src/(.*)$": "<rootDir>/src/$1"
   }
 }
