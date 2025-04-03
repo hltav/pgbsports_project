@@ -37,44 +37,71 @@ The **HR Manager** is a sports bankroll management platform built using **NestJS
 ## 📁 Project Structure
 
 ```
-📂 project-nestjs
- ├── 📂 prisma                     # Database management
- │   ├── 📂 migrations             # Prisma migrations
- │   ├── schema.prisma             # Database schema definition
- │   ├── prisma.module.ts          # Prisma module
- │   ├── prisma.service.ts         # Prisma service
- │
- ├── 📂 src
- │   ├── 📂 app                     # Main application
- │   ├── 📂 modules                 # Organized modules
- │   │   ├── admin                  # Admin module
- │   │   ├── auth                   # Authentication module
- │   │   ├── bankroll               # Bankroll management module
- │   │   ├── client-data            # Client data module
- │   │   ├── events                 # Sports events module
- │   │   ├── predictions            # Sports predictions module
- │   │   ├── statistics             # Statistics module
- │   │   ├── subscriptions          # Subscriptions module
- │   │   ├── users                  # Users module
- │
- │   ├── 📂 common                  # Reusable code
- │   │   ├── decorators             # Global decorators
- │   │   ├── dto                    # Shared DTOs
- │   │   ├── enums                  # Global enumerations
- │   │   ├── guards                 # Global guards
- │   │   ├── interfaces             # Global interfaces
- │   │   ├── utils                  # Utility functions
- │
- │   ├── 📂 config                   # Application configurations
- │   │   ├── config.module.ts
- │   │   ├── config.service.ts
- │
- │   ├── 📂 mailer                   # Email service
- │
- ├── 📂 test                         # Automated tests
- ├── tsconfig.json                   # TypeScript configuration
- ├── README.md                       # Project documentation
-```
+📦 hr-manager-pgbs
+│── 📜 README.md                # Project documentation
+│── 📜 package.json             # Dependencies and scripts
+│── 📜 tsconfig.json            # TypeScript configuration
+│── 📜 jest-e2e.json            # E2E test configuration
+│
+├── 📂 prisma                   # Prisma ORM configuration
+│   ├── 📂 migrations           # Database migration history
+│   ├── prisma.client.ts        # PrismaClient instance
+│   ├── prisma.module.ts        # Module for injecting PrismaService
+│   ├── prisma.service.ts       # Service handling database connections
+│   ├── schema.prisma           # Prisma schema definition
+│
+├── 📂 src                      # Main application code
+│   │
+│   ├── 📂 app                  # Application root module
+│   │   ├── app.module.ts       # Main module importing other modules
+│   │   ├── app.controller.ts   # Main controller
+│   │   ├── app.service.ts      # Main service
+│   │   ├── main.ts             # NestJS application entry point
+│   │
+│   ├── 📂 config               # Global configurations
+│   │   ├── prisma.config.ts    # Prisma ORM configuration
+│   │
+│   ├── 📂 common               # Shared resources
+│   │   ├── 📂 decorator        # Custom decorators
+│   │   ├── 📂 guards           # Route protection guards
+│   │   ├── 📂 middlewares      # Global middlewares (e.g., Logger, CORS)
+│   │   ├── 📂 enums            # Enum definitions used in the project
+│   │   ├── 📂 interfaces       # Shared interfaces across modules
+│   │   ├── 📂 strategy         # Authentication/authorization strategies
+│   │   │   ├── jwt.strategy.ts # JWT authentication strategy
+│   │   │   ├── index.ts        # Centralized export for strategies
+│   │   ├── 📂 dto              # Global DTOs (if shared across modules)
+│   │
+│   ├── 📂 services             # Reusable services
+│   │   ├── 📂 mailer           # Email sending service
+│   │   │   ├── mail.module.ts
+│   │   │   ├── mail.service.ts
+│   │   ├── 📂 cache            # (Optional) Cache service (e.g., Redis)
+│   │   │   ├── cache.module.ts
+│   │   │   ├── cache.service.ts
+│   │
+│   ├── 📂 modules              # Application modules
+│   │   ├── 📂 auth             # Authentication and JWT management
+│   │   │   ├── dto/            # DTOs specific to the module
+│   │   │   ├── interfaces/     # Interfaces specific to the module
+│   │   │   ├── auth.module.ts  # Authentication module
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.service.ts
+│   │   ├── 📂 users            # User management
+│   │   ├── 📂 bankroll         # Financial management
+│   │   ├── 📂 client-data      # Client data management
+│   │   ├── 📂 events           # System events
+│   │   ├── 📂 predictions      # Predictions and analytics
+│   │   ├── 📂 subscriptions    # Subscriptions and payments
+│   │   ├── 📂 health           # API health check endpoint
+│
+├── 📂 test                     # Unit and E2E tests
+│   ├── 📂 unit                 # Unit tests for services
+│   ├── 📂 integration          # Integration tests for controllers
+│   ├── 📂 e2e                  # End-to-End (E2E) tests
+│   ├── app.e2e-spec.ts         # Main E2E tests
+...
+
 
 ## 🔑 Authentication & Security
 
