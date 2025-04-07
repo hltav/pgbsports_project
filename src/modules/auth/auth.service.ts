@@ -113,6 +113,16 @@ export class AuthService {
       clientData: user.clientData
         ? {
             image: user.clientData.image,
+            cpf: user.clientData.cpf,
+            gender: user.clientData.gender,
+            address: user.clientData.address
+              ? {
+                  neighborhood: user.clientData.address.neighborhood,
+                  city: user.clientData.address.city,
+                  state: user.clientData.address.state,
+                  country: user.clientData.address.country,
+                }
+              : null,
           }
         : null,
     };
