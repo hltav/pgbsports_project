@@ -10,15 +10,14 @@ import { PrismaService } from '../../libs/database/prisma';
 export class ClientDataService {
   constructor(private prisma: PrismaService) {}
 
-  // Método para criar ClientData
   async createClientData(
     createClientDataDto: CreateClientDataDto,
   ): Promise<ClientData> {
-    const { address, ...clientDataData } = createClientDataDto;
+    const { address, ...clientData } = createClientDataDto;
 
     const createdClientData = await this.prisma.clientData.create({
       data: {
-        ...clientDataData,
+        ...clientData,
         address: address
           ? {
               create: {
@@ -35,7 +34,6 @@ export class ClientDataService {
     return createdClientData as ClientData;
   }
 
-  // Método para buscar ClientData por ID
   async getClientData(id: number): Promise<ClientData> {
     const clientData = await this.prisma.clientData.findUnique({
       where: { id },
@@ -49,14 +47,12 @@ export class ClientDataService {
     return clientData as ClientData;
   }
 
-  // Método para atualizar ClientData
   async updateClientData(
     id: number,
     updateClientDataDto: UpdateClientDataDto,
   ): Promise<ClientData> {
     const { address, ...clientDataData } = updateClientDataDto;
 
-    // Verifica se o ClientData existe
     const existingClientData = await this.prisma.clientData.findUnique({
       where: { id },
     });

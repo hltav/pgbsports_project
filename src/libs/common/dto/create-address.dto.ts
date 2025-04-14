@@ -1,27 +1,19 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
-
 export class CreateAddressDto {
-  @IsString()
-  @IsNotEmpty()
-  direction: string;
+  direction?: string;
+  houseNumber?: number;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+}
 
-  @IsNumber()
-  @IsNotEmpty()
-  houseNumber: number;
-
-  @IsString()
-  @IsNotEmpty()
-  neighborhood: string;
-
-  @IsString()
-  @IsNotEmpty()
-  city: string;
-
-  @IsString()
-  @IsNotEmpty()
-  state: string;
-
-  @IsString()
-  @IsNotEmpty()
-  country: string;
+export class UpdateAddressDto {
+  direction?: string;
+  houseNumber?: number;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  createdAt!: Date;
+  updatedAt!: Date;
 }

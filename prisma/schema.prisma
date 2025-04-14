@@ -46,12 +46,12 @@ model ClientData {
 
 model Address {
   id           Int         @id @default(autoincrement())
-  direction    String
-  houseNumber  Int
-  neighborhood String
-  city         String
-  state        String
-  country      String // Corrigido para minúsculo (boas práticas)
+  direction    String?
+  houseNumber  Int?
+  neighborhood String?
+  city         String?
+  state        String?
+  country      String ?
   clientDataId Int         @unique // Chave estrangeira para ClientData (única)
   clientData   ClientData? @relation(fields: [clientDataId], references: [id]) // Relação com ClientData
   createdAt    DateTime    @default(now())

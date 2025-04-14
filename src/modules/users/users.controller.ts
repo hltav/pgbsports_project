@@ -27,19 +27,19 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {
-    const user = req.user as User; // Faz o cast para User
+    const user = req.user as User;
     const role = user?.role;
     return this.usersService.findAllUsers(role);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'USER')
   async findUserById(
-    @Param('id', ParseIntPipe) id: number, // Use ParseIntPipe para garantir que 'id' seja um número
+    @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
   ): Promise<Partial<GetUserDTO> | null> {
-    const user = req.user as User; // Faz o cast para User
+    const user = req.user as User;
     const role = user?.role;
     return this.usersService.findUserById(+id, role);
   }

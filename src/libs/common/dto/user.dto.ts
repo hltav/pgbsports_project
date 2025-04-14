@@ -32,13 +32,13 @@ export class GetUserDTO {
     userId?: number;
     address?: {
       id?: number;
-      direction?: string;
-      houseNumber?: number;
-      neighborhood?: string;
-      city?: string;
-      state?: string;
-      country?: string;
-      clientDataId?: number; // 🔹 Torne `clientDataId` opcional
+      direction?: string | null;
+      houseNumber?: number | null;
+      neighborhood?: string | null;
+      city?: string | null;
+      state?: string | null;
+      country?: string | null;
+      clientDataId?: number;
       createdAt?: Date;
       updatedAt?: Date;
     } | null;

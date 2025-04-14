@@ -12,6 +12,7 @@ export class UsersService {
 
   async findAllUsers(role?: Role): Promise<Partial<GetUserDTO>[]> {
     const users = await this.prisma.user.findMany({
+      where: role ? { role } : undefined,
       select: {
         id: true,
         firstname: true,
@@ -21,24 +22,18 @@ export class UsersService {
         role: true,
         clientData: {
           include: {
-            address: true, // Inclui os dados do Address
+            address: true,
           },
         },
       },
     });
 
-    // Mapeia os usuários para o formato do DTO
     return users.map((user) => ({
-      id: user.id,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      nickname: user.nickname,
-      email: user.email,
-      role: user.role,
+      ...user,
       clientData: user.clientData
         ? {
             ...user.clientData,
-            address: user.clientData.address, // Inclui os dados do Address
+            address: user.clientData.address ?? undefined,
           }
         : null,
     }));
@@ -49,7 +44,7 @@ export class UsersService {
     role?: Role,
   ): Promise<Partial<GetUserDTO> | null> {
     const user = await this.prisma.user.findUnique({
-      where: { id: id },
+      where: { id },
       select: {
         id: true,
         firstname: true,
@@ -59,7 +54,7 @@ export class UsersService {
         role: true,
         clientData: {
           include: {
-            address: true, // Inclui os dados do Address
+            address: true,
           },
         },
       },
@@ -70,49 +65,47 @@ export class UsersService {
     }
 
     return {
-      id: user.id,
-      firstname: user.firstname,
-      lastname: user.lastname,
-      nickname: user.nickname,
-      email: user.email,
-      role: user.role,
+      ...user,
       clientData: user.clientData
         ? {
             ...user.clientData,
-            address: user.clientData.address, // Inclui os dados do Address
+            address: user.clientData.address ?? undefined,
           }
         : null,
     };
   }
+
   async findOneByEmail(
     @Query('email') email: string,
   ): Promise<UserWithClientData | null> {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email },
       include: {
         clientData: {
           include: {
-            address: true, // Incluindo o endereço completo
+            address: true,
           },
         },
       },
     });
-  }
 
-  async findOneByNicknameOrEmail(identifier: string): Promise<User | null> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ nickname: identifier }, { email: identifier }],
-      },
-    });
-    return user;
+    if (!user) return null;
+
+    return {
+      ...user,
+      clientData: user.clientData
+        ? {
+            ...user.clientData,
+            address: user.clientData.address ?? undefined,
+          }
+        : null,
+    };
   }
 
   async update(
     id: number,
     updateUser: Partial<UpdateUserDTO>,
   ): Promise<GetUserDTO> {
-    // Verifica se o usuário existe
     const user = await this.prisma.user.findUnique({
       where: { id: Number(id) },
     });

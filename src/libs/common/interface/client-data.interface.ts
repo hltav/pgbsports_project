@@ -8,5 +8,15 @@ export interface ClientData {
   image: string;
   userId: number;
   user?: User;
-  address?: Address | null; // Permite que address seja Address, undefined ou null
+  address?: Address | null;
+}
+
+export interface UpdateClientData {
+  id: number;
+  gender?: string;
+  cpf?: string;
+  image?: string;
+  userId: number;
+  user?: User;
+  address?: Address;
 }

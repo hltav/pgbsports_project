@@ -8,6 +8,6 @@ export interface UserWithClientData extends User {
     cpf?: string;
     image?: string;
     userId: number;
-    address?: Address | null;
+    address?: Address | undefined;
   } | null;
 }
