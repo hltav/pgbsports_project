@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { Address } from './address.interface';
+import { AddressDTO } from '../../common/dto/client-data/address.schema';
 
 export interface UserWithClientData extends User {
   clientData: {
@@ -8,6 +8,6 @@ export interface UserWithClientData extends User {
     cpf?: string;
     image?: string;
     userId: number;
-    address?: Address | undefined;
+    address?: AddressDTO | undefined;
   } | null;
 }

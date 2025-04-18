@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 
-// Verifica se já existe uma instância global para evitar criar múltiplas conexões
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({ log: ['query', 'info', 'warn', 'error'] });

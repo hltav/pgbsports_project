@@ -1,5 +1,5 @@
 import { Role } from '@prisma/client';
-import { ClientData } from './client-data.interface';
+import { ClientDataDTO } from '../../common/dto/client-data';
 
 export interface User {
   id: number;
@@ -11,5 +11,5 @@ export interface User {
   accessToken?: string;
   refreshToken?: string | null;
   role: Role;
-  clientData?: ClientData;
+  clientData?: ClientDataDTO;
 }

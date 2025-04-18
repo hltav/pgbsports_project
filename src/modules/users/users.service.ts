@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
-import { GetUserDTO, UpdateUserDTO } from './../../libs/common';
 import { PrismaService } from './../../libs/database/prisma';
 import * as bcrypt from 'bcrypt';
 import { UserWithClientData } from './../../libs/common/interface/userWithClientData';
+import { GetUserDTO, UpdateUserDTO } from './../../libs/common/dto/user';
 
 @Injectable()
 export class UsersService {

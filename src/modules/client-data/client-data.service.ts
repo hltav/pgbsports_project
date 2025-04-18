@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  ClientData,
-  CreateClientDataDto,
-  UpdateClientDataDto,
-} from '../../libs/common';
 import { PrismaService } from '../../libs/database/prisma';
+import {
+  CreateClientDataDTO,
+  ClientDataDTO,
+  UpdateClientDataDTO,
+} from './../../libs/common/dto/client-data';
 
 @Injectable()
 export class ClientDataService {
   constructor(private prisma: PrismaService) {}
 
   async createClientData(
-    createClientDataDto: CreateClientDataDto,
-  ): Promise<ClientData> {
+    createClientDataDto: CreateClientDataDTO,
+  ): Promise<ClientDataDTO> {
     const { address, ...clientData } = createClientDataDto;
 
     const createdClientData = await this.prisma.clientData.create({
@@ -31,10 +31,10 @@ export class ClientDataService {
       },
     });
 
-    return createdClientData as ClientData;
+    return createdClientData as ClientDataDTO;
   }
 
-  async getClientData(id: number): Promise<ClientData> {
+  async getClientData(id: number): Promise<ClientDataDTO> {
     const clientData = await this.prisma.clientData.findUnique({
       where: { id },
       include: { address: true },
@@ -44,13 +44,13 @@ export class ClientDataService {
       throw new NotFoundException(`ClientData com ID ${id} não encontrado.`);
     }
 
-    return clientData as ClientData;
+    return clientData as ClientDataDTO;
   }
 
   async updateClientData(
     id: number,
-    updateClientDataDto: UpdateClientDataDto,
-  ): Promise<ClientData> {
+    updateClientDataDto: UpdateClientDataDTO,
+  ): Promise<ClientDataDTO> {
     const { address, ...clientDataData } = updateClientDataDto;
 
     const existingClientData = await this.prisma.clientData.findUnique({
@@ -79,6 +79,6 @@ export class ClientDataService {
       },
     });
 
-    return updatedClientData as ClientData;
+    return updatedClientData as ClientDataDTO;
   }
 }

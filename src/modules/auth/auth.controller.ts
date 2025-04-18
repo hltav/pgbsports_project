@@ -13,11 +13,11 @@ import {
   ForgotPasswordDTO,
   JwtAuthGuard,
   JwtPayload,
-  RefreshTokenDTO,
   Roles,
   RolesGuard,
   User,
 } from '../../libs/common';
+import { RefreshTokenDTO } from './dto/refresh-token.dto';
 
 interface AuthenticatedRequest extends Request {
   user: User;

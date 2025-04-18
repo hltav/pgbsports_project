@@ -14,6 +14,12 @@
       "*": ["*", "../../../node_modules/*"]
     }
   },
-  "include": ["**/*.ts", "../modules/auth/dto/auth.dto.ts", "../modules/auth/dto/login.dto.ts", "../modules/auth/dto/refresh-token.dto.ts", "../modules/auth/interface/jwt-payload.interface.ts"],
+  "include": [
+    "**/*.ts",
+    "../modules/auth/dto/auth.dto.ts",
+    "../modules/auth/dto/login.dto.ts",
+    "../modules/auth/dto/refresh-token.dto.ts",
+    "../modules/auth/interface/jwt-payload.interface.ts"
+  ],
   "exclude": ["../../node_modules", "../../test"]
 }

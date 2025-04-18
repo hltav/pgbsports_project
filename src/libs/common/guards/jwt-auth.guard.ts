@@ -14,9 +14,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const request = context.switchToHttp().getRequest<Request>();
     const user = request.user as User;
 
-    // Aqui, adicione a lógica para garantir que o usuário tenha a propriedade role
     if (user) {
-      user.role = user.role || 'USER'; // Defina um valor padrão se a role não estiver definida
+      user.role = user.role || 'USER';
     }
 
     return !!user;

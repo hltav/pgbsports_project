@@ -6,17 +6,12 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../../modules/users/users.service';
 import { JwtService } from '@nestjs/jwt';
-
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../libs/database/prisma';
-
 import { MailerService } from '@nestjs-modules/mailer';
-import {
-  CreateUserDTO,
-  ForgotPasswordDTO,
-  GetUserDTO,
-  JwtPayload,
-} from '../../libs/common';
+import { GetUserDTO, CreateUserDTO } from './../../libs/common/dto/user/';
+import { ForgotPasswordDTO } from './../../libs/common/dto/forgot-password.dto';
+import { JwtPayload } from './interface/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -96,10 +91,8 @@ export class AuthService {
     const accessToken = this.jwtService.sign(payload, { expiresIn: '1d' });
     const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
-    // 🔹 Hash do refreshToken antes de armazenar no banco
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
 
-    // 🔹 Atualiza o usuário no banco com o refreshToken hashado
     await this.usersService.update(user.id, {
       refreshToken: hashedRefreshToken,
     });
@@ -142,7 +135,6 @@ export class AuthService {
       throw new NotFoundException('User not found');
     }
 
-    // 🔹 Remove o refreshToken do banco de dados
     await this.usersService.update(userId, { refreshToken: null });
   }
 
@@ -152,19 +144,18 @@ export class AuthService {
     });
 
     if (!user) {
-      return; // Não revele que o email não existe por questões de segurança
+      return;
     }
 
     const resetToken = this.jwtService.sign(
       { sub: user.id },
-      { expiresIn: '1h' }, // Token de redefinição válido por 1 hora
+      { expiresIn: '1h' },
     );
 
-    // Envie o email com o link de redefinição de senha
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Password reset',
-      template: 'forgot-password', // Template de email (usando Handlebars, EJS, etc.)
+      template: 'forgot-password',
       context: {
         name: user.firstname,
         resetLink: `https://localhost:3000/reset-password?token=${resetToken}`,
@@ -174,17 +165,14 @@ export class AuthService {
 
   async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {
     try {
-      // Verifica se o refresh token é válido e tipa o payload
       const payload = this.jwtService.verify<JwtPayload>(refreshToken);
 
-      // Busca o usuário no banco de dados
       const user = await this.usersService.findUserById(payload.sub);
 
       if (!user) {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
-      // Gera um novo access token
       const newPayload: JwtPayload = {
         sub: user.id as number,
         email: user.email,
@@ -197,7 +185,6 @@ export class AuthService {
 
       return { accessToken };
     } catch (error) {
-      // Tipagem explícita do erro
       if (error instanceof Error) {
         throw new UnauthorizedException('Invalid refresh token');
       }
