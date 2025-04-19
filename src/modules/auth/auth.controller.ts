@@ -8,16 +8,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard, Roles, RolesGuard } from '../../libs/common';
+import { RefreshTokenDTO } from './dto/refresh-token.dto';
 import {
+  User,
   CreateUserDTO,
   ForgotPasswordDTO,
-  JwtAuthGuard,
-  JwtPayload,
-  Roles,
-  RolesGuard,
-  User,
-} from '../../libs/common';
-import { RefreshTokenDTO } from './dto/refresh-token.dto';
+} from './../../libs/common/dto/user';
+import { JwtPayload } from './dto/jwt-payload.dto';
 
 interface AuthenticatedRequest extends Request {
   user: User;

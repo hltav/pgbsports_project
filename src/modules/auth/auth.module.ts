@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { MailModule } from '../../libs/services/mailer/mail.module';
-import { JwtStrategy } from './../../libs/common/strategy/jwt.strategy';
+import { JwtStrategy } from './strategy/jwt.strategy';
 import { PrismaModule, PrismaService } from './../../libs/database/prisma';
 import { UsersModule } from '../users/users.module';
 

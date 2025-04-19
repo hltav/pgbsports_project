@@ -1,6 +1,6 @@
-export * from './create-client-data.dto';
-export * from './update-client-data.dto';
-export * from './create-address.dto';
-export * from './update-address.dto';
-export * from './client-data.schema';
-export * from './address.schema';
+export { CreateClientDataDTO } from './create-client-data.dto';
+export { UpdateClientDataDTO } from './update-client-data.dto';
+export { CreateAddressDTO } from './create-address.dto';
+export { UpdateAddressDTO } from './update-address.dto';
+export { ClientDataDTO } from './client-data.schema';
+export { AddressDTO } from './address.schema';

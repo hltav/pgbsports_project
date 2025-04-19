@@ -11,13 +11,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ClientDataService } from './client-data.service';
+import { JwtAuthGuard, Roles, RolesGuard } from './../../libs/common';
 import {
-  CreateClientDataDto,
-  JwtAuthGuard,
-  Roles,
-  RolesGuard,
-  UpdateClientDataDto,
-} from './../../libs/common';
+  CreateClientDataDTO,
+  UpdateClientDataDTO,
+} from './../../libs/common/dto/client-data';
 
 @Controller('client-data')
 export class ClientDataController {
@@ -27,7 +25,7 @@ export class ClientDataController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async create(@Body() createClientDataDto: CreateClientDataDto) {
+  async create(@Body() createClientDataDto: CreateClientDataDTO) {
     return this.clientDataService.createClientData(createClientDataDto);
   }
 
@@ -48,7 +46,7 @@ export class ClientDataController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
     @Param('id') id: string,
-    @Body() updateClientDataDto: UpdateClientDataDto,
+    @Body() updateClientDataDto: UpdateClientDataDTO,
   ) {
     return this.clientDataService.updateClientData(+id, updateClientDataDto);
   }

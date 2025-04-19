@@ -11,14 +11,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BankrollService } from './bankroll.service';
+import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
 import {
-  JwtAuthGuard,
-  RolesGuard,
-  Roles,
   GetBankrollDTO,
-  BankrollCreateDTO,
-  BankrollUpdateDTO,
-} from './../../libs';
+  CreateBankrollDTO,
+  UpdateBankrollDTO,
+} from './../../libs/common/dto/bankroll';
 
 @Controller('bankrolls')
 export class BankrollController {
@@ -43,7 +41,7 @@ export class BankrollController {
   @Roles('USER')
   @UsePipes(new ValidationPipe({ transform: true }))
   async createBankroll(
-    @Body() data: BankrollCreateDTO,
+    @Body() data: CreateBankrollDTO,
   ): Promise<GetBankrollDTO> {
     return this.bankrollService.createBankroll(data);
   }
@@ -53,7 +51,7 @@ export class BankrollController {
   @Roles('USER')
   async updateBankroll(
     @Param('id') id: string,
-    @Body() data: BankrollUpdateDTO,
+    @Body() data: UpdateBankrollDTO,
   ): Promise<GetBankrollDTO> {
     return this.bankrollService.updateBankroll(+id, data);
   }

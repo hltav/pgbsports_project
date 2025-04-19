@@ -12,20 +12,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
+import { JwtAuthGuard, Roles, RolesGuard } from './../../libs/common';
 import {
   CreateEventDTO,
   GetEventDTO,
-  JwtAuthGuard,
-  Roles,
-  RolesGuard,
   UpdateEventDTO,
-} from './../../libs/common';
+} from './../../libs/common/dto';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventService: EventsService) {}
 
-  // Cria um novo evento
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')
@@ -34,7 +31,6 @@ export class EventsController {
     return this.eventService.createEvent(data);
   }
 
-  // Busca todos os eventos
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')
@@ -42,7 +38,6 @@ export class EventsController {
     return this.eventService.findAllEvents();
   }
 
-  // Busca um evento por ID
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')
@@ -56,7 +51,6 @@ export class EventsController {
     return event;
   }
 
-  // Atualiza um evento
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')
@@ -67,7 +61,6 @@ export class EventsController {
     return this.eventService.updateEvent(+id, data);
   }
 
-  // Exclui um evento
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')

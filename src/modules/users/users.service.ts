@@ -3,8 +3,8 @@ import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
 import { PrismaService } from './../../libs/database/prisma';
 import * as bcrypt from 'bcrypt';
-import { UserWithClientData } from './../../libs/common/interface/userWithClientData';
 import { GetUserDTO, UpdateUserDTO } from './../../libs/common/dto/user';
+import { UserWithClientData } from './../../libs/common/dto/user/user-with-client-data.schema';
 
 @Injectable()
 export class UsersService {

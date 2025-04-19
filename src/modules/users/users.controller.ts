@@ -14,8 +14,7 @@ import {
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
 import { RolesGuard } from './../../libs/common/guards/roles.guard';
-import { User } from './../../libs/common/interface/user.interface';
-import { GetUserDTO, UpdateUserDTO } from './../../libs/common/dto/user';
+import { GetUserDTO, UpdateUserDTO, User } from './../../libs/common/dto/user';
 import { Roles } from './../../libs/common/decorator/roles.decorator';
 import { Request } from 'express';
 

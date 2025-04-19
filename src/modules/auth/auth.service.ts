@@ -10,8 +10,8 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../libs/database/prisma';
 import { MailerService } from '@nestjs-modules/mailer';
 import { GetUserDTO, CreateUserDTO } from './../../libs/common/dto/user/';
-import { ForgotPasswordDTO } from './../../libs/common/dto/forgot-password.dto';
-import { JwtPayload } from './interface/jwt-payload.interface';
+import { ForgotPasswordDTO } from '../../libs/common/dto/user/forgot-password.dto';
+import { JwtPayload } from './dto/jwt-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -108,6 +108,7 @@ export class AuthService {
             image: user.clientData.image,
             cpf: user.clientData.cpf,
             gender: user.clientData.gender,
+            phone: user.clientData.phone,
             address: user.clientData.address
               ? {
                   neighborhood: user.clientData.address.neighborhood,

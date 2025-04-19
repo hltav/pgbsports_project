@@ -3,12 +3,12 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import {
-  BankrollCreateDTO,
-  BankrollUpdateDTO,
-  GetBankrollDTO,
-} from './../../libs/common';
 import { PrismaService } from './../../libs/database/prisma';
+import {
+  GetBankrollDTO,
+  CreateBankrollDTO,
+  UpdateBankrollDTO,
+} from './../../libs/common/dto/bankroll';
 
 @Injectable()
 export class BankrollService {
@@ -24,7 +24,7 @@ export class BankrollService {
     });
 
     return bankrolls.map((b) => ({
-      id: b.id ?? 0, // Substitui undefined por 0 ou outro valor seguro
+      id: b.id ?? 0,
       name: b.name,
       balance: b.balance,
     }));
@@ -53,7 +53,7 @@ export class BankrollService {
     });
   }
 
-  async createBankroll(data: BankrollCreateDTO): Promise<GetBankrollDTO> {
+  async createBankroll(data: CreateBankrollDTO): Promise<GetBankrollDTO> {
     const existingBankroll = await this.prisma.bankroll.findFirst({
       where: { name: data.name },
     });
@@ -77,7 +77,7 @@ export class BankrollService {
 
   async updateBankroll(
     id: number,
-    updateData: Partial<BankrollUpdateDTO>,
+    updateData: Partial<UpdateBankrollDTO>,
   ): Promise<GetBankrollDTO> {
     const bankroll = await this.prisma.bankroll.findUnique({
       where: { id },

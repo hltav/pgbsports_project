@@ -36,6 +36,7 @@ model ClientData {
   id        Int      @id @default(autoincrement())
   gender    String
   cpf       String   @unique
+  phone     String   @default("")
   image     String
   userId    Int      @unique // Chave estrangeira para User (única)
   user      User     @relation(fields: [userId], references: [id]) // Relação com User
@@ -51,7 +52,7 @@ model Address {
   neighborhood String?
   city         String?
   state        String?
-  country      String ?
+  country      String?
   clientDataId Int         @unique // Chave estrangeira para ClientData (única)
   clientData   ClientData? @relation(fields: [clientDataId], references: [id]) // Relação com ClientData
   createdAt    DateTime    @default(now())

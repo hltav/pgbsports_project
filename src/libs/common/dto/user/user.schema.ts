@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client';
 import { z } from 'zod';
-import { ClientDataSchema } from '../client-data';
+import { ClientDataSchema } from '../client-data/client-data.schema';
 
 export const UserSchema = z.object({
   id: z.number(),
@@ -15,4 +15,4 @@ export const UserSchema = z.object({
   clientData: ClientDataSchema.optional(),
 });
 
-export type UserDTO = z.infer<typeof UserSchema>;
+export type User = z.infer<typeof UserSchema>;
