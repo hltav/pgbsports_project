@@ -23,14 +23,20 @@ export class AuthService {
   ) {}
 
   async register(createUser: CreateUserDTO): Promise<GetUserDTO> {
-    const existingUser = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ email: createUser.email }, { nickname: createUser.nickname }],
-      },
+    const existingUserByEmail = await this.prisma.user.findUnique({
+      where: { email: createUser.email },
     });
 
-    if (existingUser) {
-      throw new ConflictException('Email or Nickname User already registered!');
+    if (existingUserByEmail) {
+      throw new ConflictException('Este e-mail já está em uso.');
+    }
+
+    const existingUserByNickname = await this.prisma.user.findUnique({
+      where: { nickname: createUser.nickname },
+    });
+
+    if (existingUserByNickname) {
+      throw new ConflictException('Este nome de usuário já está em uso.');
     }
 
     const saltRounds = 10;

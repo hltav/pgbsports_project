@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -16,6 +18,7 @@ import {
   CreateClientDataDTO,
   UpdateClientDataDTO,
 } from './../../libs/common/dto/client-data';
+import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 
 @Controller('client-data')
 export class ClientDataController {
@@ -49,5 +52,21 @@ export class ClientDataController {
     @Body() updateClientDataDto: UpdateClientDataDTO,
   ) {
     return this.clientDataService.updateClientData(+id, updateClientDataDto);
+  }
+
+  @Put(':id/image')
+  @UseGuards(JwtAuthGuard)
+  async updateProfileImage(
+    @Param('id') id: string,
+    @Body() body: { image: string },
+    @Req() req: AuthenticatedRequest,
+  ) {
+    if (req.user.id !== +id) {
+      throw new UnauthorizedException(
+        'Você só pode atualizar seu próprio perfil',
+      );
+    }
+
+    return this.clientDataService.updateClientImage(+id, body.image);
   }
 }

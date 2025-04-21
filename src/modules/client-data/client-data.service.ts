@@ -5,6 +5,7 @@ import {
   ClientDataDTO,
   UpdateClientDataDTO,
 } from './../../libs/common/dto/client-data';
+import { UpdateClientDataSchema } from './../../libs/common/dto/client-data/update-client-data.dto';
 
 @Injectable()
 export class ClientDataService {
@@ -49,36 +50,53 @@ export class ClientDataService {
 
   async updateClientData(
     id: number,
-    updateClientDataDto: UpdateClientDataDTO,
+    updateData: UpdateClientDataDTO,
   ): Promise<ClientDataDTO> {
-    const { address, ...clientDataData } = updateClientDataDto;
+    const validatedData = UpdateClientDataSchema.parse(updateData);
 
-    const existingClientData = await this.prisma.clientData.findUnique({
+    const existingData = await this.prisma.clientData.findUnique({
       where: { id },
     });
 
-    if (!existingClientData) {
-      throw new NotFoundException(`ClientData com ID ${id} não encontrado.`);
+    if (!existingData) {
+      throw new NotFoundException(`Dados do cliente não encontrados`);
     }
 
-    const updatedClientData = await this.prisma.clientData.update({
+    if (validatedData.image && Object.keys(validatedData).length === 1) {
+      return this.prisma.clientData.update({
+        where: { id },
+        data: { image: validatedData.image },
+      });
+    }
+
+    const { address, ...clientData } = validatedData;
+
+    return this.prisma.clientData.update({
       where: { id },
       data: {
-        ...clientDataData,
+        ...clientData,
         address: address
-          ? {
-              upsert: {
-                create: { ...address },
-                update: { ...address },
-              },
-            }
+          ? { upsert: { create: address, update: address } }
           : undefined,
       },
-      include: {
-        address: true,
+      include: { address: true },
+    });
+  }
+
+  async updateClientImage(id: number, imageUrl: string) {
+    const updated = await this.prisma.clientData.update({
+      where: { id },
+      data: { image: imageUrl },
+      select: {
+        id: true,
+        image: true,
+        updatedAt: true,
       },
     });
 
-    return updatedClientData as ClientDataDTO;
+    return {
+      ...updated,
+      updatedAt: updated.updatedAt.toISOString(),
+    };
   }
 }
