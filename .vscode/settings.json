@@ -5,12 +5,14 @@
         "Adicionado",
         "Allmodule",
         "Asserção",
+        "banca",
         "centralizado",
         "Chave",
         "Constrói",
         "definidas",
         "dependência",
         "destinatário",
+        "encontrada",
         "encontrados",
         "Envia",
         "Envie",
@@ -35,6 +37,7 @@
         "métodos",
         "minúsculo",
         "múltiplas",
+        "Nenhuma",
         "nível",
         "Obtém",
         "ocorre",
@@ -65,6 +68,7 @@
         "Tipagem",
         "transforma",
         "Tratamento",
-        "única"
+        "única",
+        "unid"
     ]
 }

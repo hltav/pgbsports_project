@@ -25,6 +25,7 @@ model User {
   refreshToken String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+  Bankroll     Bankroll[]
 }
 
 enum Role {
@@ -60,10 +61,13 @@ model Address {
 }
 
 model Bankroll {
-  id      Int     @id @default(autoincrement())
-  name    String  @unique
-  balance Float
-  events  Event[] // Relação com Event
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  balance   Float
+  unidValue Float
+  events    Event[] // Relação com Event
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
 }
 
 model Event {

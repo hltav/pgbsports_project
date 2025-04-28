@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Get,
@@ -9,6 +10,8 @@ import {
   UsePipes,
   ValidationPipe,
   UseGuards,
+  Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BankrollService } from './bankroll.service';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
@@ -17,6 +20,7 @@ import {
   CreateBankrollDTO,
   UpdateBankrollDTO,
 } from './../../libs/common/dto/bankroll';
+import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 
 @Controller('bankrolls')
 export class BankrollController {
@@ -29,11 +33,20 @@ export class BankrollController {
     return this.bankrollService.findAllBankrolls();
   }
 
-  @Get(':id')
+  @Get(':id/bank')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')
   async findBankrollById(@Param('id') id: string): Promise<GetBankrollDTO> {
     return this.bankrollService.findBankrollById(+id);
+  }
+
+  @Get('user/:userId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('USER')
+  async findBankrollsByUserId(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<GetBankrollDTO[]> {
+    return this.bankrollService.findBankrollsByUserId(userId);
   }
 
   @Post()
@@ -42,6 +55,7 @@ export class BankrollController {
   @UsePipes(new ValidationPipe({ transform: true }))
   async createBankroll(
     @Body() data: CreateBankrollDTO,
+    @Req() req: AuthenticatedRequest,
   ): Promise<GetBankrollDTO> {
     return this.bankrollService.createBankroll(data);
   }

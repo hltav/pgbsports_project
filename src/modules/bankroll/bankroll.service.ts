@@ -18,6 +18,7 @@ export class BankrollService {
     const bankrolls = await this.prisma.bankroll.findMany({
       select: {
         id: true,
+        userId: true,
         name: true,
         balance: true,
       },
@@ -25,8 +26,10 @@ export class BankrollService {
 
     return bankrolls.map((b) => ({
       id: b.id ?? 0,
+      userId: b.userId,
       name: b.name,
       balance: b.balance,
+      unidValue: b.balance,
     }));
   }
 
@@ -35,8 +38,10 @@ export class BankrollService {
       where: { id },
       select: {
         id: true,
+        userId: true,
         name: true,
         balance: true,
+        unidValue: true,
       },
     });
 
@@ -45,6 +50,27 @@ export class BankrollService {
     }
 
     return bankroll;
+  }
+
+  async findBankrollsByUserId(userId: number): Promise<GetBankrollDTO[]> {
+    const bankrolls = await this.prisma.bankroll.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        userId: true,
+        name: true,
+        balance: true,
+        unidValue: true,
+      },
+    });
+
+    if (bankrolls.length === 0) {
+      throw new NotFoundException(
+        'Nenhuma banca encontrada para este usuário!',
+      );
+    }
+
+    return bankrolls;
   }
 
   async findBankrollByName(name: string): Promise<GetBankrollDTO | null> {
@@ -65,12 +91,16 @@ export class BankrollService {
     return this.prisma.bankroll.create({
       data: {
         name: data.name,
+        userId: data.userId,
         balance: data.balance,
+        unidValue: data.unidValue,
       },
       select: {
         id: true,
+        userId: true,
         name: true,
         balance: true,
+        unidValue: true,
       },
     });
   }
@@ -92,8 +122,10 @@ export class BankrollService {
       data: updateData,
       select: {
         id: true,
+        userId: true,
         name: true,
         balance: true,
+        unidValue: true,
       },
     });
   }
