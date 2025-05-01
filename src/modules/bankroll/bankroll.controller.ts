@@ -23,26 +23,22 @@ import {
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 
 @Controller('bankrolls')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('USER', 'TEST_USER')
 export class BankrollController {
   constructor(private readonly bankrollService: BankrollService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
   async findAllBankrolls(): Promise<GetBankrollDTO[]> {
     return this.bankrollService.findAllBankrolls();
   }
 
   @Get(':id/bank')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
   async findBankrollById(@Param('id') id: string): Promise<GetBankrollDTO> {
     return this.bankrollService.findBankrollById(+id);
   }
 
   @Get('user/:userId')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
   async findBankrollsByUserId(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<GetBankrollDTO[]> {
@@ -50,8 +46,6 @@ export class BankrollController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
   @UsePipes(new ValidationPipe({ transform: true }))
   async createBankroll(
     @Body() data: CreateBankrollDTO,
@@ -61,8 +55,6 @@ export class BankrollController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
   async updateBankroll(
     @Param('id') id: string,
     @Body() data: UpdateBankrollDTO,
@@ -71,8 +63,6 @@ export class BankrollController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
   async deleteBankroll(@Param('id') id: string): Promise<GetBankrollDTO> {
     return this.bankrollService.deleteBankroll(+id);
   }
