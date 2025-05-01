@@ -13,6 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enum pare tipo de usuário
+enum Role {
+  USER
+  TEST_USER
+  ADMIN
+}
+
+// Enum pare tipo do evento
+enum EventType {
+  SINGLE
+  MULTIPLE
+  LIVE
+}
+
+// Enum para resultado do evento
+enum Result {
+  pending
+  win
+  lose
+  void
+}
+
+//Dados iniciais de usuário
 model User {
   id           Int         @id @default(autoincrement())
   firstname    String
@@ -21,31 +44,29 @@ model User {
   email        String      @unique
   password     String
   role         Role        @default(USER)
-  clientData   ClientData? // Relação um-para-um com ClientData (opcional)
+  clientData   ClientData?
   refreshToken String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   Bankroll     Bankroll[]
+  Event        Event[]
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
+//Dados de Cliente
 model ClientData {
   id        Int      @id @default(autoincrement())
   gender    String
   cpf       String   @unique
   phone     String   @default("")
   image     String
-  userId    Int      @unique // Chave estrangeira para User (única)
-  user      User     @relation(fields: [userId], references: [id]) // Relação com User
-  address   Address? // Relação um-para-um com Address (opcional)
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address   Address?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+//Endereço do Cliente
 model Address {
   id           Int         @id @default(autoincrement())
   direction    String?
@@ -54,31 +75,39 @@ model Address {
   city         String?
   state        String?
   country      String?
-  clientDataId Int         @unique // Chave estrangeira para ClientData (única)
-  clientData   ClientData? @relation(fields: [clientDataId], references: [id]) // Relação com ClientData
+  clientDataId Int         @unique
+  clientData   ClientData  @relation(fields: [clientDataId], references: [id], onDelete: Cascade)
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 }
 
+//Dados da Banca 
 model Bankroll {
-  id        Int     @id @default(autoincrement())
-  name      String  @unique
+  id        Int       @id @default(autoincrement())
+  name      String
   balance   Float
   unidValue Float
-  events    Event[] // Relação com Event
+  events    Event[]
   userId    Int
-  user      User    @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
 }
 
+//Dados do Evento esportivo
 model Event {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   bankId    Int
-  bank      Bankroll @relation(fields: [bankId], references: [id]) // Relação com Bankroll
-  eventType String
+  bank      Bankroll   @relation(fields: [bankId], references: [id], onDelete: Cascade)
+  eventType EventType
   event     String
   market    String
   amount    Float
-  result    String   @default("pending")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  result    Result     @default(pending)
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([userId, eventType])
 }
