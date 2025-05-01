@@ -10,6 +10,7 @@ import {
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
+  //Cria um novo evento
   async createEvent(data: CreateEventDTO): Promise<GetEventDTO> {
     const event = await this.prisma.event.create({
       data: {
@@ -18,7 +19,8 @@ export class EventsService {
         event: data.event,
         market: data.market,
         amount: data.amount,
-        result: data.result || 'pending',
+        result: data.result ?? undefined,
+        userId: data.userId,
       },
     });
 

@@ -32,6 +32,8 @@ enum Result {
   pending
   win
   lose
+  draw
+  returned
   void
 }
 
