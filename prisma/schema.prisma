@@ -70,46 +70,48 @@ model ClientData {
 
 //Endereço do Cliente
 model Address {
-  id           Int         @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   direction    String?
   houseNumber  Int?
   neighborhood String?
   city         String?
   state        String?
   country      String?
-  clientDataId Int         @unique
-  clientData   ClientData  @relation(fields: [clientDataId], references: [id], onDelete: Cascade)
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  clientDataId Int        @unique
+  clientData   ClientData @relation(fields: [clientDataId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 //Dados da Banca 
 model Bankroll {
-  id        Int       @id @default(autoincrement())
-  name      String
-  balance   Float
-  unidValue Float
-  events    Event[]
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         Int     @id @default(autoincrement())
+  name       String
+  balance    Float
+  unidValue  Float
+  events     Event[]
+  userId     Int
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookmaker  String  @default("Unknown")
+  statusSync String  @default("Synchronizing")
 
   @@unique([userId, name])
 }
 
 //Dados do Evento esportivo
 model Event {
-  id        Int        @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   bankId    Int
-  bank      Bankroll   @relation(fields: [bankId], references: [id], onDelete: Cascade)
+  bank      Bankroll  @relation(fields: [bankId], references: [id], onDelete: Cascade)
   eventType EventType
   event     String
   market    String
   amount    Float
-  result    Result     @default(pending)
+  result    Result    @default(pending)
   userId    Int
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([userId, eventType])
 }

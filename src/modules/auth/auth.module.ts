@@ -8,6 +8,11 @@ import { MailModule } from '../../libs/services/mailer/mail.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PrismaModule, PrismaService } from './../../libs/database/prisma';
 import { UsersModule } from '../users/users.module';
+import { ForgotPasswordService } from './services/forgot-password.service';
+import { RefreshTokenService } from './services/refresh-token.service';
+import { RegisterUserService } from './services/register-user.service';
+import { SignInService } from './services/sign-in.service';
+import { SignOutService } from './services/sign-out.service';
 
 @Module({
   imports: [
@@ -26,7 +31,23 @@ import { UsersModule } from '../users/users.module';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, PrismaService],
-  exports: [AuthService],
+  providers: [
+    AuthService,
+    RegisterUserService,
+    SignInService,
+    SignOutService,
+    ForgotPasswordService,
+    RefreshTokenService,
+    JwtStrategy,
+    PrismaService,
+  ],
+  exports: [
+    AuthService,
+    RegisterUserService,
+    SignInService,
+    SignOutService,
+    ForgotPasswordService,
+    RefreshTokenService,
+  ],
 })
 export class AuthModule {}
