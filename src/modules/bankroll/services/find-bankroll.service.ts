@@ -1,7 +1,8 @@
-import { NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database/prisma/prisma.service';
 import { GetBankrollDTO } from './../../../libs/common/dto/bankroll/get-bankroll.dto';
 
+@Injectable()
 export class FindBankrollService {
   constructor(private prisma: PrismaService) {}
 

@@ -21,33 +21,33 @@ export class BankrollService {
   ) {}
 
   async createBankroll(data: CreateBankrollDTO): Promise<GetBankrollDTO> {
-    return await this.createService.createBankroll(data);
+    return this.createService.createBankroll(data);
   }
 
   async findAllBankrolls(): Promise<GetBankrollDTO[]> {
-    return await this.readService.findAllBankrolls();
+    return this.readService.findAllBankrolls();
   }
 
   async findBankrollById(id: number): Promise<GetBankrollDTO> {
-    return await this.readService.findBankrollById(id);
+    return this.readService.findBankrollById(id);
   }
 
   async findBankrollsByUserId(userId: number): Promise<GetBankrollDTO[]> {
-    return await this.readService.findBankrollsByUserId(userId);
+    return this.readService.findBankrollsByUserId(userId);
   }
 
   async findBankrollByName(name: string): Promise<GetBankrollDTO | null> {
-    return await this.readService.findBankrollByName(name);
+    return this.readService.findBankrollByName(name);
   }
 
   async updateBankroll(
     id: number,
     data: UpdateBankrollDTO,
   ): Promise<GetBankrollDTO> {
-    return await this.updateService.updateBankroll(id, data);
+    return this.updateService.updateBankroll(id, data);
   }
 
   async deleteBankroll(id: number): Promise<GetBankrollDTO> {
-    return await this.deleteService.deleteBankroll(id);
+    return this.deleteService.deleteBankroll(id);
   }
 }

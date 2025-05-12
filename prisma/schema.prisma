@@ -50,7 +50,7 @@ model User {
   refreshToken String?
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
-  Bankroll     Bankroll[]
+  bankrolls    Bankroll[]
   Event        Event[]
 }
 

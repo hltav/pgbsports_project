@@ -13,7 +13,6 @@ import {
   Req,
   ParseIntPipe,
 } from '@nestjs/common';
-import { BankrollService } from './bankroll.service';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
 import {
   GetBankrollDTO,
@@ -21,6 +20,7 @@ import {
   UpdateBankrollDTO,
 } from './../../libs/common/dto/bankroll';
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
+import { BankrollService } from './bankroll.service';
 
 @Controller('bankrolls')
 @UseGuards(JwtAuthGuard, RolesGuard)
