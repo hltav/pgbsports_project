@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Role } from '@prisma/client';
-import { AddressSchema } from '../client-data/address.schema';
+import { AddressSchema } from '../../../../modules/client-data/dto/address.schema';
 
 export const ClientDataSchema = z.object({
   id: z.number().optional(),

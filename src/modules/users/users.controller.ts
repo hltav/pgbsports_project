@@ -17,6 +17,7 @@ import { RolesGuard } from './../../libs/common/guards/roles.guard';
 import { GetUserDTO, UpdateUserDTO, User } from './../../libs/common/dto/user';
 import { Roles } from './../../libs/common/decorator/roles.decorator';
 import { Request } from 'express';
+import { Role } from './../../libs/common/enum/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -27,7 +28,7 @@ export class UsersController {
   @Roles('ADMIN')
   async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {
     const user = req.user as User;
-    const role = user?.role;
+    const role: Role = user?.role as Role;
     return this.usersService.findAllUsers(role);
   }
 
@@ -39,7 +40,7 @@ export class UsersController {
     @Req() req: Request,
   ): Promise<Partial<GetUserDTO> | null> {
     const user = req.user as User;
-    const role = user?.role;
+    const role: Role = user?.role as Role;
     return this.usersService.findUserById(+id, role);
   }
 

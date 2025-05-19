@@ -12,13 +12,10 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ClientDataService } from './client-data.service';
-import { JwtAuthGuard, Roles, RolesGuard } from './../../libs/common';
-import {
-  CreateClientDataDTO,
-  UpdateClientDataDTO,
-} from './../../libs/common/dto/client-data';
-import { AuthenticatedRequest } from '../auth/dto/auth.schema';
+import { ClientDataService } from '../client-data.service';
+import { JwtAuthGuard, Roles, RolesGuard } from '../../../libs/common';
+import { AuthenticatedRequest } from '../../auth/dto/auth.schema';
+import { CreateClientDataDTO, UpdateClientDataDTO } from '../dto';
 
 @Controller('client-data')
 export class ClientDataController {

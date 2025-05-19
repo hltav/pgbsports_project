@@ -13,9 +13,12 @@ import { RefreshTokenService } from './services/refresh-token.service';
 import { RegisterUserService } from './services/register-user.service';
 import { SignInService } from './services/sign-in.service';
 import { SignOutService } from './services/sign-out.service';
+import { CryptoModule } from '@/libs/crypto/crypto.module';
+import { CryptoService } from '@/libs/crypto/services/crypto.service';
 
 @Module({
   imports: [
+    CryptoModule,
     ConfigModule.forRoot(),
     PassportModule,
     UsersModule,
@@ -32,6 +35,7 @@ import { SignOutService } from './services/sign-out.service';
   ],
   controllers: [AuthController],
   providers: [
+    CryptoService,
     AuthService,
     RegisterUserService,
     SignInService,

@@ -1,6 +1,6 @@
-import { Role } from '@prisma/client';
 import { z } from 'zod';
-import { ClientDataSchema } from '../client-data/client-data.schema';
+import { ClientDataSchema } from '../../../../modules/client-data/dto/client-data.schema';
+import { Role } from '@prisma/client';
 
 export const UserSchema = z.object({
   id: z.number(),

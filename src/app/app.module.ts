@@ -3,11 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { LibsModule } from './../libs/libs.module';
-import { AllmoduleModule } from './../modules/allmodule.module';
+import { CryptoModule } from '@/libs/crypto/crypto.module';
+import { AllmoduleModule } from '@/modules/allmodule.module';
+import { LibsModule } from '@/libs/libs.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), LibsModule, AllmoduleModule],
+  imports: [ConfigModule.forRoot(), LibsModule, AllmoduleModule, CryptoModule],
   controllers: [AppController],
   providers: [AppService, JwtService],
 })

@@ -2,9 +2,16 @@ import { PrismaService } from '../../libs/database/prisma';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersService } from '../src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UsersService } from '../users/users.service';
+import {
+  ForgotPasswordService,
+  RefreshTokenService,
+  RegisterUserService,
+  SignInService,
+  SignOutService,
+} from './services';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -38,6 +45,11 @@ describe('AuthController', () => {
             sendMail: jest.fn(),
           },
         },
+        RegisterUserService,
+        SignInService,
+        SignOutService,
+        RefreshTokenService,
+        ForgotPasswordService,
       ],
     }).compile();
 

@@ -1,9 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { PrismaService } from '../../libs/database/prisma';;
-import { UsersService } from '../src/users/users.service';
+import { PrismaService } from '../../libs/database/prisma';
 import { JwtService } from '@nestjs/jwt';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UsersService } from '../users/users.service';
+import {
+  ForgotPasswordService,
+  RefreshTokenService,
+  RegisterUserService,
+  SignInService,
+  SignOutService,
+} from './services';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -28,6 +35,11 @@ describe('AuthService', () => {
           provide: MailerService,
           useValue: { sendMail: jest.fn() },
         },
+        RegisterUserService,
+        SignInService,
+        SignOutService,
+        RefreshTokenService,
+        ForgotPasswordService,
       ],
     }).compile();
 

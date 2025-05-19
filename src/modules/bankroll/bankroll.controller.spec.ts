@@ -1,7 +1,13 @@
-import { PrismaService } from './../../libs/database/prisma';;
+import { PrismaService } from './../../libs/database/prisma';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BankrollController } from './bankroll.controller';
 import { BankrollService } from './bankroll.service';
+import {
+  CreateBankrollService,
+  FindBankrollService,
+  UpdateBankrollService,
+  DeleteBankrollService,
+} from './services';
 
 describe('BankrollController', () => {
   let controller: BankrollController;
@@ -9,7 +15,14 @@ describe('BankrollController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [BankrollController],
-      providers: [BankrollService, PrismaService],
+      providers: [
+        BankrollService,
+        PrismaService,
+        CreateBankrollService,
+        FindBankrollService,
+        UpdateBankrollService,
+        DeleteBankrollService,
+      ],
     }).compile();
 
     controller = module.get<BankrollController>(BankrollController);
