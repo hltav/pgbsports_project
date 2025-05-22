@@ -19,7 +19,9 @@ import { CryptoService } from '@/libs/crypto/services/crypto.service';
 @Module({
   imports: [
     CryptoModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     PassportModule,
     UsersModule,
     PrismaModule,

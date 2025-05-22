@@ -23,7 +23,7 @@ import { Role } from './../../libs/common/enum/role.enum';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+  @Get('')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {

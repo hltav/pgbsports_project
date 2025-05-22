@@ -11,14 +11,12 @@ export class UserFindService {
 
   async findAllUsers(role?: Role): Promise<Partial<GetUserDTO>[]> {
     const users = await this.prisma.user.findMany({
-      where: role ? { role } : undefined,
       select: {
         id: true,
         firstname: true,
         lastname: true,
         nickname: true,
         email: true,
-        role: true,
         clientData: {
           include: {
             address: true,

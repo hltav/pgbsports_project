@@ -1,19 +1,3 @@
-// import { Injectable } from '@nestjs/common';
-// import { PasswordBcrypt } from './../algorithms/classic/passwordBcrypt';
-
-// @Injectable()
-// export class PasswordService {
-//   constructor(private readonly passwordBcrypt: PasswordBcrypt) {}
-
-//   async hash(password: string): Promise<string> {
-//     return this.passwordBcrypt.hash(password);
-//   }
-
-//   async compare(password: string, hash: string): Promise<boolean> {
-//     return this.passwordBcrypt.compare(password, hash);
-//   }
-// }
-
 import { Injectable } from '@nestjs/common';
 import { PasswordBcrypt } from './../algorithms/classic/passwordBcrypt';
 
