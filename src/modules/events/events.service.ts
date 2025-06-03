@@ -1,10 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../libs/database/prisma';
-import {
-  CreateEventDTO,
-  GetEventDTO,
-  UpdateEventDTO,
-} from './../../libs/common/dto/events';
+import { CreateEventDTO, GetEventDTO, UpdateEventDTO } from './dto';
 
 @Injectable()
 export class EventsService {
@@ -16,6 +12,7 @@ export class EventsService {
       data: {
         bankId: data.bankId,
         eventType: data.eventType,
+        category: data.category,
         event: data.event,
         market: data.market,
         amount: data.amount,

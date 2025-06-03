@@ -1,14 +1,11 @@
+import { decimalSchema } from '@/libs/common/dto/decimalSchema.interface';
 import { z } from 'zod';
 
 export const CreateBankrollSchema = z.object({
   userId: z.number(),
   name: z.string().min(3),
-  balance: z.number(),
-  unidValue: z.number(),
+  balance: decimalSchema,
+  unidValue: decimalSchema,
   bookmaker: z.string().default('Unknown'),
-  statusSync: z
-    .enum(['Connected', 'Disconnected', 'Synchronizing'])
-    .default('Synchronizing'),
 });
-
 export type CreateBankrollDTO = z.infer<typeof CreateBankrollSchema>;

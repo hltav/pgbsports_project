@@ -13,21 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enum pare tipo de usuário
+// User types enum
 enum Role {
   USER
   TEST_USER
   ADMIN
 }
 
-// Enum pare tipo do evento
+// Type of event enum
 enum EventType {
   SINGLE
   MULTIPLE
   LIVE
 }
 
-// Enum para resultado do evento
+// Result enum for event outcomes
 enum Result {
   pending
   win
@@ -37,7 +37,7 @@ enum Result {
   void
 }
 
-//Dados iniciais de usuário
+//Initial User Data
 model User {
   id           Int         @id @default(autoincrement())
   firstname    String
@@ -54,7 +54,7 @@ model User {
   Event        Event[]
 }
 
-//Dados de Cliente
+//Client Data
 model ClientData {
   id        Int      @id @default(autoincrement())
   gender    String
@@ -68,7 +68,7 @@ model ClientData {
   updatedAt DateTime @updatedAt
 }
 
-//Endereço do Cliente
+//Client Address
 model Address {
   id           Int        @id @default(autoincrement())
   direction    String?
@@ -83,30 +83,30 @@ model Address {
   updatedAt    DateTime   @updatedAt
 }
 
-//Dados da Banca 
+//Bankroll Data
 model Bankroll {
   id         Int     @id @default(autoincrement())
   name       String
-  balance    Float
-  unidValue  Float
+  balance    Decimal
+  unidValue  Decimal
   events     Event[]
   userId     Int
   user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookmaker  String  @default("Unknown")
-  statusSync String  @default("Synchronizing")
-
+  
   @@unique([userId, name])
 }
 
-//Dados do Evento esportivo
+//Event Data
 model Event {
   id        Int       @id @default(autoincrement())
   bankId    Int
   bank      Bankroll  @relation(fields: [bankId], references: [id], onDelete: Cascade)
   eventType EventType
+  category  String
   event     String
   market    String
-  amount    Float
+  amount    Decimal
   result    Result    @default(pending)
   userId    Int
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)

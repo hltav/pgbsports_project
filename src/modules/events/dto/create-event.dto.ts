@@ -1,14 +1,15 @@
 import { z } from 'zod';
 import { EventType, Result } from '@prisma/client';
+import { decimalSchema } from '../../../libs/common/dto/decimalSchema.interface';
 
 export const CreateEventSchema = z.object({
   bankId: z.number(),
   eventType: z.nativeEnum(EventType),
+  category: z.string().min(1),
   event: z.string().min(1),
   market: z.string().min(1),
-  amount: z.number(),
+  amount: decimalSchema,
   result: z.nativeEnum(Result).optional(),
   userId: z.number(),
 });
-
 export type CreateEventDTO = z.infer<typeof CreateEventSchema>;

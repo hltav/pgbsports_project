@@ -7,12 +7,25 @@ import {
   UserFindService,
   UserUpdateService,
 } from './services';
+import { UsersServiceProxy } from './proxies/user.cache.proxy.service';
+import { CacheService } from '@/libs/services/cache/cache.service';
+import { MyCacheModule } from '@/libs/services/cache/cache.module';
+import {
+  UsersDeleterService,
+  UsersFinderService,
+  UsersUpdaterService,
+} from './proxies/serviceProxies';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, MyCacheModule],
   providers: [
     UsersService,
+    UsersServiceProxy,
+    UsersDeleterService,
+    UsersFinderService,
+    UsersUpdaterService,
     PrismaService,
+    CacheService,
     UserFindService,
     UserUpdateService,
     UserDeleteService,
@@ -20,9 +33,14 @@ import {
   controllers: [UsersController],
   exports: [
     UsersService,
+    CacheService,
+    UsersServiceProxy,
     UserFindService,
     UserUpdateService,
     UserDeleteService,
+    UsersDeleterService,
+    UsersFinderService,
+    UsersUpdaterService,
   ],
 })
 export class UsersModule {}

@@ -14,13 +14,9 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
-import {
-  GetBankrollDTO,
-  CreateBankrollDTO,
-  UpdateBankrollDTO,
-} from './../../libs/common/dto/bankroll';
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 import { BankrollService } from './bankroll.service';
+import { GetBankrollDTO, CreateBankrollDTO, UpdateBankrollDTO } from './z.dto';
 
 @Controller('bankrolls')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -29,8 +25,11 @@ export class BankrollController {
   constructor(private readonly bankrollService: BankrollService) {}
 
   @Get()
-  async findAllBankrolls(): Promise<GetBankrollDTO[]> {
-    return this.bankrollService.findAllBankrolls();
+  async findMyBankrolls(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<GetBankrollDTO[]> {
+    const userId = req.user.id;
+    return this.bankrollService.findBankrollsByUserId(userId);
   }
 
   @Get(':id/bank')
@@ -56,14 +55,14 @@ export class BankrollController {
 
   @Put(':id')
   async updateBankroll(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() data: UpdateBankrollDTO,
   ): Promise<GetBankrollDTO> {
     return this.bankrollService.updateBankroll(+id, data);
   }
 
   @Delete(':id')
-  async deleteBankroll(@Param('id') id: string): Promise<GetBankrollDTO> {
+  async deleteBankroll(@Param('id') id: number): Promise<GetBankrollDTO> {
     return this.bankrollService.deleteBankroll(+id);
   }
 }

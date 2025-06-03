@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database/prisma/prisma.service';
-import { GetBankrollDTO } from './../../../libs/common/dto/bankroll/get-bankroll.dto';
+import { GetBankrollDTO } from '../z.dto';
 
 @Injectable()
 export class FindBankrollService {
@@ -13,19 +13,14 @@ export class FindBankrollService {
         userId: true,
         name: true,
         balance: true,
+        unidValue: true,
         bookmaker: true,
-        statusSync: true,
       },
     });
 
     return bankrolls.map((b) => ({
-      id: b.id ?? 0,
-      userId: b.userId,
-      name: b.name,
-      balance: b.balance,
-      unidValue: b.balance,
-      bookmaker: b.bookmaker,
-      statusSync: b.statusSync,
+      ...b,
+      statusSync: 'Synchronized',
     }));
   }
 
@@ -39,7 +34,6 @@ export class FindBankrollService {
         balance: true,
         unidValue: true,
         bookmaker: true,
-        statusSync: true,
       },
     });
 
@@ -47,7 +41,10 @@ export class FindBankrollService {
       throw new NotFoundException('Bankroll not found!');
     }
 
-    return bankroll;
+    return {
+      ...bankroll,
+      statusSync: 'Synchronized',
+    };
   }
 
   async findBankrollsByUserId(userId: number): Promise<GetBankrollDTO[]> {
@@ -60,7 +57,6 @@ export class FindBankrollService {
         balance: true,
         unidValue: true,
         bookmaker: true,
-        statusSync: true,
       },
     });
 
@@ -68,12 +64,32 @@ export class FindBankrollService {
       throw new NotFoundException('No bankroll found for this user!');
     }
 
-    return bankrolls;
+    return bankrolls.map((b) => ({
+      ...b,
+      statusSync: 'Synchronized',
+    }));
   }
 
   async findBankrollByName(name: string): Promise<GetBankrollDTO | null> {
-    return this.prisma.bankroll.findFirst({
+    const bankroll = await this.prisma.bankroll.findFirst({
       where: { name },
+      select: {
+        id: true,
+        userId: true,
+        name: true,
+        balance: true,
+        unidValue: true,
+        bookmaker: true,
+      },
     });
+
+    if (!bankroll) {
+      return null;
+    }
+
+    return {
+      ...bankroll,
+      statusSync: 'Synchronized',
+    };
   }
 }

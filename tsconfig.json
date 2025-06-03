@@ -11,7 +11,7 @@
     "sourceMap": true,
     "outDir": "./dist/app",
     "baseUrl": "./",
-    "typeRoots": ["./node_modules/@types", "src/app/@types"],
+    "typeRoots": ["./node_modules/@types", "./@types"],
     "paths": {
       "@lib/*": ["src/lib/*"],
       "@app/*": ["src/app/*"],

@@ -8,8 +8,10 @@ import { PredictionsModule } from './predictions/predictions.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
+import { MyCacheModule } from './../libs/services/cache/cache.module';
 @Module({
   imports: [
+    MyCacheModule,
     UsersModule,
     AuthModule,
     AdminModule,
@@ -21,6 +23,17 @@ import { UsersModule } from './users/users.module';
     ClientDataModule,
   ],
   providers: [],
-  exports: [],
+  exports: [
+    MyCacheModule,
+    UsersModule,
+    AuthModule,
+    AdminModule,
+    BankrollModule,
+    EventsModule,
+    PredictionsModule,
+    StatisticsModule,
+    SubscriptionsModule,
+    ClientDataModule,
+  ],
 })
 export class AllmoduleModule {}

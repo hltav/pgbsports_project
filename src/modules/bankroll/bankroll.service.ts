@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CreateBankrollDTO,
-  GetBankrollDTO,
-  UpdateBankrollDTO,
-} from './../../libs/common/dto/bankroll';
-import {
   CreateBankrollService,
   DeleteBankrollService,
   FindBankrollService,
   UpdateBankrollService,
 } from './services';
+import { CreateBankrollDTO, GetBankrollDTO, UpdateBankrollDTO } from './z.dto';
 
 @Injectable()
 export class BankrollService {

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database/prisma';
-import { GetBankrollDTO } from './../../../libs/common/dto/bankroll';
+import { GetBankrollDTO } from '../z.dto';
 
 @Injectable()
 export class DeleteBankrollService {
@@ -9,6 +9,14 @@ export class DeleteBankrollService {
   async deleteBankroll(id: number): Promise<GetBankrollDTO> {
     const bankroll = await this.prisma.bankroll.findUnique({
       where: { id },
+      select: {
+        id: true,
+        userId: true,
+        name: true,
+        balance: true,
+        unidValue: true,
+        bookmaker: true,
+      },
     });
 
     if (!bankroll) {
@@ -19,6 +27,9 @@ export class DeleteBankrollService {
       where: { id },
     });
 
-    return bankroll;
+    return {
+      ...bankroll,
+      statusSync: 'Synchronized',
+    };
   }
 }

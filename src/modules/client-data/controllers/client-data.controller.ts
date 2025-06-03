@@ -29,6 +29,13 @@ export class ClientDataController {
     return this.clientDataService.createClientData(createClientDataDto);
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('USER')
+  async findMyData(@Req() req: AuthenticatedRequest) {
+    return this.clientDataService.getMyClientData(req.user.id);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('USER')

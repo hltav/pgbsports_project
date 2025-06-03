@@ -11,17 +11,17 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
 import { RolesGuard } from './../../libs/common/guards/roles.guard';
 import { GetUserDTO, UpdateUserDTO, User } from './../../libs/common/dto/user';
 import { Roles } from './../../libs/common/decorator/roles.decorator';
 import { Request } from 'express';
 import { Role } from './../../libs/common/enum/role.enum';
+import { UsersServiceProxy } from './proxies/user.cache.proxy.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersServiceProxy) {}
 
   @Get('')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -61,7 +61,6 @@ export class UsersController {
     @Body() updateUser: Partial<UpdateUserDTO>,
   ): Promise<GetUserDTO> {
     const updatedUser = await this.usersService.update(Number(id), updateUser);
-
     if (!updatedUser) {
       throw new NotFoundException('User not found');
     }

@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database/prisma';
-import { UpdateBankrollDTO } from './../../../libs/common/dto/bankroll';
-import { GetBankrollDTO } from './../../../libs/common/dto/bankroll';
+import { UpdateBankrollDTO, GetBankrollDTO } from '../z.dto';
 
 @Injectable()
 export class UpdateBankrollService {
@@ -19,7 +18,7 @@ export class UpdateBankrollService {
       throw new NotFoundException('Bankroll not found!');
     }
 
-    return this.prisma.bankroll.update({
+    const updatedBankroll = await this.prisma.bankroll.update({
       where: { id },
       data: updateData,
       select: {
@@ -29,8 +28,12 @@ export class UpdateBankrollService {
         balance: true,
         unidValue: true,
         bookmaker: true,
-        statusSync: true,
       },
     });
+
+    return {
+      ...updatedBankroll,
+      statusSync: 'Synchronized',
+    };
   }
 }

@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { PrismaModule, PrismaService } from '../../libs/database/prisma';
 import { ClientDataService } from './client-data.service';
 import { ClientDataController } from './controllers/client-data.controller';
-import { CreateClientDataService } from './services/create-client-data.service';
-import { GetClientDataService } from './services/get-client-data.service';
-import { UpdateClientDataService } from './services/update-client-data.service';
-import { UpdateClientImageService } from './services/update-client-image.service';
+import {
+  GetMyClientDataService,
+  UpdateClientImageService,
+  UpdateClientDataService,
+  GetClientDataService,
+  CreateClientDataService,
+} from './services';
 
 @Module({
   imports: [PrismaModule],
@@ -14,6 +17,7 @@ import { UpdateClientImageService } from './services/update-client-image.service
     PrismaService,
     CreateClientDataService,
     GetClientDataService,
+    GetMyClientDataService,
     UpdateClientDataService,
     UpdateClientImageService,
   ],
@@ -22,6 +26,7 @@ import { UpdateClientImageService } from './services/update-client-image.service
     ClientDataService,
     CreateClientDataService,
     GetClientDataService,
+    GetMyClientDataService,
     UpdateClientDataService,
     UpdateClientImageService,
   ],

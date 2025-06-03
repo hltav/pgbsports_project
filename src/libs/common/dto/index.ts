@@ -1,3 +1,2 @@
 export * from './user';
-export * from './bankroll';
-export * from './events';
+export * from '../../../modules/events/dto';

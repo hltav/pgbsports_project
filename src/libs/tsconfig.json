@@ -8,10 +8,18 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types", "./@types"],
     "paths": {
-      "*": ["*", "../../../node_modules/*"]
+      "*": ["*", "../../../node_modules/*"],
+      "@lib/*": ["src/lib/*"],
+      "@app/*": ["src/app/*"],
+      "@config/*": ["src/config/*"],
+      "@modules/*": ["src/modules/*"],
+      "@/*": ["src/*"]
     }
   },
   "include": [
@@ -19,7 +27,8 @@
     "../modules/auth/dto/auth.dto.ts",
     "../modules/auth/dto/login.dto.ts",
     "../modules/auth/dto/refresh-token.dto.ts",
-    "../modules/auth/dto/jwt-payload.dto.ts"
-, "common/dto/user/forgot-password.dto.ts"  ],
+    "../modules/auth/dto/jwt-payload.dto.ts",
+    "common/dto/user/forgot-password.dto.ts"
+, "../modules/events/dto/get-event.dto.ts", "../modules/events/dto/index.ts", "../modules/events/dto/update-event.dto.ts"  ],
   "exclude": ["../../node_modules", "../../test"]
 }
