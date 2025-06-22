@@ -9,6 +9,8 @@ import {
   GetClientDataService,
   CreateClientDataService,
 } from './services';
+import { ImageService } from './../../modules/image/image.service';
+import { LocalStorageService } from './../../modules/image/storage/local-storage.service';
 
 @Module({
   imports: [PrismaModule],
@@ -20,6 +22,11 @@ import {
     GetMyClientDataService,
     UpdateClientDataService,
     UpdateClientImageService,
+    ImageService,
+    {
+      provide: 'StorageService',
+      useClass: LocalStorageService,
+    },
   ],
   controllers: [ClientDataController],
   exports: [
@@ -29,6 +36,7 @@ import {
     GetMyClientDataService,
     UpdateClientDataService,
     UpdateClientImageService,
+    ImageService,
   ],
 })
 export class ClientDataModule {}

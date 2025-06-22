@@ -17,6 +17,12 @@ export class UserDeleteService {
       throw new NotFoundException('User not Found!');
     }
 
+    await this.prisma.emailVerification.deleteMany({
+      where: {
+        userId: Number(id),
+      },
+    });
+
     await this.prisma.user.delete({
       where: {
         id: Number(id),

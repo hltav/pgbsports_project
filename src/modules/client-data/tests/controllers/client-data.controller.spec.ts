@@ -5,6 +5,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   CreateClientDataService,
   GetClientDataService,
+  GetMyClientDataService,
   UpdateClientDataService,
   UpdateClientImageService,
 } from '../../services';
@@ -19,6 +20,7 @@ describe('ClientDataController', () => {
         ClientDataService,
         PrismaService,
         CreateClientDataService,
+        GetMyClientDataService,
         GetClientDataService,
         UpdateClientDataService,
         UpdateClientImageService,

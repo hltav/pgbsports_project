@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ClientDataDTO } from '../dto';
-import { PrismaService } from '@/libs/database';
+import { PrismaService } from './../../../libs/database';
 
 @Injectable()
 export class GetMyClientDataService {

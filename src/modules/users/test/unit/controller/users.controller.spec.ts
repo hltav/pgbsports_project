@@ -1,12 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-import { PrismaService } from './../../libs/database/prisma';
+import { UsersController } from './../../../users.controller';
+import { UsersService } from './../../../users.service';
+import { PrismaService } from '../../../../../libs/database';
+import {
+  UsersDeleterService,
+  UsersFinderService,
+  UsersUpdaterService,
+} from './../../../../../modules/users/proxies/serviceProxies';
 import {
   UserDeleteService,
   UserFindService,
   UserUpdateService,
-} from './services';
+} from './../../../../../modules/users/services';
+import { UsersServiceProxy } from './../../../../../modules/users/proxies/user.cache.proxy.service';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -18,17 +24,21 @@ describe('UsersController', () => {
         UsersService,
         PrismaService,
         {
-          provide: UserFindService,
+          provide: UsersFinderService,
           useValue: {}, // ou useValue: { findById: jest.fn() }, etc.
         },
         {
-          provide: UserUpdateService,
+          provide: UsersUpdaterService,
           useValue: {},
         },
         {
-          provide: UserDeleteService,
+          provide: UsersDeleterService,
           useValue: {},
         },
+        UserFindService,
+        UserUpdateService,
+        UserDeleteService,
+        UsersServiceProxy,
       ],
     }).compile();
 

@@ -4,8 +4,8 @@ import {
   UsersFinderService,
   UsersUpdaterService,
 } from './serviceProxies';
-import { UpdateUserDTO } from 'dist/libs';
-import { Role } from '@/libs';
+import { UpdateUserDTO } from './../../../libs';
+import { Role } from './../../../libs';
 
 @Injectable()
 export class UsersServiceProxy {

@@ -3,6 +3,8 @@ import {
   Controller,
   Get,
   Post,
+  Query,
+  Redirect,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -16,6 +18,7 @@ import {
   ForgotPasswordDTO,
 } from './../../libs/common/dto/user';
 import { JwtPayload } from './dto/jwt-payload.dto';
+import { ConfirmEmailService } from './services';
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -23,7 +26,10 @@ interface AuthenticatedRequest extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly confirmEmailService: ConfirmEmailService,
+  ) {}
 
   @Post('register')
   async register(@Body() registerUser: CreateUserDTO) {
@@ -55,6 +61,13 @@ export class AuthController {
     const userId = Number(req.user.sub);
     await this.authService.signOut(userId);
     return { message: 'Logged out successfully' };
+  }
+
+  @Get('confirm')
+  @Redirect('http://localhost:3000/login') // redireciona para a página de login
+  async confirmEmail(@Query('token') token: string) {
+    await this.confirmEmailService.execute(token);
+    return { message: 'E-mail confirmado com sucesso!' };
   }
 
   @Post('forgot-password')

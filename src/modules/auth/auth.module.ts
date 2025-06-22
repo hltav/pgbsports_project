@@ -8,13 +8,16 @@ import { MailModule } from '../../libs/services/mailer/mail.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PrismaModule, PrismaService } from './../../libs/database/prisma';
 import { UsersModule } from '../users/users.module';
-import { ForgotPasswordService } from './services/forgot-password.service';
-import { RefreshTokenService } from './services/refresh-token.service';
-import { RegisterUserService } from './services/register-user.service';
-import { SignInService } from './services/sign-in.service';
-import { SignOutService } from './services/sign-out.service';
-import { CryptoModule } from '@/libs/crypto/crypto.module';
-import { CryptoService } from '@/libs/crypto/services/crypto.service';
+import { CryptoModule } from './../../libs/crypto/crypto.module';
+import { CryptoService } from './../../libs/crypto/services/crypto.service';
+import {
+  ConfirmEmailService,
+  ForgotPasswordService,
+  RefreshTokenService,
+  RegisterUserService,
+  SignInService,
+  SignOutService,
+} from './services';
 
 @Module({
   imports: [
@@ -46,6 +49,7 @@ import { CryptoService } from '@/libs/crypto/services/crypto.service';
     RefreshTokenService,
     JwtStrategy,
     PrismaService,
+    ConfirmEmailService,
   ],
   exports: [
     AuthService,

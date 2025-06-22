@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService, ISendMailOptions } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
@@ -9,26 +7,32 @@ interface EmailRecipient {
   name: string;
 }
 
-interface EmailOptions extends Omit<ISendMailOptions, 'to'> {}
-
 @Injectable()
-export class MailService {
-  private readonly logger = new Logger(MailService.name);
+export class EmailService {
+  private readonly logger = new Logger(EmailService.name);
   private readonly frontendUrl: string;
   private readonly sendMail: (options: ISendMailOptions) => Promise<void>;
 
-  constructor(mailerService: MailerService, configService: ConfigService) {
+  constructor(
+    private readonly mailerService: MailerService,
+    configService: ConfigService,
+  ) {
     this.frontendUrl = configService.get(
       'FRONTEND_URL',
       'https://localhost:3000',
     );
 
-    // Vincula o método sendMail para evitar problemas com 'this'
     this.sendMail = async (options) => {
       try {
-        await mailerService.sendMail(options);
+        await this.mailerService.sendMail(options);
+        this.logSuccess(
+          typeof options.to === 'string' ? options.to : '[object Object]',
+        );
       } catch (error) {
-        this.handleError(error, options.to as string);
+        this.handleError(
+          error,
+          typeof options.to === 'string' ? options.to : '[object Object]',
+        );
         throw new MailSendError('Failed to send email');
       }
     };
@@ -38,29 +42,55 @@ export class MailService {
     recipient: EmailRecipient,
     resetToken: string,
   ): Promise<void> {
-    const options = this.createForgotPasswordOptions(recipient, resetToken);
-
-    await this.sendMail(options);
-    this.logSuccess(recipient.email);
-  }
-
-  private createForgotPasswordOptions(
-    recipient: EmailRecipient,
-    token: string,
-  ): ISendMailOptions {
-    return {
+    const options: ISendMailOptions = {
       to: recipient.email,
       subject: 'Redefinição de Senha',
       template: './forgot-password',
       context: {
         name: recipient.name,
-        resetLink: this.buildResetPasswordLink(token),
+        resetLink: this.buildResetPasswordLink(resetToken),
       },
     };
+
+    await this.sendMail(options);
+  }
+
+  async sendEmailConfirmation(
+    recipient: EmailRecipient,
+    verificationToken: string,
+  ): Promise<void> {
+    const options: ISendMailOptions = {
+      to: recipient.email,
+      subject: 'Confirmação de E-mail',
+      template: './email-confirmation',
+      context: {
+        name: recipient.name,
+        confirmationLink: this.buildEmailConfirmationLink(verificationToken),
+      },
+    };
+
+    await this.sendMail(options);
+  }
+
+  async sendWelcomeEmail(recipient: EmailRecipient): Promise<void> {
+    const options: ISendMailOptions = {
+      to: recipient.email,
+      subject: 'Bem-vindo à RT Sports Manager!',
+      template: './welcome',
+      context: {
+        name: recipient.name,
+      },
+    };
+
+    await this.sendMail(options);
   }
 
   private buildResetPasswordLink(token: string): string {
     return `${this.frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
+  }
+
+  private buildEmailConfirmationLink(token: string): string {
+    return `${this.frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
   }
 
   private logSuccess(email: string): void {

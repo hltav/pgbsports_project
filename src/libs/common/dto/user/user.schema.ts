@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { ClientDataSchema } from '../../../../modules/client-data/dto/client-data.schema';
 import { Role } from '@prisma/client';
+import { EmailVerificationSchema } from './emailVerified.dto';
 
 export const UserSchema = z.object({
   id: z.number(),
@@ -13,6 +14,7 @@ export const UserSchema = z.object({
   refreshToken: z.string().nullable().optional(),
   role: z.nativeEnum(Role),
   clientData: ClientDataSchema.optional(),
+  emailVerification: EmailVerificationSchema.optional(), // <- aqui!
 });
 
 export type User = z.infer<typeof UserSchema>;

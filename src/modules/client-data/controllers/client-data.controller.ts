@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,7 +9,9 @@ import {
   Put,
   Req,
   UnauthorizedException,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -16,10 +19,16 @@ import { ClientDataService } from '../client-data.service';
 import { JwtAuthGuard, Roles, RolesGuard } from '../../../libs/common';
 import { AuthenticatedRequest } from '../../auth/dto/auth.schema';
 import { CreateClientDataDTO, UpdateClientDataDTO } from '../dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ImageService } from './../../image/image.service';
+import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
 
 @Controller('client-data')
 export class ClientDataController {
-  constructor(private readonly clientDataService: ClientDataService) {}
+  constructor(
+    private readonly clientDataService: ClientDataService,
+    private readonly imageService: ImageService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -58,19 +67,46 @@ export class ClientDataController {
     return this.clientDataService.updateClientData(+id, updateClientDataDto);
   }
 
+  // @Put(':id/image')
+  // @UseGuards(JwtAuthGuard)
+  // async updateProfileImage(
+  //   @Param('id') id: string,
+  //   @Body() body: { image: string },
+  //   @Req() req: AuthenticatedRequest,
+  // ) {
+  //   if (req.user.id !== +id) {
+  //     throw new UnauthorizedException(
+  //       'Você só pode atualizar seu próprio perfil',
+  //     );
+  //   }
+
+  //   return this.clientDataService.updateClientImage(+id, body.image);
+  // }
+
   @Put(':id/image')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 3 * 1024 * 1024 }, // até 2MB
+      fileFilter: avatarFileFilter,
+    }),
+  )
   async updateProfileImage(
     @Param('id') id: string,
-    @Body() body: { image: string },
+    @UploadedFile() file: Express.Multer.File,
     @Req() req: AuthenticatedRequest,
   ) {
     if (req.user.id !== +id) {
       throw new UnauthorizedException(
-        'Você só pode atualizar seu próprio perfil',
+        'Você só pode atualizar sua própria imagem',
       );
     }
 
-    return this.clientDataService.updateClientImage(+id, body.image);
+    if (!file) {
+      throw new BadRequestException('Arquivo inválido ou ausente');
+    }
+
+    const imageUrl = await this.imageService.uploadUserAvatar(file, id);
+    return this.clientDataService.updateClientImage(+id, imageUrl);
   }
 }

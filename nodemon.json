@@ -5,6 +5,9 @@
     "ext": "ts",
     "ignore": [
         "node_modules",
-        "dist"
-    ]
+        "dist",
+        "**/*.spec.ts",
+        "test"
+    ],
+    "exec": "npm run dev:with-test"
 }

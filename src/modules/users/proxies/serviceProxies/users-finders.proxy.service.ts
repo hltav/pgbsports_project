@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '@/libs/services/cache/cache.service';
-import { UsersService } from '@modules/index';
+import { CacheService } from '../../../../libs/services/cache/cache.service';
 import { GetUserDTO, UserWithClientData } from '@/libs/common/dto/user';
-import { Role } from '@/libs';
+import { Role } from './../../../../libs';
+import { UsersService } from './../../../users/users.service';
 
 @Injectable()
 export class UsersFinderService {

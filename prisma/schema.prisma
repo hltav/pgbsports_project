@@ -39,19 +39,22 @@ enum Result {
 
 //Initial User Data
 model User {
-  id           Int         @id @default(autoincrement())
-  firstname    String
-  lastname     String
-  nickname     String      @unique
-  email        String      @unique
-  password     String
-  role         Role        @default(USER)
-  clientData   ClientData?
-  refreshToken String?
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  bankrolls    Bankroll[]
-  Event        Event[]
+  id                Int                @id @default(autoincrement())
+  firstname         String
+  lastname          String
+  nickname          String             @unique
+  email             String             @unique
+  password          String
+  role              Role               @default(USER)
+  emailVerification EmailVerification?
+  clientData        ClientData?
+  emailVerifiedAt   DateTime?
+  refreshToken      String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  bankrolls         Bankroll[]
+  Event             Event[]
+  avatar            Image?
 }
 
 //Client Data
@@ -85,15 +88,15 @@ model Address {
 
 //Bankroll Data
 model Bankroll {
-  id         Int     @id @default(autoincrement())
-  name       String
-  balance    Decimal
-  unidValue  Decimal
-  events     Event[]
-  userId     Int
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bookmaker  String  @default("Unknown")
-  
+  id        Int     @id @default(autoincrement())
+  name      String
+  balance   Decimal
+  unidValue Decimal
+  events    Event[]
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookmaker String  @default("Unknown")
+
   @@unique([userId, name])
 }
 
@@ -114,4 +117,24 @@ model Event {
   updatedAt DateTime  @updatedAt
 
   @@index([userId, eventType])
+}
+
+// Email Verification Model
+model EmailVerification {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String
+  userId    Int      @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

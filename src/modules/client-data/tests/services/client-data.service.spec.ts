@@ -4,6 +4,7 @@ import { ClientDataService } from '../../client-data.service';
 import {
   CreateClientDataService,
   GetClientDataService,
+  GetMyClientDataService,
   UpdateClientDataService,
   UpdateClientImageService,
 } from '../../services';
@@ -17,6 +18,7 @@ describe('ClientDataService', () => {
         ClientDataService,
         PrismaService,
         CreateClientDataService,
+        GetMyClientDataService,
         GetClientDataService,
         UpdateClientDataService,
         UpdateClientImageService,

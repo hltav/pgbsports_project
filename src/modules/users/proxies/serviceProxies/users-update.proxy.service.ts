@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '@/libs/services/cache/cache.service';
-import { UsersService } from '@modules/index';
-import { GetUserDTO, UpdateUserDTO } from '@/libs/common/dto/user';
+import { CacheService } from './../../../../libs/services/cache/cache.service';
+import { UsersService } from './../../../../modules/users/users.service';
+import { GetUserDTO, UpdateUserDTO } from './../../../../libs/common/dto/user';
 
 @Injectable()
 export class UsersUpdaterService {

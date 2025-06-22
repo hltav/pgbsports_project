@@ -12,6 +12,9 @@ import {
   SignInService,
   SignOutService,
 } from './services';
+import { CryptoService } from './../../libs/crypto/services/crypto.service';
+import { PasswordService } from './../../libs/crypto/services/password.service';
+import { JwtHandlerService } from './../../libs/crypto/services/jwt.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -45,11 +48,14 @@ describe('AuthController', () => {
             sendMail: jest.fn(),
           },
         },
+        CryptoService,
         RegisterUserService,
         SignInService,
         SignOutService,
         RefreshTokenService,
         ForgotPasswordService,
+        PasswordService,
+        JwtHandlerService,
       ],
     }).compile();
 

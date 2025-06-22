@@ -11,6 +11,9 @@ import {
   SignInService,
   SignOutService,
 } from './services';
+import { CryptoService } from './../../libs/crypto/services/crypto.service';
+import { PasswordService } from './../../libs/crypto/services/password.service';
+import { JwtHandlerService } from './../../libs/crypto/services/jwt.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -35,11 +38,14 @@ describe('AuthService', () => {
           provide: MailerService,
           useValue: { sendMail: jest.fn() },
         },
+        CryptoService,
         RegisterUserService,
         SignInService,
         SignOutService,
         RefreshTokenService,
         ForgotPasswordService,
+        PasswordService,
+        JwtHandlerService,
       ],
     }).compile();
 

@@ -1,14 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database';
 
 @Injectable()
 export class UpdateClientImageService {
   constructor(private prisma: PrismaService) {}
 
-  async execute(id: number, imageUrl: string) {
+  async execute(userId: number, imageUrl: string | null) {
+    const clientData = await this.prisma.clientData.findUnique({
+      where: { userId },
+    });
+
+    if (!clientData) {
+      throw new NotFoundException('Client data not found');
+    }
+
     const updated = await this.prisma.clientData.update({
-      where: { id },
-      data: { image: imageUrl },
+      where: { id: clientData.id },
+      data: {
+        image: { set: imageUrl ?? undefined },
+      },
       select: {
         id: true,
         image: true,
@@ -16,9 +26,6 @@ export class UpdateClientImageService {
       },
     });
 
-    return {
-      ...updated,
-      updatedAt: updated.updatedAt.toISOString(),
-    };
+    return updated;
   }
 }

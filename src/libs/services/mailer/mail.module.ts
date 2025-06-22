@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config'; // Importe ConfigModule e ConfigService
-import { MailService } from './mail.service';
+import { EmailService } from './mail.service';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import * as path from 'path';
 
@@ -24,7 +24,10 @@ import * as path from 'path';
           from: configService.get<string>('MAIL_FROM'),
         },
         template: {
-          dir: path.join(__dirname, 'templates'), // Caminho para templates
+          dir: path.join(
+            __dirname,
+            './../../../libs/services/mailer/templates',
+          ),
           adapter: new HandlebarsAdapter(),
           options: { strict: true },
         },
@@ -32,7 +35,7 @@ import * as path from 'path';
     }),
     ConfigModule, // Importe ConfigModule aqui (nível superior do @Module)
   ],
-  providers: [MailService],
-  exports: [MailService],
+  providers: [EmailService],
+  exports: [EmailService],
 })
 export class MailModule {}

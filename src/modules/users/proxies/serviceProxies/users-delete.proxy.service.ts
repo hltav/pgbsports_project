@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '@/libs/services/cache/cache.service';
-import { UsersService } from '@modules/index';
-import { User } from '@/libs/common/dto/user';
+import { CacheService } from './../../../../libs/services/cache/cache.service';
+import { User } from './../../../../libs/common/dto/user';
+import { UsersService } from './../../../../modules/users/users.service';
 
 @Injectable()
 export class UsersDeleterService {
