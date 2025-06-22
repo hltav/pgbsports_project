@@ -25,7 +25,6 @@ async function bootstrap() {
     }),
   );
 
-  // Serve arquivos estáticos da pasta uploads com prefixo /uploads
   app.useStaticAssets(join(process.cwd(), 'uploads'), {
     prefix: '/uploads',
   });
