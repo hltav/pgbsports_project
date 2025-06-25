@@ -81,7 +81,7 @@ jobs:
           echo "Instalando dependências..."
           npm install
 
-          echo "Buildando projeto..."
+          echo "Building project..."
           npm run build
 
           echo "Iniciando com PM2..."
