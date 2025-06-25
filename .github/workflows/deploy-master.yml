@@ -44,10 +44,19 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production  # Adicione um ambiente para melhor gerenciamento de secrets
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+
+    - name: Verify secrets are available
+      run: |
+        if [ -z "${{ secrets.VPS_HOST }}" ] || [ -z "${{ secrets.VPS_USER }}" ] || [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
+          echo "::error::One or more required secrets are missing"
+          exit 1
+        fi
+        echo "All required secrets are available"
 
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v0.1.6
@@ -56,42 +65,40 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         port: 22
-        timeout: 30s
+        timeout: 300s
         script: |
-          # Configurações iniciais
+          set -e
           APP_DIR="/var/www/rtsmanager_backend"
-          LOG_FILE="/tmp/deploy_$(date +'%Y%m%d_%H%M%S').log"
           
-          # Criar diretório se não existir
+          echo "Starting deployment process..."
+          
+          # Prepare directory
           sudo mkdir -p $APP_DIR
-          sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} $APP_DIR
+          sudo chown -R $USER:$USER $APP_DIR
+          cd $APP_DIR
           
-          # Configurar Git para usar SSH
+          # Configure Git
           git config --global url."git@github.com:".insteadOf "https://github.com/"
           
-          # Clonar ou atualizar repositório
-          cd $APP_DIR
+          # Clone or update repository
           if [ ! -d "$APP_DIR/.git" ]; then
-            echo "Clonando repositório..."
-            git clone git@github.com:hltav/pgbdsports_project.git $APP_DIR || exit 1
+            echo "Cloning repository..."
+            git clone git@github.com:hltav/pgbdsports_project.git $APP_DIR
           fi
           
-          # Atualizar código
-          echo "Atualizando código..."
-          git fetch origin master
+          cd $APP_DIR
+          git fetch origin
           git reset --hard origin/master
+          git clean -fd
           
-          # Instalar dependências
-          echo "Instalando dependências..."
+          # Install dependencies
           npm install --production
           
-          # Build do projeto
-          echo "Buildando projeto..."
+          # Build project
           npm run build
           
-          # Reiniciar aplicação
-          echo "Reiniciando aplicação..."
-          if [ -f "$APP_DIR/ecosystem.config.js" ]; then
+          # PM2 process management
+          if [ -f "ecosystem.config.js" ]; then
             pm2 delete rtsmanager || true
             pm2 startOrReload ecosystem.config.js --env production
           else
@@ -99,6 +106,5 @@ jobs:
             pm2 start dist/main.js --name rtsmanager
           fi
           
-          # Limpeza
           pm2 save
-          pm2 startup | grep -v PM2_HOME
+          echo "Deployment completed successfully!"
