@@ -29,7 +29,7 @@ export class UserAvatarController {
       storage: memoryStorage(),
       fileFilter: avatarFileFilter,
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB file
+        fileSize: 5 * 1024 * 1024, // 5MB
       },
     }),
   )
