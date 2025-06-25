@@ -1,39 +1,3 @@
-# name: Deploy to VPS on master branch update
-
-# on:
-#   push:
-#     branches:
-#       - master
-
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v3
-
-#     - name: Test SSH connection
-#       uses: appleboy/ssh-action@v0.1.6
-#       with:
-#         host: ${{ secrets.VPS_HOST }}
-#         username: ${{ secrets.VPS_USER }}
-#         key: ${{ secrets.VPS_SSH_KEY }}
-#         script: echo "Connection to VPS working via GitHub Actions!"
-
-#     - name: Deploy to Hetzner VPS
-#       uses: appleboy/ssh-action@v0.1.6
-#       with:
-#         host: ${{ secrets.VPS_HOST }}
-#         username: ${{ secrets.VPS_USER }}
-#         key: ${{ secrets.VPS_SSH_KEY }}
-#         script: |
-#           cd /var/www/rtsmanager_backend
-#           git pull origin master
-#           npm install
-#           npm run build
-#           pm2 restart all
-
 name: Deploy to VPS on master branch update
 
 on:
@@ -44,19 +8,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production  # Adicione um ambiente para melhor gerenciamento de secrets
+    environment: production
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Verify secrets are available
-      run: |
-        if [ -z "${{ secrets.VPS_HOST }}" ] || [ -z "${{ secrets.VPS_USER }}" ] || [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then
-          echo "::error::One or more required secrets are missing"
-          exit 1
-        fi
-        echo "All required secrets are available"
 
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v0.1.6
@@ -67,44 +23,41 @@ jobs:
         port: 22
         timeout: 300s
         script: |
-          set -e
+          set -ex  # Modo verbose e sai no primeiro erro
           APP_DIR="/var/www/rtsmanager_backend"
+          REPO="git@github.com:hltav/pgbsports_project.git"
           
-          echo "Starting deployment process..."
-          
-          # Prepare directory
+          # 1. Preparar ambiente
+          echo "🔧 Configurando ambiente..."
           sudo mkdir -p $APP_DIR
           sudo chown -R $USER:$USER $APP_DIR
           cd $APP_DIR
           
-          # Configure Git
-          git config --global url."git@github.com:".insteadOf "https://github.com/"
-          
-          # Clone or update repository
+          # 2. Sincronizar código
+          echo "🔄 Sincronizando repositório..."
           if [ ! -d "$APP_DIR/.git" ]; then
-            echo "Cloning repository..."
-            git clone git@github.com:hltav/pgbdsports_project.git $APP_DIR
+            git clone $REPO .
+          else
+            git fetch origin
+            git reset --hard origin/master
+            git clean -fd
           fi
           
-          cd $APP_DIR
-          git fetch origin
-          git reset --hard origin/master
-          git clean -fd
+          # 3. Instalar dependências
+          echo "📦 Instalando dependências..."
+          npm ci --production
           
-          # Install dependencies
-          npm install --production
-          
-          # Build project
+          # 4. Build do projeto
+          echo "🏗️ Executando build..."
           npm run build
           
-          # PM2 process management
-          if [ -f "ecosystem.config.js" ]; then
-            pm2 delete rtsmanager || true
-            pm2 startOrReload ecosystem.config.js --env production
-          else
-            pm2 delete rtsmanager || true
+          # 5. Gerenciar processo
+          echo "🚀 Configurando PM2..."
+          pm2 delete rtsmanager || true
+          [ -f "ecosystem.config.js" ] && \
+            pm2 startOrReload ecosystem.config.js --env production || \
             pm2 start dist/main.js --name rtsmanager
-          fi
           
           pm2 save
-          echo "Deployment completed successfully!"
+          pm2 list
+          echo "✅ Deploy concluído com sucesso!"
