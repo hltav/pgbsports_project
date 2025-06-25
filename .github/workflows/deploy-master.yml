@@ -1,9 +1,8 @@
-name: Deploy to VPS on master branch update
+name: Deploy to VPS
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 
 jobs:
   deploy:
@@ -21,43 +20,50 @@ jobs:
         username: ${{ secrets.VPS_USER }}
         key: ${{ secrets.VPS_SSH_KEY }}
         port: 22
-        timeout: 300s
+        timeout: 600s
         script: |
-          set -ex  # Modo verbose e sai no primeiro erro
+          set -ex
           APP_DIR="/var/www/rtsmanager_backend"
-          REPO="git@github.com:hltav/pgbsports_project.git"
           
-          # 1. Preparar ambiente
-          echo "🔧 Configurando ambiente..."
-          sudo mkdir -p $APP_DIR
-          sudo chown -R $USER:$USER $APP_DIR
+          # 1. Garantir permissões (como você já executou manualmente)
+          echo "🔒 Verificando permissões..."
+          sudo chown -R $USER:$USER /var/www
+          sudo chmod -R 755 /var/www
+          
+          # 2. Configurar ambiente
+          echo "📂 Preparando diretório da aplicação..."
+          mkdir -p $APP_DIR
           cd $APP_DIR
           
-          # 2. Sincronizar código
-          echo "🔄 Sincronizando repositório..."
-          if [ ! -d "$APP_DIR/.git" ]; then
-            git clone $REPO .
+          # 3. Configurar Git SSH
+          echo "🔑 Configurando acesso Git..."
+          mkdir -p ~/.ssh
+          echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+          
+          # 4. Gerenciar repositório
+          echo "🔄 Sincronizando código..."
+          if [ ! -d ".git" ]; then
+            git clone git@github.com:hltav/pgbsports_project.git .
           else
             git fetch origin
             git reset --hard origin/master
             git clean -fd
           fi
           
-          # 3. Instalar dependências
+          # 5. Instalar e buildar
           echo "📦 Instalando dependências..."
           npm ci --production
           
-          # 4. Build do projeto
-          echo "🏗️ Executando build..."
+          echo "🏗️ Buildando aplicação..."
           npm run build
           
-          # 5. Gerenciar processo
-          echo "🚀 Configurando PM2..."
+          # 6. Gerenciar processo
+          echo "🚀 Iniciando PM2..."
           pm2 delete rtsmanager || true
-          [ -f "ecosystem.config.js" ] && \
-            pm2 startOrReload ecosystem.config.js --env production || \
-            pm2 start dist/main.js --name rtsmanager
-          
+          pm2 start dist/main.js --name rtsmanager
           pm2 save
-          pm2 list
+          
           echo "✅ Deploy concluído com sucesso!"
+          echo "🔄 Status da aplicação:"
+          pm2 list
