@@ -2,68 +2,64 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Deploy to VPS
-      uses: appleboy/ssh-action@v0.1.6
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        port: 22
-        timeout: 600s
-        script: |
-          set -ex
-          APP_DIR="/var/www/rtsmanager_backend"
-          
-          # 1. Garantir permissões (como você já executou manualmente)
-          echo "🔒 Verificando permissões..."
-          sudo chown -R $USER:$USER /var/www
-          sudo chmod -R 755 /var/www
-          
-          # 2. Configurar ambiente
-          echo "📂 Preparando diretório da aplicação..."
-          mkdir -p $APP_DIR
-          cd $APP_DIR
-          
-          # 3. Configurar Git SSH
-          echo "🔑 Configurando acesso Git..."
-          mkdir -p ~/.ssh
-          echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-          chmod 600 ~/.ssh/config
-          
-          # 4. Gerenciar repositório
-          echo "🔄 Sincronizando código..."
-          if [ ! -d ".git" ]; then
-            git clone git@github.com:hltav/pgbsports_project.git .
-          else
-            git fetch origin
-            git reset --hard origin/master
-            git clean -fd
-          fi
-          
-          # 5. Instalar e buildar
-          echo "📦 Instalando dependências..."
-          npm ci --production
-          
-          echo "🏗️ Buildando aplicação..."
-          npm run build
-          
-          # 6. Gerenciar processo
-          echo "🚀 Iniciando PM2..."
-          pm2 delete rtsmanager || true
-          pm2 start dist/main.js --name rtsmanager
-          pm2 save
-          
-          echo "✅ Deploy concluído com sucesso!"
-          echo "🔄 Status da aplicação:"
-          pm2 list
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          timeout: 600s
+          script: |
+            set -ex
+            APP_DIR="/var/www/rtsmanager_backend"
+            
+            # 1. Configurar ambiente SSH de forma explícita
+            echo "🔑 Configurando SSH..."
+            mkdir -p ~/.ssh
+            echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/github_actions
+            chmod 600 ~/.ssh/github_actions
+            echo -e "Host github.com\n\
+              HostName github.com\n\
+              User git\n\
+              IdentityFile ~/.ssh/github_actions\n\
+              IdentitiesOnly yes\n\
+              StrictHostKeyChecking no" > ~/.ssh/config
+            chmod 600 ~/.ssh/config
+            
+            # 2. Testar conexão SSH
+            echo "🔍 Testando conexão com GitHub..."
+            ssh -T git@github.com || true
+            
+            # 3. Gerenciar diretório da aplicação
+            echo "🧹 Preparando diretório..."
+            sudo rm -rf $APP_DIR  # Remove completamente o diretório existente
+            mkdir -p $APP_DIR
+            cd $APP_DIR
+            
+            # 4. Clonar repositório com SSH explícito
+            echo "📥 Clonando repositório..."
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/github_actions" git clone git@github.com:hltav/pgbsports_project.git .
+            
+            # 5. Instalar e buildar
+            echo "📦 Instalando dependências..."
+            npm ci --production
+            
+            echo "🏗️ Buildando aplicação..."
+            npm run build
+            
+            # 6. Gerenciar processo com PM2
+            echo "🚀 Iniciando aplicação..."
+            pm2 delete rtsmanager || true
+            pm2 start dist/main.js --name rtsmanager
+            pm2 save
+            
+            echo "✅ Deploy concluído com sucesso!"
+            pm2 list
