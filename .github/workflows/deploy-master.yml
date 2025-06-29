@@ -1,4 +1,4 @@
-name: Deploy Master
+name: Deploy to VPS
 
 on:
   push:
@@ -8,7 +8,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -16,43 +21,49 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
-          timeout: 600s
+          timeout: 60s
           script: |
             set -ex
+
             APP_DIR="/var/www/rtsmanager_backend"
-            
-            # 1. Configurar SSH com nova chave
-            echo "🔑 Configurando SSH..."
-            mkdir -p ~/.ssh
-            echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/github_actions
-            chmod 600 ~/.ssh/github_actions
-            
-            # Gerar chave pública correspondente
-            ssh-keygen -y -f ~/.ssh/github_actions > ~/.ssh/github_actions.pub
-            
-            echo -e "Host github.com\n\
-              HostName github.com\n\
-              User git\n\
-              IdentityFile ~/.ssh/github_actions\n\
-              IdentitiesOnly yes\n\
-              StrictHostKeyChecking no" > ~/.ssh/config
-            chmod 600 ~/.ssh/config
-            
-            # 2. Testar conexão
-            echo "🔍 Testando conexão..."
-            ssh -T git@github.com || true
-            
-            # 3. Gerenciar repositório
-            echo "🧹 Preparando ambiente..."
-            sudo rm -rf $APP_DIR
-            mkdir -p $APP_DIR
+            REPO="https://github.com/hltav/pgbdsports_project.git"
+            ECOSYSTEM="$APP_DIR/ecosystem.config.js"
+
+            echo "📁 Criando diretório do app (se necessário)..."
+            sudo mkdir -p $APP_DIR
+            sudo chown -R $USER:$USER $APP_DIR
             cd $APP_DIR
+
+            echo "🔧 Configurando Git..."
+            git config --global url."git@github.com:".insteadOf "https://github.com/"
             
-            echo "📥 Clonando repositório..."
-            GIT_SSH_COMMAND="ssh -v -i ~/.ssh/github_actions" git clone git@github.com:hltav/pgbsports_project.git .
-            
-            # Resto do script...
+            if [ ! -d .git ]; then
+              echo "🆕 Clonando repositório..."
+              git init
+              git remote add origin $REPO
+            fi
+
+            echo "📥 Atualizando código..."
+            git fetch origin master
+            git reset --hard origin/master
+            git clean -fd
+
+            echo "📦 Instalando dependências..."
             npm ci --production
+
+            echo "🔨 Buildando aplicação..."
             npm run build
-            pm2 start dist/main.js --name rtsmanager
+
+            echo "🚀 Gerenciando processo com PM2..."
+            pm2 delete rtsmanager || true
+            if [ -f "$ECOSYSTEM" ]; then
+              pm2 startOrReload $ECOSYSTEM --env production
+            else
+              pm2 start dist/main.js --name rtsmanager
+            fi
+
             pm2 save
+            pm2 startup | grep -v PM2_HOME || true
+
+            echo "✅ Deploy finalizado com sucesso!"
+            pm2 list
