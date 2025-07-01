@@ -11,61 +11,80 @@ jobs:
     environment: production
 
     steps:
+      # Configuração do SSH (usando a chave VPS_SSH_KEY)
       - name: Configure SSH
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
 
+      # Checkout do código via SSH (para repositório privado)
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           ssh-key: ${{ secrets.VPS_SSH_KEY }}
 
+      # Deploy na VPS
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
+          host: ${{ secrets.VPS_HOST }}       # Ex: 91.99.55.16
+          username: ${{ secrets.VPS_USER }}   # Ex: root
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
           timeout: 60s
           script: |
-            set -ex
-            
-            # 1. Verificar e corrigir configuração SSH
-            sudo sed -i '/permit\*\*\*login/d' /etc/ssh/ssh_config
-            sudo systemctl restart ssh
+            set -ex  # Ativa modo debug (exibe cada comando)
 
-            # 2. Variáveis do projeto
+            # Variáveis do projeto
             APP_DIR="/var/www/rtsmanager_backend"
             REPO="git@github.com:hltav/pgbdsports_project.git"
-            
-            # 3. Configuração do ambiente
+            ECOSYSTEM="$APP_DIR/ecosystem.config.js"
+
+            # 1. Pré-requisitos do sistema
+            echo "🛠️  Instalando dependências globais..."
+            if ! command -v pm2 &> /dev/null; then
+              npm install -g pm2
+            fi
+
+            # 2. Configuração do diretório
+            echo "📂 Preparando diretório $APP_DIR..."
             sudo mkdir -p $APP_DIR
             sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} $APP_DIR
             cd $APP_DIR
-            
-            # 4. Configuração do Git
+
+            # 3. Configuração do Git
             git config --global user.name "GitHub Actions"
             git config --global user.email "actions@github.com"
-            
-            # 5. Clone/Atualização com tratamento de erro
+
+            # 4. Clone/Atualização do código
             if [ ! -d .git ]; then
-              git clone $REPO . || { echo "❌ Falha no clone"; exit 1; }
+              echo "🆕 Clonando repositório..."
+              git clone $REPO .
             else
-              git fetch origin master || { echo "❌ Falha no fetch"; exit 1; }
+              echo "🔄 Atualizando código..."
+              git fetch origin master
               git reset --hard origin/master
               git clean -fd
             fi
 
-            # 6. Instalação e build
+            # 5. Instalação e build
+            echo "📦 Instalando dependências..."
             npm ci --production
+
+            echo "🔨 Buildando aplicação..."
             npm run build
 
-            # 7. PM2 com fallback
-            if [ -f "ecosystem.config.js" ]; then
-              pm2 reload ecosystem.config.js --env production || pm2 start ecosystem.config.js --env production
+            # 6. Gerenciamento do PM2
+            echo "🚀 Iniciando/Reiniciando aplicação..."
+            if [ -f "$ECOSYSTEM" ]; then
+              pm2 startOrReload $ECOSYSTEM --env production
             else
               pm2 start dist/main.js --name "rtsmanager"
             fi
+
+            # 7. Persistência do PM2
             pm2 save
+            pm2 startup | grep -v PM2_HOME || true
+
+            echo "🎉 Deploy concluído com sucesso!"
+            pm2 list
