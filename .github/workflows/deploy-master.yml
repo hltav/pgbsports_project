@@ -37,7 +37,7 @@ jobs:
 
             # Variáveis do projeto
             APP_DIR="/var/www/rtsmanager_backend"
-            REPO="git@github.com:hltav/pgbdsports_project.git"
+            REPO="git@github.com:hltav/pgbsports_project.git"
             ECOSYSTEM="$APP_DIR/ecosystem.config.js"
 
             # 1. Pré-requisitos do sistema
