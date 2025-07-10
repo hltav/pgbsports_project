@@ -75,7 +75,7 @@ jobs:
             npm install --omit=dev --prefer-offline --no-audit
             
             echo "🔨 Buildando aplicação..."
-            npm run build
+            npx nest build
             
             # ===== PM2 =====
             echo "🚀 Iniciando aplicação..."
