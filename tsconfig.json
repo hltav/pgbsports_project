@@ -14,11 +14,7 @@
     "types": ["node", "jest", "multer", "express"],
     "typeRoots": ["./node_modules/@types", "./@types"],
     "paths": {
-      "@lib/*": ["src/lib/*"],
-      "@app/*": ["src/app/*"],
-      "@config/*": ["src/config/*"],
-      "@modules/*": ["src/modules/*"],
-      "@/*": ["src/*"]
+      
     },
     "incremental": true,
     "skipLibCheck": true,
