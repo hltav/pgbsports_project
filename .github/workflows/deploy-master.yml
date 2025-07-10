@@ -11,19 +11,9 @@ jobs:
     environment: production
 
     steps:
-      # Passo 1: Configurar chave SSH para o GitHub (opcional, mas recomendado)
-      - name: Setup SSH for GitHub
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.GIT_DEPLOY_KEY }}
-
-      # Passo 2: Checkout do código
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          ssh-key: ${{ secrets.GIT_DEPLOY_KEY }}
 
-      # Passo 3: Deploy na VPS
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -35,13 +25,16 @@ jobs:
           script: |
             set -ex
             
+            # ===== CONFIGURAÇÃO GIT =====
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+            
             # ===== CONFIGURAÇÃO SSH =====
             mkdir -p ~/.ssh
             echo "${{ secrets.GIT_DEPLOY_KEY }}" > ~/.ssh/github_key
             chmod 600 ~/.ssh/github_key
             
-            # Configuração explícita do SSH
-            cat >> ~/.ssh/config <<EOF
+            cat > ~/.ssh/config <<EOF
             Host github.com
               HostName github.com
               User git
@@ -52,34 +45,33 @@ jobs:
             ssh-keyscan -H github.com >> ~/.ssh/known_hosts
             
             # ===== VERIFICAÇÃO =====
-            echo "🔍 Testando conexão com GitHub..."
+            echo "🔍 Testando conexão..."
             ssh -T git@github.com || true
             
-            # ===== CONFIGURAÇÃO DO PROJETO =====
+            # ===== DEPLOY =====
             APP_DIR="/var/www/rtsmanager_backend"
             sudo mkdir -p "$APP_DIR"
             sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} "$APP_DIR"
             cd "$APP_DIR"
             
-            # ===== ATUALIZAÇÃO DO CÓDIGO =====
+            REPO_URL="git@github.com:hltav/pgbsports_project.git"
+            
             if [ ! -d .git ]; then
               echo "🆕 Clonando repositório..."
-              git clone git@github.com:hltav/pgbsports_project.git .
+              git clone "$REPO_URL" .
             else
               echo "🔄 Atualizando código..."
+              git remote set-url origin "$REPO_URL"
               git fetch origin master
               git reset --hard origin/master
               git clean -fd
             fi
             
-            # ===== BUILD E DEPLOY =====
-            echo "📦 Instalando dependências..."
+            # ===== BUILD =====
             npm ci --production
-            
-            echo "🔨 Buildando aplicação..."
             npm run build
             
-            echo "🚀 Iniciando aplicação..."
+            # ===== PM2 =====
             pm2 startOrReload ecosystem.config.js --env production || \
               pm2 start dist/main.js --name "rtsmanager"
             
