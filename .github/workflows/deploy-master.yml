@@ -72,7 +72,7 @@ jobs:
             npx prisma generate
 
             echo "🔨 Buildando aplicação..."
-            npx nest build
+            npx tsc -p tsconfig.build.json
 
             echo "🚀 Iniciando aplicação..."
             pm2 startOrReload ecosystem.config.js --env production || \
