@@ -62,7 +62,7 @@ jobs:
 
             # ===== BUILD E DEPLOY =====
             echo "🧹 Limpando instalação anterior..."
-            rm -rf node_modules package-lock.json
+            rm -rf node_modules package-lock.json dist
             npm cache clean --force
 
             echo "📦 Instalando dependências..."
