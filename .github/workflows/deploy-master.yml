@@ -24,16 +24,12 @@ jobs:
           timeout: 60s
           script: |
             set -ex
-            
-            # ===== CONFIGURAÇÃO GIT =====
-            git config --global user.name "GitHub Actions"
-            git config --global user.email "actions@github.com"
-            
+
             # ===== CONFIGURAÇÃO SSH =====
             mkdir -p ~/.ssh
             echo "${{ secrets.GIT_DEPLOY_KEY }}" > ~/.ssh/github_key
             chmod 600 ~/.ssh/github_key
-            
+
             cat > ~/.ssh/config <<EOF
             Host github.com
               HostName github.com
@@ -41,47 +37,47 @@ jobs:
               IdentityFile ~/.ssh/github_key
               IdentitiesOnly yes
             EOF
-            
-            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-            
-            # ===== VERIFICAÇÃO =====
-            echo "🔍 Testando conexão..."
-            ssh -T git@github.com || true
-            
-            # ===== DEPLOY =====
-            APP_DIR="/var/www/rtsmanager_backend"
-            REPO_URL="git@github.com:hltav/pgbsports_project.git"
 
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+            echo "🔍 Testando conexão com GitHub..."
+            ssh -T git@github.com || true
+
+            # ===== CONFIGURAÇÃO DO PROJETO =====
+            APP_DIR="/var/www/rtsmanager_backend"
             sudo mkdir -p "$APP_DIR"
             sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} "$APP_DIR"
             cd "$APP_DIR"
-            
+
+            # ===== ATUALIZAÇÃO DO CÓDIGO =====
             if [ ! -d .git ]; then
               echo "🆕 Clonando repositório..."
-              git clone "$REPO_URL" .
+              git clone git@github.com:hltav/pgbsports_project.git .
             else
               echo "🔄 Atualizando código..."
-              git remote set-url origin "$REPO_URL"
               git fetch origin master
               git reset --hard origin/master
               git clean -fd
             fi
-            
-            # ===== BUILD =====
-            echo "📦 Limpando instalação anterior..."
+
+            # ===== BUILD E DEPLOY =====
+            echo "🧹 Limpando instalação anterior..."
             rm -rf node_modules package-lock.json
+            npm cache clean --force
 
             echo "📦 Instalando dependências..."
             npm install --omit=dev --prefer-offline --no-audit
-            
+
+            echo "⚙️ Gerando Prisma Client..."
+            npx prisma generate
+
             echo "🔨 Buildando aplicação..."
             npx nest build
-            
-            # ===== PM2 =====
+
             echo "🚀 Iniciando aplicação..."
             pm2 startOrReload ecosystem.config.js --env production || \
               pm2 start dist/main.js --name "rtsmanager"
-            
+
             pm2 save
             echo "✅ Deploy concluído com sucesso!"
             pm2 list
