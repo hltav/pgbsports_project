@@ -11,7 +11,7 @@
     "start": "nest start",
     "start:dev": "nodemon --exec nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/app/main",
+    "start:prod": "node dist/main.js",
     "dev:with-tests": "concurrently \"npm:serve\" \"npm:test:changed\"",
     "serve": "nest start --watch",
     "test:changed": "jest --onlyChanged --passWithNoTests",
@@ -22,7 +22,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
-    "postbuild": "cp -r src/libs/services/mailer/templates dist/app/libs/services/mailer/templates"
+    "postbuild": "cp -r src/libs/services/mailer/templates dist/libs/services/mailer/templates"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
