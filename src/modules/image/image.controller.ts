@@ -1,6 +1,6 @@
 import { ClientDataService } from './../../modules/client-data/client-data.service';
 import { ImageService } from './image.service';
-import { AuthenticatedRequest } from '@modules/auth/dto/auth.schema';
+import { AuthenticatedRequest } from './../../modules/auth/dto/auth.schema';
 import {
   Controller,
   UseGuards,
