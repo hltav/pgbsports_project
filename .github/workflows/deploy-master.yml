@@ -68,10 +68,16 @@ jobs:
             fi
             
             # ===== BUILD =====
-            npm ci --production
+            echo "📦 Instalando dependências..."
+            cd "$APP_DIR"
+            rm -rf node_modules
+            npm install --omit=dev --prefer-offline --no-audit
+            
+            echo "🔨 Buildando aplicação..."
             npm run build
             
             # ===== PM2 =====
+            echo "🚀 Iniciando aplicação..."
             pm2 startOrReload ecosystem.config.js --env production || \
               pm2 start dist/main.js --name "rtsmanager"
             
