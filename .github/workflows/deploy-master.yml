@@ -11,17 +11,17 @@ jobs:
     environment: production
 
     steps:
-      # Configuração do SSH
-      - name: Configure SSH
+      # Configuração do SSH para o GitHub
+      - name: Add GitHub SSH Key
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+          ssh-private-key: ${{ secrets.GIT_DEPLOY_KEY }}
 
       # Checkout do código
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ssh-key: ${{ secrets.VPS_SSH_KEY }}
+          ssh-key: ${{ secrets.GIT_DEPLOY_KEY }}
 
       # Deploy na VPS
       - name: Deploy to VPS
@@ -35,41 +35,26 @@ jobs:
           script: |
             set -ex
             
-            # Configura o ambiente SSH
-            eval $(ssh-agent -s)
-            echo "${{ secrets.VPS_SSH_KEY }}" | ssh-add -
+            # Configuração do SSH para o GitHub na VPS
             mkdir -p ~/.ssh
+            echo "${{ secrets.GIT_DEPLOY_KEY }}" > ~/.ssh/github_key
+            chmod 600 ~/.ssh/github_key
             ssh-keyscan github.com >> ~/.ssh/known_hosts
             
+            # Configuração do Git
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+            
             APP_DIR="/var/www/rtsmanager_backend"
             REPO="git@github.com:hltav/pgbsports_project.git"
             ECOSYSTEM="$APP_DIR/ecosystem.config.js"
             
-            # Resto do seu script...
-            set -ex  # Ativa modo debug (exibe cada comando)
-
-            # Variáveis do projeto
-            APP_DIR="/var/www/rtsmanager_backend"
-            REPO="git@github.com:hltav/pgbsports_project.git"
-            ECOSYSTEM="$APP_DIR/ecosystem.config.js"
-
-            # 1. Pré-requisitos do sistema
-            echo "🛠️  Instalando dependências globais..."
-            if ! command -v pm2 &> /dev/null; then
-              npm install -g pm2
-            fi
-
-            # 2. Configuração do diretório
-            echo "📂 Preparando diretório $APP_DIR..."
+            # Preparar diretório
             sudo mkdir -p $APP_DIR
-            sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} $APP_DIR
+            sudo chown -R $USER:$USER $APP_DIR
             cd $APP_DIR
-
-            # 3. Configuração do Git
-            git config --global user.name "GitHub Actions"
-            git config --global user.email "actions@github.com"
-
-            # 4. Clone/Atualização do código
+            
+            # Clone/Atualização do repositório
             if [ ! -d .git ]; then
               echo "🆕 Clonando repositório..."
               git clone $REPO .
@@ -79,25 +64,11 @@ jobs:
               git reset --hard origin/master
               git clean -fd
             fi
-
-            # 5. Instalação e build
-            echo "📦 Instalando dependências..."
+            
+            # Resto do seu script original...
             npm ci --production
-
-            echo "🔨 Buildando aplicação..."
             npm run build
-
-            # 6. Gerenciamento do PM2
-            echo "🚀 Iniciando/Reiniciando aplicação..."
-            if [ -f "$ECOSYSTEM" ]; then
-              pm2 startOrReload $ECOSYSTEM --env production
-            else
-              pm2 start dist/main.js --name "rtsmanager"
-            fi
-
-            # 7. Persistência do PM2
+            
+            pm2 startOrReload $ECOSYSTEM --env production || pm2 start dist/main.js --name "rtsmanager"
             pm2 save
-            pm2 startup | grep -v PM2_HOME || true
-
             echo "🎉 Deploy concluído com sucesso!"
-            pm2 list
