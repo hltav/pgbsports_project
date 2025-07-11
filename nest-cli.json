@@ -2,9 +2,14 @@
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
-  "entryFile": "app/main",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": ["**/*.hbs"]
+    "assets": [
+      {
+        "include": "libs/services/mailer/templates/**/*",
+        "outDir": "./dist/libs/services/mailer/templates", 
+        "watchAssets": true 
+      }
+    ]
   }
 }

@@ -15,7 +15,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from 'dist/libs';
+import { JwtAuthGuard } from './../../libs';
 import { avatarFileFilter } from './utils/file-filter.util';
 
 @Controller('client-data')

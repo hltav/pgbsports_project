@@ -1,4 +1,4 @@
-import { decimalSchema } from '@/libs/common/dto/decimalSchema.interface';
+import { decimalSchema } from './../../../libs/common/dto/decimalSchema.interface';
 import { z } from 'zod';
 
 export const UpdateBankrollSchema = z.object({

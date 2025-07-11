@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nodemon --exec nest start --watch",
+    "start:dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/main.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main.js",
     "dev:with-tests": "concurrently \"npm:serve\" \"npm:test:changed\"",
@@ -21,8 +21,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix",
-    "postbuild": "cp -r src/libs/services/mailer/templates dist/libs/services/mailer/templates"
+    "lint:fix": "eslint 'src/**/*.{ts,tsx}' --fix"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",
@@ -39,6 +38,8 @@
     "bcrypt": "^5.1.1",
     "cache-manager": "^6.4.3",
     "cache-manager-ioredis": "^2.1.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
     "date-fns": "^4.1.0",
     "handlebars": "^4.7.8",
     "ioredis": "^5.6.1",
@@ -67,7 +68,7 @@
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/multer": "^1.4.13",
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.16.3",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
     "@typescript-eslint/eslint-plugin": "^8.25.0",

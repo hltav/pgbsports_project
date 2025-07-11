@@ -1,13 +1,6 @@
 {
-    "watch": [
-        "src"
-    ],
-    "ext": "ts",
-    "ignore": [
-        "node_modules",
-        "dist",
-        "**/*.spec.ts",
-        "test"
-    ],
-    "exec": "npm run dev:with-test"
+  "watch": ["src"],
+  "ext": "ts",
+  "ignore": ["node_modules", "dist", "**/*.spec.ts", "test"],
+  "exec": "nest start --watch"
 }

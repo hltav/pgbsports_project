@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { CacheService } from '@/libs/services/cache/cache.service';
+import { CacheService } from './../../../../libs/services/cache/cache.service';
 import { ApiFetcherService } from './api-fetcher.service';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDTO, ForgotPasswordDTO } from 'dist/libs';
+import { CreateUserDTO, ForgotPasswordDTO } from './../../libs';
 import { ForgotPasswordService } from './services/forgot-password.service';
 import { RefreshTokenService } from './services/refresh-token.service';
 import { RegisterUserService } from './services/register-user.service';

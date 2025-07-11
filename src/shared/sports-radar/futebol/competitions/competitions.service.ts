@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CacheService } from '@/libs/services/cache/cache.service';
+import { CacheService } from './../../../../libs/services/cache/cache.service';
 import {
   CompetitionInfo,
   CompetitionInfoSchema,
