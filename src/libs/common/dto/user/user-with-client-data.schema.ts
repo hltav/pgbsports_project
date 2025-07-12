@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { Role } from '@prisma/client';
 import { AddressSchema } from '../../../../modules/client-data/dto/address.schema';
+import { SafeInfer } from './../../../../types/zod';
 
 export const ClientDataSchema = z.object({
   id: z.number().optional(),
@@ -24,4 +25,4 @@ export const UserWithClientDataSchema = z.object({
   clientData: ClientDataSchema.nullable(),
 });
 
-export type UserWithClientData = z.infer<typeof UserWithClientDataSchema>;
+export type UserWithClientData = SafeInfer<typeof UserWithClientDataSchema>;

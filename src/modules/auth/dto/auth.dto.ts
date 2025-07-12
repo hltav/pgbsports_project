@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SafeInfer } from './../../../types/zod';
 
 export const AuthUserSchema = z.object({
   id: z.number(),
@@ -9,4 +10,4 @@ export const AuthUserSchema = z.object({
   password: z.string(),
 });
 
-export type AuthUserDTO = z.infer<typeof AuthUserSchema>;
+export type AuthUserDTO = SafeInfer<typeof AuthUserSchema>;

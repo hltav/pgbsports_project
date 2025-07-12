@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Role } from '@prisma/client';
+import { SafeInfer } from './../../../../types/zod';
 
 export const CreateUserSchema = z.object({
   firstname: z.string().default(''),
@@ -10,4 +11,4 @@ export const CreateUserSchema = z.object({
   role: z.nativeEnum(Role).optional(),
 });
 
-export type CreateUserDTO = z.infer<typeof CreateUserSchema>;
+export type CreateUserDTO = SafeInfer<typeof CreateUserSchema>;

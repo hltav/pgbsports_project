@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SafeInfer } from './../../../../types/zod';
 
 export const EmailVerificationSchema = z.object({
   id: z.number(),
@@ -9,4 +10,4 @@ export const EmailVerificationSchema = z.object({
   createdAt: z.date(),
 });
 
-export type EmailVerification = z.infer<typeof EmailVerificationSchema>;
+export type EmailVerification = SafeInfer<typeof EmailVerificationSchema>;

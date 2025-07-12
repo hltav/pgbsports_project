@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SafeInfer } from './../../../types/zod';
 
 export const AddressSchema = z.object({
   id: z.number(),
@@ -13,4 +14,4 @@ export const AddressSchema = z.object({
   updatedAt: z.date(),
 });
 
-export type AddressDTO = z.infer<typeof AddressSchema>;
+export type AddressDTO = SafeInfer<typeof AddressSchema>;

@@ -1,3 +1,4 @@
+import { SafeInfer } from './../../../types/zod';
 import { z } from 'zod';
 
 export const JwtPayloadSchema = z.object({
@@ -16,7 +17,6 @@ export const AuthenticatedRequestSchema = z.object({
   user: AuthenticatedUserSchema,
 });
 
-export type SchemaJwtPayload = z.infer<typeof JwtPayloadSchema>;
-export type AuthenticatedUser = z.infer<typeof AuthenticatedUserSchema>;
-export type AuthenticatedRequest = z.infer<typeof AuthenticatedRequestSchema> &
-  Express.Request;
+export type SchemaJwtPayload = SafeInfer<typeof JwtPayloadSchema>;
+export type AuthenticatedUser = SafeInfer<typeof AuthenticatedUserSchema>;
+export type AuthenticatedRequest = SafeInfer<typeof AuthenticatedRequestSchema>;

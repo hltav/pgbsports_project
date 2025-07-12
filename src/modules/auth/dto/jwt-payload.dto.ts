@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SafeInfer } from './../../../types/zod';
 
 export const JwtPayloadSchema = z.object({
   sub: z.number(),
@@ -7,4 +8,4 @@ export const JwtPayloadSchema = z.object({
   role: z.string().optional(),
 });
 
-export type JwtPayload = z.infer<typeof JwtPayloadSchema>;
+export type JwtPayload = SafeInfer<typeof JwtPayloadSchema>;

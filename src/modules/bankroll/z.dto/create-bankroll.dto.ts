@@ -1,5 +1,6 @@
 import { decimalSchema } from './../../../libs/common/dto/decimalSchema.interface';
 import { z } from 'zod';
+import { SafeInfer } from './../../../types/zod';
 
 export const CreateBankrollSchema = z.object({
   userId: z.number(),
@@ -8,4 +9,4 @@ export const CreateBankrollSchema = z.object({
   unidValue: decimalSchema,
   bookmaker: z.string().default('Unknown'),
 });
-export type CreateBankrollDTO = z.infer<typeof CreateBankrollSchema>;
+export type CreateBankrollDTO = SafeInfer<typeof CreateBankrollSchema>;

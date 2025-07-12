@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { UpdateAddressDto } from './update-address.dto';
+import { SafeInfer } from './../../../types/zod';
 
 export const UpdateClientDataSchema = z.object({
   gender: z.string().optional(),
@@ -10,4 +11,4 @@ export const UpdateClientDataSchema = z.object({
   address: UpdateAddressDto.optional(),
 });
 
-export type UpdateClientDataDTO = z.infer<typeof UpdateClientDataSchema>;
+export type UpdateClientDataDTO = SafeInfer<typeof UpdateClientDataSchema>;

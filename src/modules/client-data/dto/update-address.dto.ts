@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SafeInfer } from './../../../types/zod';
 
 export const UpdateAddressDto = z.object({
   direction: z.string().nullable().optional(),
@@ -9,4 +10,4 @@ export const UpdateAddressDto = z.object({
   country: z.string().nullable().optional(),
 });
 
-export type UpdateAddressDTO = z.infer<typeof UpdateAddressDto>;
+export type UpdateAddressDTO = SafeInfer<typeof UpdateAddressDto>;

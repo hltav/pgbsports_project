@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { EventType, Result } from '@prisma/client';
 import { decimalSchema } from '../../../libs/common/dto/decimalSchema.interface';
+import { SafeInfer } from '../../../types/zod';
 
 export const GetEventSchema = z.object({
   id: z.number(),
@@ -12,4 +13,4 @@ export const GetEventSchema = z.object({
   result: z.nativeEnum(Result),
   userId: z.number(),
 });
-export type GetEventDTO = z.infer<typeof GetEventSchema>;
+export type GetEventDTO = SafeInfer<typeof GetEventSchema>;

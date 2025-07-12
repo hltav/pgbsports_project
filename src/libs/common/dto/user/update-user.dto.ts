@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { SafeInfer } from './../../../../types/zod';
 
 export const UpdateUserSchema = z.object({
   firstname: z.string().optional(),
@@ -8,4 +9,4 @@ export const UpdateUserSchema = z.object({
   refreshToken: z.string().nullable().optional(),
 });
 
-export type UpdateUserDTO = z.infer<typeof UpdateUserSchema>;
+export type UpdateUserDTO = SafeInfer<typeof UpdateUserSchema>;

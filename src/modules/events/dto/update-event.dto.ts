@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { EventType, Result } from '@prisma/client';
 import { decimalSchema } from '../../../libs/common/dto/decimalSchema.interface';
+import { SafeInfer } from '../../../types/zod';
 
 export const UpdateEventSchema = z.object({
   bankId: z.number().optional(),
@@ -11,4 +12,4 @@ export const UpdateEventSchema = z.object({
   result: z.nativeEnum(Result).optional(),
   userId: z.number(),
 });
-export type UpdateEventDTO = z.infer<typeof UpdateEventSchema>;
+export type UpdateEventDTO = SafeInfer<typeof UpdateEventSchema>;
