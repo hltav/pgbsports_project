@@ -1,5 +1,6 @@
 import { extname } from 'path';
-import { Request } from 'express';
+import { Request } from '@nestjs/common';
+;
 
 import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
 

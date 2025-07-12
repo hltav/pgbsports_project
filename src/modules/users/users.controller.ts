@@ -15,7 +15,8 @@ import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
 import { RolesGuard } from './../../libs/common/guards/roles.guard';
 import { GetUserDTO, UpdateUserDTO, User } from './../../libs/common/dto/user';
 import { Roles } from './../../libs/common/decorator/roles.decorator';
-import { Request } from 'express';
+import { Request } from '@nestjs/common';
+;
 import { Role } from './../../libs/common/enum/role.enum';
 import { UsersServiceProxy } from './proxies/user.cache.proxy.service';
 
