@@ -19,6 +19,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["zod", "node",]
-  }
+    "types": ["zod", "node"]
+  },
+  "exclude": ["node_modules", "ecosystem.config.js", "dist"]
 }
