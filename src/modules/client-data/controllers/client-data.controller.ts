@@ -22,7 +22,7 @@ import { CreateClientDataDTO, UpdateClientDataDTO } from '../dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageService } from './../../image/image.service';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
-import type { Request } from 'express';
+import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
 
 @Controller('client-data')
 export class ClientDataController {
@@ -78,7 +78,7 @@ export class ClientDataController {
   )
   async updateProfileImage(
     @Param('id') id: string,
-    @UploadedFile() file: Request['file'],
+    @UploadedFile() file: MulterFile,
     @Req() req: AuthenticatedRequest,
   ) {
     if (req.user.id !== +id) {
