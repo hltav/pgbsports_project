@@ -15,7 +15,7 @@
     "node": true,
     "jest": true
   },
-  "ignorePatterns": [".eslintrc.js"],
+  "ignorePatterns": [".eslintrc.js", "ecosystem.config.js"],
   "rules": {
     "linebreak-style": ["error", "unix"], // Usar 'lf' (Unix) como padrão
     "@typescript-eslint/interface-name-prefix": "off",
