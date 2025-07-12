@@ -5,7 +5,8 @@ import {
   Injectable,
   ForbiddenException,
 } from '@nestjs/common';
-import { Request } from 'express';
+import type { Request } from 'express-serve-static-core';
+
 
 @Injectable()
 export class EmailVerifiedGuard implements CanActivate {
