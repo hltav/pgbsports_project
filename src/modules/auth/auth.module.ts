@@ -22,9 +22,7 @@ import {
 @Module({
   imports: [
     CryptoModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule,
     PassportModule,
     UsersModule,
     PrismaModule,

@@ -11,7 +11,9 @@ import { ApiSportsModule } from './shared/api-sports/api-sports.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     LibsModule,
     AllmoduleModule,
     CryptoModule,
