@@ -17,6 +17,7 @@ import { AuthenticatedRequest } from './../../../modules/auth/dto/auth.schema';
 import { ImageService } from './../../../modules/image/image.service';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
 import { JwtAuthGuard } from './../../../libs';
+import type { Express } from 'express';
 
 @Controller('users')
 export class UserAvatarController {
@@ -29,7 +30,7 @@ export class UserAvatarController {
       storage: memoryStorage(),
       fileFilter: avatarFileFilter,
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB
+        fileSize: 3 * 1024 * 1024, // 3MB
       },
     }),
   )
@@ -50,7 +51,7 @@ export class UserAvatarController {
       return { imageUrl };
     } catch (error) {
       if (error instanceof MulterError && error.code === 'LIMIT_FILE_SIZE') {
-        throw new BadRequestException('Arquivo excede o limite de 5MB');
+        throw new BadRequestException('Arquivo excede o limite de 3MB');
       }
       throw error;
     }

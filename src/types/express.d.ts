@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Request } from 'express';
-import { JwtPayload } from '../auth/jwt-payload.interface';
+import { AuthenticatedUser } from '../schemas/auth/authenticated.user.schema';
 
-declare module 'express' {
-  interface Request {
-    user?: JwtPayload;
+declare global {
+  namespace Express {
+    interface Request {
+      user?: AuthenticatedUser;
+    }
   }
 }

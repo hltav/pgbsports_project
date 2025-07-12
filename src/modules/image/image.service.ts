@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StorageService } from './storage/storage.service';
+import type { Express } from 'express';
 
 @Injectable()
 export class ImageService {

@@ -17,6 +17,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './../../libs';
 import { avatarFileFilter } from './utils/file-filter.util';
+import type { Express } from 'express';
 
 @Controller('client-data')
 export class ClientImageController {

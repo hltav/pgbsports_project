@@ -2,6 +2,7 @@
 import { Request } from 'express';
 import { extname } from 'path';
 import type { Multer } from 'multer';
+import type { Express } from 'express';
 
 export function avatarFileFilter(
   req: Request,

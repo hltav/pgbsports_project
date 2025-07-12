@@ -22,6 +22,7 @@ import { CreateClientDataDTO, UpdateClientDataDTO } from '../dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImageService } from './../../image/image.service';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
+import type { Express } from 'express';
 
 @Controller('client-data')
 export class ClientDataController {
@@ -67,27 +68,11 @@ export class ClientDataController {
     return this.clientDataService.updateClientData(+id, updateClientDataDto);
   }
 
-  // @Put(':id/image')
-  // @UseGuards(JwtAuthGuard)
-  // async updateProfileImage(
-  //   @Param('id') id: string,
-  //   @Body() body: { image: string },
-  //   @Req() req: AuthenticatedRequest,
-  // ) {
-  //   if (req.user.id !== +id) {
-  //     throw new UnauthorizedException(
-  //       'Você só pode atualizar seu próprio perfil',
-  //     );
-  //   }
-
-  //   return this.clientDataService.updateClientImage(+id, body.image);
-  // }
-
   @Put(':id/image')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('file', {
-      limits: { fileSize: 3 * 1024 * 1024 }, // até 2MB
+      limits: { fileSize: 3 * 1024 * 1024 }, // até 3MB
       fileFilter: avatarFileFilter,
     }),
   )

@@ -4,6 +4,7 @@ import { writeFile, unlink, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { randomUUID } from 'crypto';
 import { StorageService } from './storage.service';
+import type { Express } from 'express';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
