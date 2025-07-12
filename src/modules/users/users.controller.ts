@@ -15,8 +15,7 @@ import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
 import { RolesGuard } from './../../libs/common/guards/roles.guard';
 import { GetUserDTO, UpdateUserDTO, User } from './../../libs/common/dto/user';
 import { Roles } from './../../libs/common/decorator/roles.decorator';
-import { Request } from '@nestjs/common';
-;
+import { Request } from './../../libs/common/interface/request.interface';
 import { Role } from './../../libs/common/enum/role.enum';
 import { UsersServiceProxy } from './proxies/user.cache.proxy.service';
 
@@ -28,7 +27,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN')
   async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {
-    const user = req.user as User;
+    const user = req.user;
     const role: Role = user?.role as Role;
     return this.usersService.findAllUsers(role);
   }
@@ -40,7 +39,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
   ): Promise<Partial<GetUserDTO> | null> {
-    const user = req.user as User;
+    const user = req.user;
     const role: Role = user?.role as Role;
     return this.usersService.findUserById(+id, role);
   }

@@ -19,6 +19,6 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["zod", "node", "express"]
+    "types": ["zod", "node",]
   }
 }

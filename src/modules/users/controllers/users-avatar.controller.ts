@@ -1,23 +1,18 @@
 import {
   Controller,
   Post,
-  UseGuards,
-  UseInterceptors,
   Param,
-  ParseIntPipe,
-  UploadedFile,
   Req,
+  UseGuards,
   UnauthorizedException,
   BadRequestException,
+  ParseIntPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
-import { MulterError } from 'multer';
-import { AuthenticatedRequest } from './../../../modules/auth/dto/auth.schema';
+import { JwtAuthGuard } from './../../../libs/common/guards/jwt-auth.guard';
 import { ImageService } from './../../../modules/image/image.service';
+import { Request } from './../../../libs/common/interface/request.interface';
+import { AvatarUploadedFile } from './../../../modules/image/interface/avatarUploadedFile.interface';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
-import { JwtAuthGuard } from './../../../libs';
-import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
 
 @Controller('users')
 export class UserAvatarController {
@@ -25,35 +20,35 @@ export class UserAvatarController {
 
   @Post(':id/avatar')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: memoryStorage(),
-      fileFilter: avatarFileFilter,
-      limits: {
-        fileSize: 3 * 1024 * 1024, // 3MB
-      },
-    }),
-  )
   async uploadAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: MulterFile,
-    @Req() req: AuthenticatedRequest,
+    @Req() req: Request,
   ) {
     if (req.user.id !== id) {
       throw new UnauthorizedException('Denied access to the user');
     }
 
-    try {
-      const imageUrl = await this.imageService.uploadUserAvatar(
-        file,
-        String(id),
-      );
-      return { imageUrl };
-    } catch (error) {
-      if (error instanceof MulterError && error.code === 'LIMIT_FILE_SIZE') {
-        throw new BadRequestException('Arquivo excede o limite de 3MB');
+    const parts = req.parts();
+    for await (const part of parts) {
+      if (part.type === 'file') {
+        const buffer = await part.toBuffer();
+
+        const file: AvatarUploadedFile = {
+          originalname: part.filename,
+          buffer,
+          mimetype: part.mimetype,
+        };
+
+        avatarFileFilter(file);
+
+        const imageUrl = await this.imageService.uploadUserAvatar(
+          file,
+          String(id),
+        );
+        return { imageUrl };
       }
-      throw error;
     }
+
+    throw new BadRequestException('No file was uploaded');
   }
 }

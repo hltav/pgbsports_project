@@ -1,8 +1,6 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from './../../../libs/common/dto/user';
-import { Request } from '@nestjs/common';
-;
+import { Request } from './../../../libs/common/interface/request.interface';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -14,7 +12,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }
 
       const request = context.switchToHttp().getRequest<Request>();
-      const user = request.user as User;
+      const user = request.user;
 
       if (user) {
         user.role = user.role || 'USER';

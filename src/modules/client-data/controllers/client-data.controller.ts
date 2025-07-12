@@ -5,13 +5,12 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
   Req,
   UnauthorizedException,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,10 +18,10 @@ import { ClientDataService } from '../client-data.service';
 import { JwtAuthGuard, Roles, RolesGuard } from '../../../libs/common';
 import { AuthenticatedRequest } from '../../auth/dto/auth.schema';
 import { CreateClientDataDTO, UpdateClientDataDTO } from '../dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Request } from '../../../libs/common/interface/request.interface';
 import { ImageService } from './../../image/image.service';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
-import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
+import { AvatarUploadedFile } from './../../../modules/image/interface/avatarUploadedFile.interface';
 
 @Controller('client-data')
 export class ClientDataController {
@@ -70,28 +69,37 @@ export class ClientDataController {
 
   @Put(':id/image')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      limits: { fileSize: 3 * 1024 * 1024 }, // até 3MB
-      fileFilter: avatarFileFilter,
-    }),
-  )
   async updateProfileImage(
-    @Param('id') id: string,
-    @UploadedFile() file: MulterFile,
-    @Req() req: AuthenticatedRequest,
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
   ) {
-    if (req.user.id !== +id) {
+    if (req.user.id !== id) {
       throw new UnauthorizedException(
         'Você só pode atualizar sua própria imagem',
       );
     }
 
-    if (!file) {
-      throw new BadRequestException('Arquivo inválido ou ausente');
+    const parts = req.parts();
+    for await (const part of parts) {
+      if (part.type === 'file') {
+        const buffer = await part.toBuffer();
+
+        const file: AvatarUploadedFile = {
+          originalname: part.filename,
+          buffer,
+          mimetype: part.mimetype,
+        };
+
+        avatarFileFilter(file);
+
+        const imageUrl = await this.imageService.uploadUserAvatar(
+          file,
+          String(id),
+        );
+        return this.clientDataService.updateClientImage(id, imageUrl);
+      }
     }
 
-    const imageUrl = await this.imageService.uploadUserAvatar(file, id);
-    return this.clientDataService.updateClientImage(+id, imageUrl);
+    throw new BadRequestException('Nenhum arquivo enviado');
   }
 }

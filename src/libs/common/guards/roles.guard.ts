@@ -6,9 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { User } from './../../../libs/common/dto/user';
-import { Request } from '@nestjs/common';
-;
+import { Request } from './../../../libs/common/interface/request.interface';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -26,7 +24,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest<Request>();
-    const user = request.user as User;
+    const user = request.user;
 
     if (
       !user ||

@@ -1,25 +1,20 @@
-import { ClientDataService } from './../../modules/client-data/client-data.service';
-import { ImageService } from './image.service';
-import { AuthenticatedRequest } from './../../modules/auth/dto/auth.schema';
 import {
   Controller,
-  UseGuards,
-  UseInterceptors,
-  Param,
-  ParseIntPipe,
-  UploadedFile,
-  Req,
-  UnauthorizedException,
-  Put,
-  NotFoundException,
   Delete,
+  Put,
+  Param,
+  Req,
+  UseGuards,
+  UnauthorizedException,
+  NotFoundException,
+  ParseIntPipe,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtAuthGuard } from './../../libs';
-import { avatarFileFilter } from './utils/file-filter.util';
-import { MulterFile } from './../../libs/common/interface/multerFile.inteface';
+import { Request } from './../../libs/common/interface/request.interface';
+import { ClientDataService } from '../client-data/client-data.service';
+import { ImageService } from './image.service';
+import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
 
-@Controller('client-data')
+@Controller('client-image')
 export class ClientImageController {
   constructor(
     private readonly imageService: ImageService,
@@ -28,13 +23,13 @@ export class ClientImageController {
 
   @Put(':id/avatar')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('file', { fileFilter: avatarFileFilter }))
   async updateAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: MulterFile,
-    @Req() req: AuthenticatedRequest,
+    @Req() req: Request,
   ) {
-    if (req.user.id !== id) {
+    const user = req.user;
+
+    if (user.id !== id) {
       throw new UnauthorizedException('Acesso negado');
     }
 
@@ -43,19 +38,36 @@ export class ClientImageController {
       throw new NotFoundException('Cliente não encontrado');
     }
 
-    if (clientData.image) {
-      await this.imageService.deleteUserAvatar(clientData.image);
+    const parts = req.parts();
+    for await (const part of parts) {
+      if (part.type === 'file') {
+        const buffer = await part.toBuffer();
+        const file = {
+          originalname: part.filename,
+          buffer,
+          mimetype: part.mimetype,
+        };
+
+        if (clientData.image) {
+          await this.imageService.deleteUserAvatar(clientData.image);
+        }
+
+        const imageUrl = await this.imageService.uploadUserAvatar(
+          file,
+          String(id),
+        );
+        return this.clientDataService.updateClientImage(id, imageUrl);
+      }
     }
 
-    const imageUrl = await this.imageService.uploadUserAvatar(file, String(id));
-    return this.clientDataService.updateClientImage(id, imageUrl);
+    throw new NotFoundException('Nenhum arquivo enviado');
   }
 
   @Delete(':id/avatar')
   @UseGuards(JwtAuthGuard)
   async deleteAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: AuthenticatedRequest,
+    @Req() req: Request,
   ) {
     if (req.user.id !== id) {
       throw new UnauthorizedException('Acesso negado');

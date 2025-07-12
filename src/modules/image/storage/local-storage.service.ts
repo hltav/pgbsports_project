@@ -4,7 +4,7 @@ import { writeFile, unlink, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { randomUUID } from 'crypto';
 import { StorageService } from './storage.service';
-import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
+import { AvatarUploadedFile } from '../interface/avatarUploadedFile.interface';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
@@ -18,7 +18,10 @@ export class LocalStorageService implements StorageService {
     }
   };
 
-  async uploadAvatar(file: MulterFile, userId: string): Promise<string> {
+  async uploadAvatar(
+    file: AvatarUploadedFile,
+    userId: string,
+  ): Promise<string> {
     if (!file.originalname || !file.buffer) {
       throw new Error('Invalid file');
     }

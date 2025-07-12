@@ -1,6 +1,6 @@
-import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
+import { AvatarUploadedFile } from '../interface/avatarUploadedFile.interface';
 
 export interface StorageService {
-  uploadAvatar(file: MulterFile, userId: string): Promise<string>;
+  uploadAvatar(file: AvatarUploadedFile, userId: string): Promise<string>;
   deleteAvatar(filePath: string): Promise<void>;
 }

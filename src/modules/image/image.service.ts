@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StorageService } from './storage/storage.service';
-import { MulterFile } from './../../libs/common/interface/multerFile.inteface';
+import { AvatarUploadedFile } from './interface/avatarUploadedFile.interface';
 
 @Injectable()
 export class ImageService {
@@ -8,7 +8,7 @@ export class ImageService {
     @Inject('StorageService') private readonly storage: StorageService,
   ) {}
 
-  async uploadUserAvatar(file: MulterFile, userId: string) {
+  async uploadUserAvatar(file: AvatarUploadedFile, userId: string) {
     return this.storage.uploadAvatar(file, userId);
   }
 
