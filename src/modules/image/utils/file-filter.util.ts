@@ -1,12 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Request } from 'express';
 import { extname } from 'path';
-import type { Multer } from 'multer';
-import type { Express } from 'express';
+import type { Request } from 'express';
+import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
 
 export function avatarFileFilter(
   req: Request,
-  file: Express.Multer.File,
+  file: MulterFile,
   callback: (error: Error | null, acceptFile: boolean) => void,
 ) {
   const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];

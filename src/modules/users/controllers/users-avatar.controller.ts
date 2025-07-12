@@ -17,7 +17,7 @@ import { AuthenticatedRequest } from './../../../modules/auth/dto/auth.schema';
 import { ImageService } from './../../../modules/image/image.service';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
 import { JwtAuthGuard } from './../../../libs';
-import type { Express } from 'express';
+import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
 
 @Controller('users')
 export class UserAvatarController {
@@ -36,7 +36,7 @@ export class UserAvatarController {
   )
   async uploadAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: MulterFile,
     @Req() req: AuthenticatedRequest,
   ) {
     if (req.user.id !== id) {

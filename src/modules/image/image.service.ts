@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { StorageService } from './storage/storage.service';
-import type { Express } from 'express';
+import type { Request } from 'express';
 
 @Injectable()
 export class ImageService {
@@ -8,7 +8,7 @@ export class ImageService {
     @Inject('StorageService') private readonly storage: StorageService,
   ) {}
 
-  async uploadUserAvatar(file: Express.Multer.File, userId: string) {
+  async uploadUserAvatar(file: Request['file'], userId: string) {
     return this.storage.uploadAvatar(file, userId);
   }
 

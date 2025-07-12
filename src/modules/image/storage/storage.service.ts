@@ -1,5 +1,8 @@
-import type { Express } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
+import type { Request } from 'express';
+
 export interface StorageService {
-  uploadAvatar(file: Express.Multer.File, userId: string): Promise<string>;
+  uploadAvatar(file: Request['file'], userId: string): Promise<string>;
   deleteAvatar(filePath: string): Promise<void>;
 }

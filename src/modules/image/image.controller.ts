@@ -17,7 +17,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './../../libs';
 import { avatarFileFilter } from './utils/file-filter.util';
-import type { Express } from 'express';
+import { MulterFile } from './../../libs/common/interface/multerFile.inteface';
 
 @Controller('client-data')
 export class ClientImageController {
@@ -31,7 +31,7 @@ export class ClientImageController {
   @UseInterceptors(FileInterceptor('file', { fileFilter: avatarFileFilter }))
   async updateAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: MulterFile,
     @Req() req: AuthenticatedRequest,
   ) {
     if (req.user.id !== id) {
