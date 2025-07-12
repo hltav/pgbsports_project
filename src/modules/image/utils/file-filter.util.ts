@@ -1,5 +1,6 @@
 import { extname } from 'path';
-import type { Request } from 'express-serve-static-core';
+import { Request } from 'express';
+
 import { MulterFile } from './../../../libs/common/interface/multerFile.inteface';
 
 export function avatarFileFilter(

@@ -7,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { User } from './../../../libs/common/dto/user';
-import type { Request } from 'express-serve-static-core';
+import { Request } from 'express';
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   private readonly logger = new Logger(RolesGuard.name);
@@ -27,12 +28,10 @@ export class RolesGuard implements CanActivate {
     const user = request.user as User;
 
     if (
-      !requiredRoles.some((role) => {
-        if (typeof user.role === 'string') {
-          return role.toLowerCase() === user.role.toLowerCase();
-        }
-        return false;
-      })
+      !user ||
+      !requiredRoles.some(
+        (role) => role.toLowerCase() === (user.role as string).toLowerCase(),
+      )
     ) {
       throw new ForbiddenException(
         'You do not have permission to access this resource',
