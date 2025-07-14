@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:  # Adicione esta linha para testes manuais
 
 jobs:
   deploy:
@@ -62,8 +63,8 @@ jobs:
 
             # ===== BUILD E DEPLOY =====
             echo "🧹 Limpando instalação anterior..."
-            rm -rf node_modules package-lock.json dist
-            npm cache clean --force
+            rm -rf node_modules package-lock.json
+            find dist -mindepth 1 -maxdepth 1 ! -name 'libs' -exec rm -rf {} + || true
 
             echo "📦 Instalando dependências..."
             npm install --omit=dev --prefer-offline --no-audit
@@ -72,7 +73,27 @@ jobs:
             npx prisma generate
 
             echo "🔨 Buildando aplicação..."
-            npx tsc -p tsconfig.build.json
+            npm run build
+
+            # Verificação rigorosa dos templates
+            echo "📂 Verificando templates .hbs..."
+            mkdir -p dist/libs/services/mailer
+            
+            if [ ! -d "src/libs/services/mailer/templates" ]; then
+              echo "❌ ERRO: Diretório de templates não encontrado em:"
+              echo "$APP_DIR/src/libs/services/mailer/templates"
+              echo "Conteúdo atual do diretório:"
+              ls -la src/libs/services/mailer/ || true
+              exit 1
+            fi
+
+            if [ -z "$(ls -A src/libs/services/mailer/templates/*.hbs 2>/dev/null)" ]; then
+              echo "❌ ERRO: Nenhum arquivo .hbs encontrado nos templates!"
+              exit 1
+            fi
+
+            cp -r src/libs/services/mailer/templates dist/libs/services/mailer/
+            echo "✅ Templates copiados: $(find dist/libs/services/mailer/templates -name '*.hbs' | wc -l) arquivos"
 
             echo "🚀 Iniciando aplicação..."
             pm2 startOrReload ecosystem.config.js --env production || \
