@@ -6,9 +6,9 @@
     "deleteOutDir": true,
     "assets": [
       {
-        "include": "src/libs/services/mailer/templates/**/*",
-        "outDir": "./dist",
-        "watchAssets": true
+        "include": "libs/services/mailer/templates/**/*",
+        "outDir": "./dist/libs/services/mailer/templates", 
+        "watchAssets": true 
       }
     ]
   }

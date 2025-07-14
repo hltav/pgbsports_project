@@ -7,14 +7,15 @@ import * as path from 'path';
 
 @Module({
   imports: [
+    ConfigModule,
     MailerModule.forRootAsync({
-      imports: [ConfigModule], // Importe ConfigModule aqui
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         transport: {
           host: configService.get<string>('MAIL_HOST'),
           port: configService.get<number>('MAIL_PORT'),
-          secure: false, // TLS
+          secure: false,
           auth: {
             user: configService.get<string>('MAIL_USER'),
             pass: configService.get<string>('MAIL_PASS'),
@@ -24,16 +25,14 @@ import * as path from 'path';
           from: configService.get<string>('MAIL_FROM'),
         },
         template: {
-          dir: path.join(
-            __dirname,
-            './../../../libs/services/mailer/templates',
-          ),
+          dir: path.resolve(__dirname, 'templates'),
           adapter: new HandlebarsAdapter(),
-          options: { strict: true },
+          options: {
+            strict: true,
+          },
         },
       }),
     }),
-    ConfigModule, // Importe ConfigModule aqui (nível superior do @Module)
   ],
   providers: [EmailService],
   exports: [EmailService],
