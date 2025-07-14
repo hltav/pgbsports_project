@@ -17,6 +17,7 @@
     "start:dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/main.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main.js",
+    "postbuild": "cp -r libs/services/mailer/templates dist/libs/services/mailer/",
     "dev:with-tests": "concurrently \"npm:serve\" \"npm:test:changed\"",
     "serve": "nest start --watch",
     "test:changed": "jest --onlyChanged --passWithNoTests",

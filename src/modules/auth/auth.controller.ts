@@ -3,8 +3,6 @@ import {
   Controller,
   Get,
   Post,
-  Query,
-  Redirect,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -63,11 +61,10 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
-  @Get('confirm')
-  @Redirect('http://localhost:3000/login') // redireciona para a página de login
-  async confirmEmail(@Query('token') token: string) {
+  @Post('confirm-email')
+  async confirmEmail(@Body('token') token: string) {
     await this.confirmEmailService.execute(token);
-    return { message: 'E-mail confirmado com sucesso!' };
+    return { success: true, message: 'E-mail confirmado com sucesso!' };
   }
 
   @Post('forgot-password')
