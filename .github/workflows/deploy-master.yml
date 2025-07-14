@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - master
-  workflow_dispatch:  # Adicione esta linha para testes manuais
-
+ 
 jobs:
   deploy:
     runs-on: ubuntu-latest
