@@ -18,7 +18,7 @@ async function bootstrap() {
   );
 
   await app.register(cors, {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:3001',
     credentials: true,
   });
 
@@ -44,7 +44,7 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen({ port: 3003, host: '0.0.0.0' });
+  await app.listen({ port: 3000, host: '0.0.0.0' });
 }
 bootstrap().catch((err) => {
   console.error('Erro ao iniciar aplicação:', err);
