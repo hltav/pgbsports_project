@@ -10,12 +10,16 @@ import multipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import cors from '@fastify/cors';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter(),
   );
+
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('PORT') || 3000;
 
   await app.register(cors, {
     origin: 'http://localhost:3001',
@@ -44,7 +48,7 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen({ port: 3000, host: '0.0.0.0' });
+  await app.listen({ port, host: '0.0.0.0' });
 }
 bootstrap().catch((err) => {
   console.error('Erro ao iniciar aplicação:', err);
