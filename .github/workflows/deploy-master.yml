@@ -44,7 +44,7 @@ jobs:
             ssh -T git@github.com || true
 
             # ===== CONFIGURAÇÃO DO PROJETO =====
-            APP_DIR="/var/www/rtsmanager_backend"
+            APP_DIR="/home/hltav/rtsmanager_backend"
             sudo mkdir -p "$APP_DIR"
             sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} "$APP_DIR"
             cd "$APP_DIR"
