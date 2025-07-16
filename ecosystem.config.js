@@ -8,6 +8,10 @@ module.exports = {
     watch: false,
     max_memory_restart: "1G",
     env: {
+      NODE_ENV: "development",
+      ENV_PATH: "/home/hltav/rtsmanager_backend/.env"
+    },
+    env_production: {
       NODE_ENV: "production",
       ENV_PATH: "/home/hltav/rtsmanager_backend/.env"
     }

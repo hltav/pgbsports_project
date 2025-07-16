@@ -86,11 +86,20 @@ export class EmailService {
   }
 
   private buildResetPasswordLink(token: string): string {
-    return `${this.frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    const isDev = process.env.NODE_ENV === 'development';
+    const frontendUrl = isDev
+      ? 'http://localhost:3001' // Ambiente dev
+      : 'http://91.99.55.16:3001'; // Ambiente prod
+    return `${frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
   }
 
   private buildEmailConfirmationLink(token: string): string {
-    return `${this.frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
+    const isDev = process.env.NODE_ENV === 'development';
+    const frontendUrl = isDev
+      ? 'http://localhost:3001' // Ambiente dev
+      : 'http://91.99.55.16:3001'; // Ambiente prod
+
+    return `${frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
   }
 
   private logSuccess(email: string): void {
