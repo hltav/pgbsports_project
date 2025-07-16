@@ -17,10 +17,8 @@ export class EmailService {
     private readonly mailerService: MailerService,
     configService: ConfigService,
   ) {
-    this.frontendUrl = configService.get(
-      'FRONTEND_URL',
-      'https://localhost:3000',
-    );
+    this.frontendUrl =
+      configService.get('FRONTEND_URL') ?? 'http://localhost:3001';
 
     this.sendMail = async (options) => {
       try {
@@ -86,20 +84,11 @@ export class EmailService {
   }
 
   private buildResetPasswordLink(token: string): string {
-    const isDev = process.env.NODE_ENV === 'development';
-    const frontendUrl = isDev
-      ? 'http://localhost:3001' // Ambiente dev
-      : 'http://91.99.55.16:3001'; // Ambiente prod
-    return `${frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
+    return `${this.frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
   }
 
   private buildEmailConfirmationLink(token: string): string {
-    const isDev = process.env.NODE_ENV === 'development';
-    const frontendUrl = isDev
-      ? 'http://localhost:3001' // Ambiente dev
-      : 'http://91.99.55.16:3001'; // Ambiente prod
-
-    return `${frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
+    return `${this.frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
   }
 
   private logSuccess(email: string): void {

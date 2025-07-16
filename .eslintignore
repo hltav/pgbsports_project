@@ -1,2 +1,2 @@
-
-/ecosystem.config.js
+# .eslintignore
+ecosystem.config.js
