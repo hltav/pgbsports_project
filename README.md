@@ -1,176 +1,260 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <a href="https://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  <b>RT Sports Manager</b> — a professional sports bankroll management platform, built with <a href="http://nestjs.com/" target="_blank">NestJS</a> for scalable and secure backend development.
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-# HR Manager - Sports Bankroll Management
-
-## 📌 About the Project
-
-The **HR Manager** is a sports bankroll management platform built using **NestJS** to provide a robust, scalable, and secure backend. The system includes features for user management, authentication, statistics, sports predictions, and more.
-
-## 🚀 Technologies Used
-
-- **[NestJS](https://nestjs.com/)** - Progressive Node.js framework
-- **[Prisma](https://www.prisma.io/)** - ORM for database management
-- **[PostgreSQL](https://www.postgresql.org/)** - Relational database
-- **[JWT (JSON Web Token)](https://jwt.io/)** - Secure authentication
-- **[TypeScript](https://www.typescriptlang.org/)** - Development language
-- **[Jest](https://jestjs.io/)** - Testing framework
-
-## 📁 Project Structure
-
-```
-📦 hr-manager-pgbs
-│── 📜 README.md                # Project documentation
-│── 📜 package.json             # Dependencies and scripts
-│── 📜 tsconfig.json            # TypeScript configuration
-│── 📜 jest-e2e.json            # E2E test configuration
-│
-├── 📂 prisma                   # Prisma ORM configuration
-│   ├── 📂 migrations           # Database migration history
-│   ├── prisma.client.ts        # PrismaClient instance
-│   ├── prisma.module.ts        # Module for injecting PrismaService
-│   ├── prisma.service.ts       # Service handling database connections
-│   ├── schema.prisma           # Prisma schema definition
-│
-├── 📂 src                      # Main application code
-│   │
-│   ├── 📂 app                  # Application root module
-│   │   ├── app.module.ts       # Main module importing other modules
-│   │   ├── app.controller.ts   # Main controller
-│   │   ├── app.service.ts      # Main service
-│   │   ├── main.ts             # NestJS application entry point
-│   │
-│   ├── 📂 config               # Global configurations
-│   │   ├── prisma.config.ts    # Prisma ORM configuration
-│   │
-│   ├── 📂 common               # Shared resources
-│   │   ├── 📂 decorator        # Custom decorators
-│   │   ├── 📂 guards           # Route protection guards
-│   │   ├── 📂 middlewares      # Global middlewares (e.g., Logger, CORS)
-│   │   ├── 📂 enums            # Enum definitions used in the project
-│   │   ├── 📂 interfaces       # Shared interfaces across modules
-│   │   ├── 📂 strategy         # Authentication/authorization strategies
-│   │   │   ├── jwt.strategy.ts # JWT authentication strategy
-│   │   │   ├── index.ts        # Centralized export for strategies
-│   │   ├── 📂 dto              # Global DTOs (if shared across modules)
-│   │
-│   ├── 📂 services             # Reusable services
-│   │   ├── 📂 mailer           # Email sending service
-│   │   │   ├── mail.module.ts
-│   │   │   ├── mail.service.ts
-│   │   ├── 📂 cache            # (Optional) Cache service (e.g., Redis)
-│   │   │   ├── cache.module.ts
-│   │   │   ├── cache.service.ts
-│   │
-│   ├── 📂 modules              # Application modules
-│   │   ├── 📂 auth             # Authentication and JWT management
-│   │   │   ├── dto/            # DTOs specific to the module
-│   │   │   ├── interfaces/     # Interfaces specific to the module
-│   │   │   ├── auth.module.ts  # Authentication module
-│   │   │   ├── auth.controller.ts
-│   │   │   ├── auth.service.ts
-│   │   ├── 📂 users            # User management
-│   │   ├── 📂 bankroll         # Financial management
-│   │   ├── 📂 client-data      # Client data management
-│   │   ├── 📂 events           # System events
-│   │   ├── 📂 predictions      # Predictions and analytics
-│   │   ├── 📂 subscriptions    # Subscriptions and payments
-│   │   ├── 📂 health           # API health check endpoint
-│
-├── 📂 test                     # Unit and E2E tests
-│   ├── 📂 unit                 # Unit tests for services
-│   ├── 📂 integration          # Integration tests for controllers
-│   ├── 📂 e2e                  # End-to-End (E2E) tests
-│   ├── app.e2e-spec.ts         # Main E2E tests
-...
-
-
-## 🔑 Authentication & Security
-
-The project implements **JWT** authentication and **Guards** for role-based access control:
-
-- `JwtAuthGuard` → Protects authenticated routes
-- `RolesGuard` → Restricts access based on user permissions
-
-## 🛠️ Setup & Installation
-
-### **1️⃣ Clone the repository**
-
-```sh
-git clone https://github.com/your-username/project-nestjs.git
-cd project-nestjs
-```
-
-### **2️⃣ Install dependencies**
-
-```sh
-yarn install  # or npm install
-```
-
-### **3️⃣ Configure environment variables**
-
-Create a `.env` file at the root of the project and add your settings:
-
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/hrmanager
-JWT_SECRET=your_secret_key
-MAIL_HOST=smtp.example.com
-MAIL_USER=user@example.com
-MAIL_PASS=password
-```
-
-### **4️⃣ Run database migrations**
-
-```sh
-yarn prisma migrate dev  # or npx prisma migrate dev
-```
-
-### **5️⃣ Start the server**
-
-```sh
-yarn start:dev  # or npm run start:dev
-```
-
-The server will be running at `http://localhost:3000`
-
-## 📌 Automated Testing
-
-To run tests, use:
-
-```sh
-yarn test        # Unit tests
-yarn test:e2e    # Integration tests
-```
-
-## 📫 Contribution
-
-1. **Fork** the repository
-2. Create a new **branch**: `git checkout -b feature/new-feature`
-3. Make your changes and **commit**: `git commit -m 'Adding new feature'`
-4. Push to the remote repository: `git push origin feature/new-feature`
-5. Open a **Pull Request**
-
-## 📜 License
-
-This project is licensed under the **MIT License**. Feel free to use and improve it! 🚀
+<p align="center">
+  <a href="https://www.npmjs.com/package/@nestjs/core"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/package/@nestjs/core"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="License" /></a>
+  <a href="https://www.npmjs.com/package/@nestjs/common"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="Downloads" /></a>
+  <a href="https://circleci.com/gh/nestjs/nest"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+  <a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master" alt="Coverage" /></a>
+  <a href="https://discord.gg/nestjs" target="_blank"><img src="https://img.shields.io/discord/520858932613122048.svg?label=Discord&logo=discord&style=flat" alt="Discord" /></a>
+</p>
 
 ---
-Developed with 💙 by [Hudson Tavares](https://github.com/hltav)
+
+# RT Sports Manager – Sports Bankroll Management System
+
+## 📌 Sobre o Projeto
+
+O **RT Sports Manager** é uma plataforma completa de gestão de bancas esportivas, focada em **traders e apostadores profissionais**. A aplicação foi construída com **NestJS** no backend, garantindo **segurança, modularidade e escalabilidade**.
+
+Entre seus recursos estão:
+- Gerenciamento de usuários e perfis
+- Controle de bancas
+- Estatísticas e predições esportivas
+- Envio de e-mails transacionais
+- Integração com API esportiva (Football)
+- Autenticação JWT e confirmação de e-mail
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+- **NestJS** – Framework backend Node.js
+- **Prisma ORM** – Gerenciamento do banco de dados
+- **PostgreSQL** – Banco relacional robusto
+- **JWT** – Autenticação segura
+- **Zod** – Validação de DTOs e schemas
+- **TypeScript** – Linguagem de desenvolvimento
+- **Jest** – Testes automatizados
+- **Handlebars** – Templates de e-mail
+
+---
+
+## 📁 Estrutura de Pastas – RT Sports Manager
+
+```
+📦 rtsmanager_backend
+├── 📜 README.md # Documentação do projeto
+├── 📜 package.json # Dependências e scripts
+├── 📜 tsconfig.json # Configuração do TypeScript
+├── 📜 jest-e2e.json # Configuração de testes e2e
+├── 📜 .env # Variáveis de ambiente (produção/desenvolvimento)
+├── 📜 nest-cli.json # Configuração do Nest CLI
+├── 📜 nodemon.json # Hot reload em dev
+├── 📜 ecosystem.config.js # Arquivo de configuração do PM2
+│
+├── 📂 .github/workflows # Workflows do GitHub Actions (deploy automático)
+│ └── deploy-master.yml
+│
+├── 📂 prisma # Configuração do Prisma ORM
+│ ├── 📂 migrations # Histórico das migrations
+│ └── schema.prisma # Definição do schema do banco de dados
+│
+├── 📂 src # Código-fonte principal da aplicação
+│ ├── 📂 config # Configurações globais
+│ │ └── prisma.config.ts
+│
+│ ├── 📂 libs # Bibliotecas reutilizáveis e infraestrutura
+│ │ ├── 📂 common # Helpers, tipos, módulos e interfaces comuns
+│ │ │ ├── crypto/ # Utilitários de criptografia
+│ │ │ ├── database/ # Configuração e conexões do banco
+│ │ ├── 📂 services # Serviços utilitários
+│ │ │ ├── cache/ # Cache com TTL configurável
+│ │ │ │ ├── cache.module.ts
+│ │ │ │ └── cache.service.ts
+│ │ │ ├── mailer/ # Serviço de e-mail com templates
+│ │ │ │ ├── templates/ # Templates de e-mail (.hbs)
+│ │ │ │ ├── mail.module.ts
+│ │ │ │ └── mail.service.ts
+│ │ │ └── notifications/ # Placeholder para notificações
+│
+│ ├── 📂 modules # Módulos principais do sistema
+│ │ ├── 📂 auth # Autenticação (registro, login, e-mail)
+│ │ │ ├── dto/ # DTOs de autenticação
+│ │ │ ├── guards/ # Guards para autenticação e verificação de e-mail
+│ │ │ ├── strategy/ # Estratégia JWT
+│ │ │ ├── services/ # Serviços de auth (login, registro etc.)
+│ │ │ ├── types/ # Tipagens auxiliares
+│ │ │ ├── auth.controller.ts
+│ │ │ ├── auth.module.ts
+│ │ │ └── auth.service.ts
+│ │
+│ │ ├── 📂 users # Gestão de usuários
+│ │ │ ├── controllers/ # Controller de avatar
+│ │ │ ├── proxies/ # Proxy services para operações de usuário
+│ │ │ ├── services/ # Serviços para manipulação de usuário
+│ │ │ ├── test/ # Testes unitários de controller e service
+│ │ │ ├── users.controller.ts
+│ │ │ ├── users.module.ts
+│ │ │ └── users.service.ts
+│ │
+│ │ ├── 📂 bankroll # Módulo de gestão de banca (bankrolls)
+│ │ │ ├── services/ # Serviços de CRUD da banca
+│ │ │ ├── z.dto/ # DTOs validados com Zod
+│ │ │ ├── bankroll.controller.ts
+│ │ │ └── bankroll.module.ts
+│ │
+│ │ ├── 📂 client-data # Dados complementares do cliente
+│ │ │ ├── controllers/ # Controller de client-data
+│ │ │ ├── dto/ # Schemas e DTOs
+│ │ │ ├── services/ # CRUD dos dados do cliente
+│ │ │ ├── tests/ # Testes unitários e e2e
+│ │ │ ├── client-data.module.ts
+│ │ │ └── client-data.service.ts
+│ │
+│ │ ├── 📂 events # Eventos do sistema
+│ │ │ ├── dto/ # DTOs dos eventos
+│ │ │ ├── events.controller.ts
+│ │ │ └── events.service.ts
+│ │
+│ │ ├── 📂 predictions # Predições esportivas
+│ │ ├── 📂 statistics # Estatísticas de partidas
+│ │ ├── 📂 subscriptions # Módulo de assinaturas
+│ │ ├── 📂 health # Health check da API
+│ │ ├── 📂 image # Upload e manipulação de imagens
+│
+│ ├── 📂 shared # Tipos e declarações globais (custom.d.ts)
+│ ├── 📂 api-sports # Integração com API-Sports
+│ └── 📂 sports-radar # Integração com Sportradar (futuro)
+│
+│ └── main.ts # Ponto de entrada da aplicação Nest
+│
+├── 📂 uploads/avatars # Avatares dos usuários salvos localmente
+├── 📂 test/ # Testes automatizados
+│ ├── unit/ # Unitários
+│ ├── integration/ # Integração (controller + service)
+│ └── e2e/ # End-to-end
+│
+└── 📂 hetzner_server/ # Chaves SSH ou scripts de deploy VPS
+
+
+---
+
+## 🔒 Segurança e Autenticação
+
+- **JWT** com suporte a `access` e `refresh token`
+- **Guards personalizados**:
+  - `JwtAuthGuard`
+  - `VerifiedEmailGuard`
+- Confirmação de e-mail com `token` e redirecionamento para o frontend
+- Reset de senha por e-mail
+
+---
+
+## ✉️ Sistema de E-mails
+
+Integração com SMTP (Gmail ou outro provedor), usando `@nestjs-modules/mailer` e templates `.hbs`:
+
+- `email-confirmation.hbs`
+- `forgot-password.hbs`
+- `welcome.hbs`
+
+Variáveis no `.env`:
+
+```env
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USER=seu_email@gmail.com
+MAIL_PASS=sua_senha
+MAIL_FROM="RT Sports Manager <seu_email@gmail.com>"
+FRONTEND_URL=http://localhost:3000
+
+
+⚙️ Como Rodar o Projeto
+1️⃣ Clone o repositório
+bash
+Copiar
+Editar
+git clone git@github.com:hltav/pgbsports_project.git
+cd pgbsports_project
+2️⃣ Instale as dependências
+bash
+Copiar
+Editar
+npm install
+# ou
+yarn install
+3️⃣ Configure o .env
+env
+Copiar
+Editar
+DATABASE_URL=postgresql://user:senha@host:porta/banco
+FRONTEND_URL=http://localhost:3000
+JWT_SECRET=chave_secreta
+JWT_EXPIRES_IN=1h
+4️⃣ Execute as migrations do banco
+bash
+Copiar
+Editar
+npx prisma migrate dev
+5️⃣ Suba a aplicação
+bash
+Copiar
+Editar
+npm run start:dev
+# ou
+yarn start:dev
+✅ Rodando Testes
+Unitários:
+
+bash
+Copiar
+Editar
+yarn test
+Integração (E2E):
+
+bash
+Copiar
+Editar
+yarn test:e2e
+🧠 Funcionalidades já implementadas
+Autenticação e refresh token
+
+Verificação de e-mail
+
+Upload de avatar
+
+Envio automático de e-mails
+
+Criação e gerenciamento de bancas
+
+Integração com API de esportes
+
+Sistema de cache
+
+Testes unitários e e2e
+
+🤝 Contribuindo
+Faça um fork
+
+Crie uma branch: git checkout -b feature/nova-funcionalidade
+
+Commit: git commit -m 'feat: nova funcionalidade'
+
+Push: git push origin feature/nova-funcionalidade
+
+Crie um Pull Request
+
+📄 Licença
+Este projeto está licenciado sob a MIT License — utilize livremente, com créditos.
+
+Desenvolvido com 💙 por [Hudson Tavares](https://github.com/hltav)
+
+
+
