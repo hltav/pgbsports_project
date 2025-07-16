@@ -1,24 +1,15 @@
 module.exports = {
-  apps: [
-    {
-      name: "pgb_sports",
-      script: "dist/main.js",
-      env: {
-        NODE_ENV: "production",
-        DATABASE_URL: "DATABASE_URL",
-        JWT_SECRET: "JWT_SECRET",
-        JWT_EXPIRES_IN: "JWT_EXPIRES_IN",
-        MAIL_SERVICE_API: "MAIL_SERVICE_API",
-        CACHE_TTL_SECONDS: "CACHE_TTL_SECONDS",
-        SPORTRADAR_API_KEY: "SPORTRADAR_API_KEY",
-        APISPORTS_API_KEY: "APISPORTS_API_KEY",
-        MAIL_HOST: "MAIL_HOST",
-        MAIL_PORT: "MAIL_PORT",
-        MAIL_USER: "MAIL_USER",
-        MAIL_PASS: "MAIL_PASS",
-        MAIL_FROM: "MAIL_FROM",
-        FRONTEND_URL: "FRONTEND_URL"
-      }
+  apps: [{
+    name: "rtsmanager",
+    script: "./dist/main.js",
+    cwd: "/home/hltav/rtsmanager_backend",
+    instances: 1,
+    autorestart: true,
+    watch: false,
+    max_memory_restart: "1G",
+    env: {
+      NODE_ENV: "production",
+      ENV_PATH: "/home/hltav/rtsmanager_backend/.env"
     }
-  ]
+  }]
 };
