@@ -38,7 +38,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
             from: `"${configService.get<string>('MAIL_FROM_NAME', 'RT Sports')}" <${configService.get<string>('MAIL_FROM')}>`,
           },
           template: {
-            dir: '/var/www/rtsmanager_backend/dist/libs/services/mailer/templates',
+            dir: process.cwd() + '/dist/libs/services/mailer/templates',
             adapter: new HandlebarsAdapter(),
             options: {
               strict: true,

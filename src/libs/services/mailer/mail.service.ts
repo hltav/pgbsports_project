@@ -89,13 +89,8 @@ export class EmailService {
     return `${this.frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
   }
 
-  // private buildEmailConfirmationLink(token: string): string {
-  //   return `${this.frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
-  // }
-
   private buildEmailConfirmationLink(token: string): string {
-    const redirectUrl = encodeURIComponent(`${this.frontendUrl}/login`);
-    return `${this.frontendUrl}/confirm-email?token=${encodeURIComponent(token)}&redirectTo=${redirectUrl}`;
+    return `${this.frontendUrl}/confirm-email?token=${encodeURIComponent(token)}`;
   }
 
   private logSuccess(email: string): void {

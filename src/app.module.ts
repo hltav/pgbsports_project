@@ -13,6 +13,7 @@ import { ApiSportsModule } from './shared/api-sports/api-sports.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: process.env.ENV_PATH || '.env',
     }),
     LibsModule,
     AllmoduleModule,
