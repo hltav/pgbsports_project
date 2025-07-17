@@ -22,7 +22,11 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') || 3000;
 
   await app.register(cors, {
-    origin: 'http://localhost:3001',
+    origin: [
+      'http://localhost:3001',
+      'https://rtsportsmanager.vercel.app',
+      'http://91.99.55.16',
+    ],
     credentials: true,
   });
 
