@@ -42,7 +42,7 @@ export class AuthController {
     @Req() req: FastifyRequest,
     @Res() res: FastifyReply,
   ) {
-    const { accessToken, refreshToken } = await this.authService.signIn(
+    const { accessToken, refreshToken, user } = await this.authService.signIn(
       email,
       pass,
     );
@@ -63,7 +63,14 @@ export class AuthController {
       maxAge: 60 * 60 * 24 * 7, // 7 dias
     });
 
-    return res.send({ message: 'Login realizado com sucesso' });
+    return res.send({
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    });
   }
   @Get('validate')
   @UseGuards(JwtAuthGuard, RolesGuard)
