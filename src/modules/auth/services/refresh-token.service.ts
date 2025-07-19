@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../../users/users.service';
-import { JwtPayload } from '../dto/jwt-payload.dto';
+import { JwtPayload, JwtPayloadSchema } from '../dto/jwt-payload.dto';
 
 @Injectable()
 export class RefreshTokenService {
@@ -10,7 +10,9 @@ export class RefreshTokenService {
     private readonly usersService: UsersService,
   ) {}
 
-  async execute(refreshToken: string): Promise<{ accessToken: string }> {
+  async execute(
+    refreshToken: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const payload = this.jwtService.verify<JwtPayload>(refreshToken);
 
@@ -20,17 +22,27 @@ export class RefreshTokenService {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
-      const newPayload: JwtPayload = {
-        sub: user.id as number,
+      // Valida o usuário com Zod
+      const parsed = JwtPayloadSchema.safeParse({
+        sub: user.id,
         email: user.email,
         nickname: user.nickname,
         role: user.role,
-      };
-      const accessToken = this.jwtService.sign(newPayload, {
+      });
+
+      if (!parsed.success) {
+        throw new UnauthorizedException('User data inválido');
+      }
+
+      const accessToken = this.jwtService.sign(parsed.data, {
         expiresIn: '15m',
       });
 
-      return { accessToken };
+      const newRefreshToken = this.jwtService.sign(parsed.data, {
+        expiresIn: '7d',
+      });
+
+      return { accessToken, refreshToken: newRefreshToken };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }

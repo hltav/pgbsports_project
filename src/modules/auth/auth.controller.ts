@@ -4,12 +4,12 @@ import {
   Get,
   Post,
   Req,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard, Roles, RolesGuard } from '../../libs/common';
-import { RefreshTokenDTO } from './dto/refresh-token.dto';
 import {
   User,
   CreateUserDTO,
@@ -17,6 +17,7 @@ import {
 } from './../../libs/common/dto/user';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { ConfirmEmailService } from './services';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -35,10 +36,35 @@ export class AuthController {
   }
 
   @Post('login')
-  async login(@Body('email') email: string, @Body('password') pass: string) {
-    return this.authService.signIn(email, pass);
-  }
+  async login(
+    @Body('email') email: string,
+    @Body('password') pass: string,
+    @Req() req: FastifyRequest,
+    @Res() res: FastifyReply,
+  ) {
+    const { accessToken, refreshToken } = await this.authService.signIn(
+      email,
+      pass,
+    );
 
+    res.setCookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 15, // 15 minutos
+    });
+
+    res.setCookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 dias
+    });
+
+    return res.send({ message: 'Login realizado com sucesso' });
+  }
   @Get('validate')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'USER')
@@ -73,7 +99,32 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Body() refreshTokenDto: RefreshTokenDTO) {
-    return this.authService.refreshToken(refreshTokenDto.refreshToken);
+  async refresh(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+    const refresh_token = req.cookies?.refresh_token;
+
+    if (!refresh_token) {
+      throw new UnauthorizedException('Refresh token não encontrado');
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await this.authService.refreshToken(refresh_token);
+
+    res.setCookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 15,
+    });
+
+    res.setCookie('refresh_token', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return res.send({ message: 'Token renovado com sucesso' });
   }
 }

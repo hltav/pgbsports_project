@@ -9,6 +9,7 @@ import { join } from 'path';
 import multipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import cors from '@fastify/cors';
+import cookie from '@fastify/cookie'; // 👈 Novo import
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 
@@ -29,6 +30,8 @@ async function bootstrap() {
     ],
     credentials: true,
   });
+
+  await app.register(cookie);
 
   await app.register(multipart, {
     limits: {

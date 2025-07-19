@@ -1,9 +1,10 @@
-import { UsersService } from '../../users/users.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from '../../users/users.service';
 import { JwtPayload } from '../dto/jwt-payload.dto';
+import { FastifyRequest } from 'fastify';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,8 +16,18 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!jwtSecret) {
       throw new Error('JWT_SECRET environment variable is missing');
     }
+
+    function cookieExtractor(req: FastifyRequest): string | null {
+      return req.cookies?.access_token || null;
+    }
+
+    const jwtFromRequest = ExtractJwt.fromExtractors([
+      ExtractJwt.fromAuthHeaderAsBearerToken(),
+      cookieExtractor,
+    ]);
+
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest,
       secretOrKey: jwtSecret,
     });
   }
