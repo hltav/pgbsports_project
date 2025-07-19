@@ -72,6 +72,7 @@ export class AuthController {
       },
     });
   }
+
   @Get('validate')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'USER')
