@@ -66,10 +66,7 @@ export class AuthController {
     return res.send({
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-      },
+      user,
     });
   }
 
