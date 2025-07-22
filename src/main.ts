@@ -25,6 +25,7 @@ async function bootstrap() {
   await app.register(cors, {
     origin: [
       'http://localhost:3001',
+      'https://localhost:3001',
       'https://rtsportsmanager.vercel.app',
       'http://91.99.55.16',
     ],
