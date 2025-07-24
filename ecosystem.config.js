@@ -11,14 +11,12 @@ module.exports = {
       // Configuração para DESENVOLVIMENTO (--env development)
       env: {
         NODE_ENV: 'development',
-        ENV_PATH: '/home/hltav/rtsmanager_backend/.env',
-        FRONTEND_URL: 'http://localhost:3001', // ← Localhost no dev
+        FRONTEND_URL: 'https://localhost:3001', 
       },
       // Configuração para PRODUÇÃO (--env production)
       env_production: {
         NODE_ENV: 'production',
-        ENV_PATH: '/home/hltav/rtsmanager_backend/.env',
-        FRONTEND_URL: 'http://91.99.55.16:3001', // ← IP público no prod
+        FRONTEND_URL: 'https://rtsmanager.duckdns.org',
       },
     },
   ],
