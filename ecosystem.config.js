@@ -16,7 +16,7 @@ module.exports = {
       // Configuração para PRODUÇÃO (--env production)
       env_production: {
         NODE_ENV: 'production',
-        FRONTEND_URL: 'https://rtsmanager.duckdns.org',
+        FRONTEND_URL: 'https://rtsportsmanager.vercel.app',
       },
     },
   ],
