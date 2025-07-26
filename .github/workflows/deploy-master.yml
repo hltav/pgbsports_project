@@ -65,17 +65,14 @@ jobs:
             rm -rf node_modules package-lock.json
             find dist -mindepth 1 -maxdepth 1 ! -name 'libs' -exec rm -rf {} + || true
 
-            echo "📦 Instalando dependências (com dev)..."
-            npm install --prefer-offline --no-audit
+            echo "📦 Instalando dependências..."
+            npm install --omit=dev --prefer-offline --no-audit
 
             echo "⚙️ Gerando Prisma Client..."
             npx prisma generate
 
             echo "🔨 Buildando aplicação..."
             npm run build
-
-            echo "🧹 Removendo devDependencies para produção..."
-            npm prune --production
 
             # Verificação rigorosa dos templates
             echo "📂 Verificando templates .hbs..."
