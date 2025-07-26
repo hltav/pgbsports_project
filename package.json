@@ -11,7 +11,7 @@
   "types": "src/types/zod.d.ts",
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
-    "build": "nest build",
+    "build": "npx nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/main.ts",
