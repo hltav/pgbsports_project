@@ -60,7 +60,7 @@ jobs:
               echo "🔄 Atualizando código..."
               git fetch origin master
               git reset --hard origin/master
-              git clean -fd
+              git clean -fd --exclude=.env
             fi
 
             # ===== BUILD E DEPLOY =====
