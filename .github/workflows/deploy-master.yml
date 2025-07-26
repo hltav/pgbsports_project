@@ -49,6 +49,9 @@ jobs:
             chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} "$APP_DIR"
             cd "$APP_DIR"
 
+            # Ajusta PATH para encontrar o nest global
+            export PATH=$PATH:/home/hltav/.npm-global/bin
+
             # ===== ATUALIZAÇÃO DO CÓDIGO =====
             if [ ! -d .git ]; then
               echo "🆕 Clonando repositório..."
