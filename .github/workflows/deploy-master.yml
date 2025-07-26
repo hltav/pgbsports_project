@@ -27,7 +27,7 @@ jobs:
 
             # ===== CONFIGURAÇÃO SSH =====
             mkdir -p ~/.ssh
-            echo "${{ secrets.GIT_DEPLOY_KEY }}" > ~/.ssh/github_key
+            printf '%s\n' "${{ secrets.GIT_DEPLOY_KEY }}" > ~/.ssh/github_key
             chmod 600 ~/.ssh/github_key
 
             cat > ~/.ssh/config <<EOF
