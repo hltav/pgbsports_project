@@ -45,8 +45,8 @@ jobs:
 
             # ===== CONFIGURAÇÃO DO PROJETO =====
             APP_DIR="/home/hltav/rtsmanager_backend"
-            sudo mkdir -p "$APP_DIR"
-            sudo chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} "$APP_DIR"
+            mkdir -p "$APP_DIR"
+            chown -R ${{ secrets.VPS_USER }}:${{ secrets.VPS_USER }} "$APP_DIR"
             cd "$APP_DIR"
 
             # ===== ATUALIZAÇÃO DO CÓDIGO =====
