@@ -18,6 +18,9 @@ module.exports = {
         NODE_ENV: 'production',
         FRONTEND_URL: 'https://rtsportsmanager.vercel.app',
       },
+      // --- ADICIONE ESTA LINHA AQUI PARA PRODUÇÃO ---
+      env_file: '.env', 
+      // ---------------------------------------------
     },
   ],
 };
