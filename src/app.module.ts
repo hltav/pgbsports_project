@@ -8,6 +8,7 @@ import { AllmoduleModule } from './modules/allmodule.module';
 import { LibsModule } from './libs/libs.module';
 import { CompetitionsModule } from './shared/sports-radar/futebol/competitions/competitions.module';
 import { ApiSportsModule } from './shared/api-sports/api-sports.module';
+import { ImageModule } from './modules/image/image.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ApiSportsModule } from './shared/api-sports/api-sports.module';
     CryptoModule,
     CompetitionsModule,
     ApiSportsModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
