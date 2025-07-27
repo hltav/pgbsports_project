@@ -13,7 +13,10 @@ import { Request } from './../../libs/common/interface/request.interface';
 import { ClientDataService } from '../client-data/client-data.service';
 import { ImageService } from './image.service';
 import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
+import { FastifyRequest } from 'fastify';
+import { JwtPayload } from '../auth/dto/jwt-payload.dto';
 
+type AuthenticatedRequest = FastifyRequest & { user: JwtPayload };
 @Controller('client-image')
 export class ClientImageController {
   constructor(
@@ -21,15 +24,57 @@ export class ClientImageController {
     private readonly clientDataService: ClientDataService,
   ) {}
 
+  // @Put(':id/avatar')
+  // @UseGuards(JwtAuthGuard)
+  // async updateAvatar(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Req() req: Request,
+  // ) {
+  //   const user = req.user;
+
+  //   if (user.id !== id) {
+  //     throw new UnauthorizedException('Acesso negado');
+  //   }
+
+  //   const clientData = await this.clientDataService.getClientData(id);
+  //   if (!clientData) {
+  //     throw new NotFoundException('Cliente não encontrado');
+  //   }
+
+  //   const parts = req.parts();
+  //   for await (const part of parts) {
+  //     if (part.type === 'file') {
+  //       const buffer = await part.toBuffer();
+  //       const file = {
+  //         originalname: part.filename,
+  //         buffer,
+  //         mimetype: part.mimetype,
+  //       };
+
+  //       if (clientData.image) {
+  //         await this.imageService.deleteUserAvatar(clientData.image);
+  //       }
+
+  //       const imageUrl = await this.imageService.uploadUserAvatar(
+  //         file,
+  //         String(id),
+  //       );
+  //       return this.clientDataService.updateClientImage(id, imageUrl);
+  //     }
+  //   }
+
+  //   throw new NotFoundException('Nenhum arquivo enviado');
+  // }
+
   @Put(':id/avatar')
   @UseGuards(JwtAuthGuard)
   async updateAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @Req() req: Request,
+    @Req() req: AuthenticatedRequest,
   ) {
     const user = req.user;
 
-    if (user.id !== id) {
+    if (!user || user.sub !== id) {
       throw new UnauthorizedException('Acesso negado');
     }
 
