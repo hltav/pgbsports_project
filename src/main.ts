@@ -22,16 +22,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
 
-  // await app.register(cors, {
-  //   origin: [
-  //     'http://localhost:3001',
-  //     'https://localhost:3001',
-  //     'https://rtsportsmanager.vercel.app',
-  //     'http://91.99.55.16',
-  //   ],
-  //   credentials: true,
-  // });
-
   await app.register(cors, {
     origin: (origin, cb) => {
       const allowedOrigins = [
@@ -48,6 +38,7 @@ async function bootstrap() {
       }
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   });
 
   await app.register(cookie);
