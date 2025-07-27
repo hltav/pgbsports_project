@@ -9,7 +9,7 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
 import { MyCacheModule } from './../libs/services/cache/cache.module';
-import { ImageModule } from './image/image.module';
+
 @Module({
   imports: [
     MyCacheModule,
@@ -22,7 +22,6 @@ import { ImageModule } from './image/image.module';
     StatisticsModule,
     SubscriptionsModule,
     ClientDataModule,
-    ImageModule,
   ],
   providers: [],
   exports: [
@@ -36,7 +35,6 @@ import { ImageModule } from './image/image.module';
     StatisticsModule,
     SubscriptionsModule,
     ClientDataModule,
-    ImageModule,
   ],
 })
 export class AllmoduleModule {}
