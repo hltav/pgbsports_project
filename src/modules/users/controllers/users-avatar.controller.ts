@@ -14,7 +14,7 @@ import { Request } from './../../../libs/common/interface/request.interface';
 import { AvatarUploadedFile } from './../../../modules/image/interface/avatarUploadedFile.interface';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
 
-@Controller('users')
+@Controller('users-avatar')
 export class UserAvatarController {
   constructor(private readonly imageService: ImageService) {}
 
