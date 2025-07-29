@@ -8,8 +8,12 @@ import { AvatarUploadedFile } from '../interface/avatarUploadedFile.interface';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
-  // Salva arquivos na pasta uploads/avatars na raiz do projeto
-  private readonly uploadDir = join(process.cwd(), 'src', 'uploads', 'avatars');
+  private readonly uploadDir = join(
+    process.cwd(),
+    'public',
+    'uploads',
+    'avatars',
+  );
   private readonly allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
 
   private ensureDirExists = async (): Promise<void> => {
