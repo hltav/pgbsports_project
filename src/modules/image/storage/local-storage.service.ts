@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { join } from 'path';
+import path, { join } from 'path';
 import { writeFile, unlink, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { randomUUID } from 'crypto';
 import { StorageService } from './storage.service';
 import { AvatarUploadedFile } from '../interface/avatarUploadedFile.interface';
-import { promises as fsPromises } from 'fs';
+import * as fs from 'fs';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
@@ -24,33 +24,24 @@ export class LocalStorageService implements StorageService {
   };
 
   async getUserAvatarPath(userId: string): Promise<string | null> {
-    const dir = join(process.cwd(), 'public', 'uploads', 'avatars');
+    const uploadDir = path.resolve('uploads/avatars');
+    const files = await fs.promises.readdir(uploadDir);
+    const userFiles = files.filter((file) => file.startsWith(`${userId}-`));
 
-    try {
-      const files = await fsPromises.readdir(dir);
+    if (userFiles.length === 0) return null;
 
-      const userFiles = files.filter((file) => file.startsWith(`${userId}-`));
+    let latestFile = userFiles[0];
+    let latestMtime = 0;
 
-      if (userFiles.length === 0) {
-        return null;
+    for (const file of userFiles) {
+      const stats = await fs.promises.stat(path.join(uploadDir, file));
+      if (stats.mtimeMs > latestMtime) {
+        latestMtime = stats.mtimeMs;
+        latestFile = file;
       }
-
-      let latestFile = userFiles[0];
-      let latestMtime = 0;
-
-      for (const file of userFiles) {
-        const stats = await fsPromises.stat(join(dir, file));
-        if (stats.mtimeMs > latestMtime) {
-          latestMtime = stats.mtimeMs;
-          latestFile = file;
-        }
-      }
-
-      return join(dir, latestFile);
-    } catch (error) {
-      console.error('Erro ao buscar avatar:', error);
-      return null;
     }
+
+    return `https://apirtsmanager.duckdns.org/uploads/avatars/${latestFile}`;
   }
 
   async uploadAvatar(

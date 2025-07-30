@@ -22,15 +22,11 @@ export class UserAvatarController {
 
   @Get(':id/avatar')
   async getAvatar(@Param('id') id: string) {
-    const imagePath = await this.imageService.getUserAvatarPath(id);
-
-    if (!imagePath) {
+    const url = await this.imageService.getUserAvatarPath(id);
+    if (!url) {
       throw new NotFoundException('Avatar not found');
     }
-
-    return {
-      url: imagePath,
-    };
+    return { url };
   }
 
   @Post(':id/avatar')
