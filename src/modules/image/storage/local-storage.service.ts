@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import path, { join } from 'path';
+import { join } from 'path';
 import { writeFile, unlink, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import { randomUUID } from 'crypto';
 import { StorageService } from './storage.service';
 import { AvatarUploadedFile } from '../interface/avatarUploadedFile.interface';
 import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
