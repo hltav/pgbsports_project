@@ -25,7 +25,7 @@ export class LocalStorageService implements StorageService {
   };
 
   async getUserAvatarPath(userId: string): Promise<string | null> {
-    const uploadDir = path.resolve('uploads/avatars');
+    const uploadDir = path.resolve('public/uploads/avatars');
     const files = await fs.promises.readdir(uploadDir);
     const userFiles = files.filter((file) => file.startsWith(`${userId}-`));
 
@@ -42,7 +42,7 @@ export class LocalStorageService implements StorageService {
       }
     }
 
-    return `https://apirtsmanager.duckdns.org/uploads/avatars/${latestFile}`;
+    return `https://apirtsmanager.duckdns.org/public/uploads/avatars/${latestFile}`;
   }
 
   async uploadAvatar(

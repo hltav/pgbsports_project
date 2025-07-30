@@ -15,12 +15,14 @@ import { ImageService } from './../../../modules/image/image.service';
 import { Request } from './../../../libs/common/interface/request.interface';
 import { AvatarUploadedFile } from './../../../modules/image/interface/avatarUploadedFile.interface';
 import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
+import { Public } from './../../../libs/common/decorator/public.decorator';
 
 @Controller('users-avatar')
 export class UserAvatarController {
   constructor(private readonly imageService: ImageService) {}
 
   @Get(':id/avatar')
+  @Public()
   async getAvatar(@Param('id') id: string) {
     const url = await this.imageService.getUserAvatarPath(id);
     if (!url) {
