@@ -7,6 +7,8 @@ import {
   UnauthorizedException,
   BadRequestException,
   ParseIntPipe,
+  NotFoundException,
+  Get,
 } from '@nestjs/common';
 import { JwtAuthGuard } from './../../../libs/common/guards/jwt-auth.guard';
 import { ImageService } from './../../../modules/image/image.service';
@@ -17,6 +19,19 @@ import { avatarFileFilter } from './../../../modules/image/utils/file-filter.uti
 @Controller('users-avatar')
 export class UserAvatarController {
   constructor(private readonly imageService: ImageService) {}
+
+  @Get(':id/avatar')
+  async getAvatar(@Param('id') id: string) {
+    const imagePath = await this.imageService.getUserAvatarPath(id);
+
+    if (!imagePath) {
+      throw new NotFoundException('Avatar not found');
+    }
+
+    return {
+      url: imagePath,
+    };
+  }
 
   @Post(':id/avatar')
   @UseGuards(JwtAuthGuard)

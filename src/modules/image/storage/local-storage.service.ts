@@ -5,6 +5,7 @@ import { existsSync } from 'fs';
 import { randomUUID } from 'crypto';
 import { StorageService } from './storage.service';
 import { AvatarUploadedFile } from '../interface/avatarUploadedFile.interface';
+import { promises as fsPromises } from 'fs';
 
 @Injectable()
 export class LocalStorageService implements StorageService {
@@ -21,6 +22,36 @@ export class LocalStorageService implements StorageService {
       await mkdir(this.uploadDir, { recursive: true });
     }
   };
+
+  async getUserAvatarPath(userId: string): Promise<string | null> {
+    const dir = join(process.cwd(), 'public', 'uploads', 'avatars');
+
+    try {
+      const files = await fsPromises.readdir(dir);
+
+      const userFiles = files.filter((file) => file.startsWith(`${userId}-`));
+
+      if (userFiles.length === 0) {
+        return null;
+      }
+
+      let latestFile = userFiles[0];
+      let latestMtime = 0;
+
+      for (const file of userFiles) {
+        const stats = await fsPromises.stat(join(dir, file));
+        if (stats.mtimeMs > latestMtime) {
+          latestMtime = stats.mtimeMs;
+          latestFile = file;
+        }
+      }
+
+      return join(dir, latestFile);
+    } catch (error) {
+      console.error('Erro ao buscar avatar:', error);
+      return null;
+    }
+  }
 
   async uploadAvatar(
     file: AvatarUploadedFile,
