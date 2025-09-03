@@ -50,7 +50,7 @@ export class AuthController {
     res.setCookie('access_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
       maxAge: 60 * 15, // 15 minutos
     });
@@ -58,7 +58,7 @@ export class AuthController {
     res.setCookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'none',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias
     });
@@ -71,6 +71,27 @@ export class AuthController {
         email: user.email,
       },
     });
+  }
+
+  @Get('me')
+  async me(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+    const accessToken = req.cookies?.access_token;
+
+    if (!accessToken) {
+      throw new UnauthorizedException('Usuário não autenticado');
+    }
+
+    try {
+      const userData = await this.authService.signInVerify(accessToken);
+      return res.send(userData);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
+      throw new UnauthorizedException(
+        'Token inválido ou expirado',
+        errorMessage,
+      );
+    }
   }
 
   @Get('validate')

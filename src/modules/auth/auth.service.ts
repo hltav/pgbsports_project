@@ -5,12 +5,14 @@ import { RefreshTokenService } from './services/refresh-token.service';
 import { RegisterUserService } from './services/register-user.service';
 import { SignInService } from './services/sign-in.service';
 import { SignOutService } from './services/sign-out.service';
+import { SignInVerifyService } from './services/signInVerify.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private registerUserService: RegisterUserService,
     private signInService: SignInService,
+    private signInServiceVerify: SignInVerifyService,
     private signOutService: SignOutService,
     private forgotPasswordService: ForgotPasswordService,
     private refreshTokenService: RefreshTokenService,
@@ -22,6 +24,10 @@ export class AuthService {
 
   signIn(email: string, password: string) {
     return this.signInService.execute(email, password);
+  }
+
+  signInVerify(email: string) {
+    return this.signInServiceVerify.execute(email);
   }
 
   signOut(userId: number) {
