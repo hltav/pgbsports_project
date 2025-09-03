@@ -18,6 +18,7 @@ import {
   SignInService,
   SignOutService,
 } from './services';
+import { SignInVerifyService } from './services/signInVerify.service';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import {
     AuthService,
     RegisterUserService,
     SignInService,
+    SignInVerifyService,
     SignOutService,
     ForgotPasswordService,
     RefreshTokenService,
@@ -53,6 +55,7 @@ import {
     AuthService,
     RegisterUserService,
     SignInService,
+    SignInVerifyService,
     SignOutService,
     ForgotPasswordService,
     RefreshTokenService,
