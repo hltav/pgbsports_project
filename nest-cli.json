@@ -4,12 +4,15 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
+    "builder": "tsc",
     "assets": [
       {
-        "include": "libs/services/mailer/templates/**/*",
-        "outDir": "./dist/libs/services/mailer/templates", 
-        "watchAssets": true 
+        "include": "libs/services/mailer/templates/**/*.hbs",
+        "outDir": "dist/libs/services/mailer/templates",
+        "watchAssets": true
       }
-    ]
+    ],
+    "watchAssets": true,
+    "tsConfigPath": "tsconfig.build.json"
   }
 }

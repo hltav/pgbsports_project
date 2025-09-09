@@ -6,20 +6,11 @@ module.exports = {
   rootDir: 'src',
   testRegex: '.*\\.spec\\.ts$',
 
-  // Transformação mais específica
   transform: {
     '^.+\\.(t|j)s$': [
       'ts-jest',
       {
-        tsconfig: {
-          target: 'ES2020',
-          module: 'commonjs',
-          experimentalDecorators: true,
-          emitDecoratorMetadata: true,
-          allowSyntheticDefaultImports: true,
-          skipLibCheck: true,
-          esModuleInterop: true,
-        },
+        tsconfig: '<rootDir>/../tsconfig.test.json',
       },
     ],
   },

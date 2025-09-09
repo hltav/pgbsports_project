@@ -22,6 +22,14 @@
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "types": ["zod", "node", "jest"]
   },
-  "include": ["src/**/*", "jest.config.js"],
-  "exclude": ["node_modules", "ecosystem.config.js", "dist"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }
