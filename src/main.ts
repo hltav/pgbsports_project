@@ -30,6 +30,10 @@ async function bootstrap() {
         'https://localhost:3001',
         'https://rtsportsmanager.vercel.app',
         'http://91.99.55.16',
+        'https://app.rtsportsmanager.com',
+        'https://admin.rtsportsmanager.com',
+        'https://rtsportsmanager.com',
+        'https://www.rtsportsmanager.com',
       ];
 
       if (!origin || allowedOrigins.includes(origin)) {
@@ -42,7 +46,7 @@ async function bootstrap() {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    preflightContinue: false, // garante que Fastify lida com o OPTIONS
+    preflightContinue: false,
   });
 
   // 🍪 Cookies
