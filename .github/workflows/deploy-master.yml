@@ -65,11 +65,11 @@ jobs:
 
             # ===== BUILD E DEPLOY =====
             echo "🧹 Limpando instalação anterior..."
-            rm -rf node_modules package-lock.json
+            rm -rf node_modules 
             find dist -mindepth 1 -maxdepth 1 ! -name 'libs' -exec rm -rf {} + || true
 
             echo "📦 Instalando dependências..."
-            npm install --omit=dev --prefer-offline --no-audit
+            npm ci --prefer-offline --no-audit
 
             echo "⚙️ Gerando Prisma Client..."
             npx prisma generate
