@@ -20,7 +20,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["zod", "node", "jest"]
+    "types": ["zod", "node"]
   },
   "include": [
     "src/**/*.ts",
