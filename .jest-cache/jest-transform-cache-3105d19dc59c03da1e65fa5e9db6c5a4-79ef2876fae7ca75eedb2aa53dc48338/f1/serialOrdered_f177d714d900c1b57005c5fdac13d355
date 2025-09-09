@@ -1,0 +1,58 @@
+f7541c007125f86fb234bc090841158c
+var iterate = require('./lib/iterate.js'), initState = require('./lib/state.js'), terminator = require('./lib/terminator.js');
+// Public API
+module.exports = serialOrdered;
+// sorting helpers
+module.exports.ascending = ascending;
+module.exports.descending = descending;
+/**
+ * Runs iterator over provided sorted array elements in series
+ *
+ * @param   {array|object} list - array or object (named list) to iterate over
+ * @param   {function} iterator - iterator to run
+ * @param   {function} sortMethod - custom sort function
+ * @param   {function} callback - invoked when all elements processed
+ * @returns {function} - jobs terminator
+ */
+function serialOrdered(list, iterator, sortMethod, callback) {
+    var state = initState(list, sortMethod);
+    iterate(list, iterator, state, function iteratorHandler(error, result) {
+        if (error) {
+            callback(error, result);
+            return;
+        }
+        state.index++;
+        // are we there yet?
+        if (state.index < (state['keyedList'] || list).length) {
+            iterate(list, iterator, state, iteratorHandler);
+            return;
+        }
+        // done here
+        callback(null, state.results);
+    });
+    return terminator.bind(state, callback);
+}
+/*
+ * -- Sort methods
+ */
+/**
+ * sort helper to sort array elements in ascending order
+ *
+ * @param   {mixed} a - an item to compare
+ * @param   {mixed} b - an item to compare
+ * @returns {number} - comparison result
+ */
+function ascending(a, b) {
+    return a < b ? -1 : a > b ? 1 : 0;
+}
+/**
+ * sort helper to sort array elements in descending order
+ *
+ * @param   {mixed} a - an item to compare
+ * @param   {mixed} b - an item to compare
+ * @returns {number} - comparison result
+ */
+function descending(a, b) {
+    return -1 * ascending(a, b);
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXHNlcmlhbE9yZGVyZWQuanMiLCJtYXBwaW5ncyI6IkFBQUEsSUFBSSxPQUFPLEdBQU0sT0FBTyxDQUFDLGtCQUFrQixDQUFDLEVBQ3hDLFNBQVMsR0FBSSxPQUFPLENBQUMsZ0JBQWdCLENBQUMsRUFDdEMsVUFBVSxHQUFHLE9BQU8sQ0FBQyxxQkFBcUIsQ0FBQyxDQUM1QztBQUVILGFBQWE7QUFDYixNQUFNLENBQUMsT0FBTyxHQUFHLGFBQWEsQ0FBQztBQUMvQixrQkFBa0I7QUFDbEIsTUFBTSxDQUFDLE9BQU8sQ0FBQyxTQUFTLEdBQUksU0FBUyxDQUFDO0FBQ3RDLE1BQU0sQ0FBQyxPQUFPLENBQUMsVUFBVSxHQUFHLFVBQVUsQ0FBQztBQUV2Qzs7Ozs7Ozs7R0FRRztBQUNILFNBQVMsYUFBYSxDQUFDLElBQUksRUFBRSxRQUFRLEVBQUUsVUFBVSxFQUFFLFFBQVE7SUFFekQsSUFBSSxLQUFLLEdBQUcsU0FBUyxDQUFDLElBQUksRUFBRSxVQUFVLENBQUMsQ0FBQztJQUV4QyxPQUFPLENBQUMsSUFBSSxFQUFFLFFBQVEsRUFBRSxLQUFLLEVBQUUsU0FBUyxlQUFlLENBQUMsS0FBSyxFQUFFLE1BQU07UUFFbkUsSUFBSSxLQUFLLEVBQ1QsQ0FBQztZQUNDLFFBQVEsQ0FBQyxLQUFLLEVBQUUsTUFBTSxDQUFDLENBQUM7WUFDeEIsT0FBTztRQUNULENBQUM7UUFFRCxLQUFLLENBQUMsS0FBSyxFQUFFLENBQUM7UUFFZCxvQkFBb0I7UUFDcEIsSUFBSSxLQUFLLENBQUMsS0FBSyxHQUFHLENBQUMsS0FBSyxDQUFDLFdBQVcsQ0FBQyxJQUFJLElBQUksQ0FBQyxDQUFDLE1BQU0sRUFDckQsQ0FBQztZQUNDLE9BQU8sQ0FBQyxJQUFJLEVBQUUsUUFBUSxFQUFFLEtBQUssRUFBRSxlQUFlLENBQUMsQ0FBQztZQUNoRCxPQUFPO1FBQ1QsQ0FBQztRQUVELFlBQVk7UUFDWixRQUFRLENBQUMsSUFBSSxFQUFFLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQztJQUNoQyxDQUFDLENBQUMsQ0FBQztJQUVILE9BQU8sVUFBVSxDQUFDLElBQUksQ0FBQyxLQUFLLEVBQUUsUUFBUSxDQUFDLENBQUM7QUFDMUMsQ0FBQztBQUVEOztHQUVHO0FBRUg7Ozs7OztHQU1HO0FBQ0gsU0FBUyxTQUFTLENBQUMsQ0FBQyxFQUFFLENBQUM7SUFFckIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7QUFDcEMsQ0FBQztBQUVEOzs7Ozs7R0FNRztBQUNILFNBQVMsVUFBVSxDQUFDLENBQUMsRUFBRSxDQUFDO0lBRXRCLE9BQU8sQ0FBQyxDQUFDLEdBQUcsU0FBUyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQztBQUM5QixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXGFzeW5ja2l0XFxzZXJpYWxPcmRlcmVkLmpzIl0sInNvdXJjZXNDb250ZW50IjpbInZhciBpdGVyYXRlICAgID0gcmVxdWlyZSgnLi9saWIvaXRlcmF0ZS5qcycpXG4gICwgaW5pdFN0YXRlICA9IHJlcXVpcmUoJy4vbGliL3N0YXRlLmpzJylcbiAgLCB0ZXJtaW5hdG9yID0gcmVxdWlyZSgnLi9saWIvdGVybWluYXRvci5qcycpXG4gIDtcblxuLy8gUHVibGljIEFQSVxubW9kdWxlLmV4cG9ydHMgPSBzZXJpYWxPcmRlcmVkO1xuLy8gc29ydGluZyBoZWxwZXJzXG5tb2R1bGUuZXhwb3J0cy5hc2NlbmRpbmcgID0gYXNjZW5kaW5nO1xubW9kdWxlLmV4cG9ydHMuZGVzY2VuZGluZyA9IGRlc2NlbmRpbmc7XG5cbi8qKlxuICogUnVucyBpdGVyYXRvciBvdmVyIHByb3ZpZGVkIHNvcnRlZCBhcnJheSBlbGVtZW50cyBpbiBzZXJpZXNcbiAqXG4gKiBAcGFyYW0gICB7YXJyYXl8b2JqZWN0fSBsaXN0IC0gYXJyYXkgb3Igb2JqZWN0IChuYW1lZCBsaXN0KSB0byBpdGVyYXRlIG92ZXJcbiAqIEBwYXJhbSAgIHtmdW5jdGlvbn0gaXRlcmF0b3IgLSBpdGVyYXRvciB0byBydW5cbiAqIEBwYXJhbSAgIHtmdW5jdGlvbn0gc29ydE1ldGhvZCAtIGN1c3RvbSBzb3J0IGZ1bmN0aW9uXG4gKiBAcGFyYW0gICB7ZnVuY3Rpb259IGNhbGxiYWNrIC0gaW52b2tlZCB3aGVuIGFsbCBlbGVtZW50cyBwcm9jZXNzZWRcbiAqIEByZXR1cm5zIHtmdW5jdGlvbn0gLSBqb2JzIHRlcm1pbmF0b3JcbiAqL1xuZnVuY3Rpb24gc2VyaWFsT3JkZXJlZChsaXN0LCBpdGVyYXRvciwgc29ydE1ldGhvZCwgY2FsbGJhY2spXG57XG4gIHZhciBzdGF0ZSA9IGluaXRTdGF0ZShsaXN0LCBzb3J0TWV0aG9kKTtcblxuICBpdGVyYXRlKGxpc3QsIGl0ZXJhdG9yLCBzdGF0ZSwgZnVuY3Rpb24gaXRlcmF0b3JIYW5kbGVyKGVycm9yLCByZXN1bHQpXG4gIHtcbiAgICBpZiAoZXJyb3IpXG4gICAge1xuICAgICAgY2FsbGJhY2soZXJyb3IsIHJlc3VsdCk7XG4gICAgICByZXR1cm47XG4gICAgfVxuXG4gICAgc3RhdGUuaW5kZXgrKztcblxuICAgIC8vIGFyZSB3ZSB0aGVyZSB5ZXQ/XG4gICAgaWYgKHN0YXRlLmluZGV4IDwgKHN0YXRlWydrZXllZExpc3QnXSB8fCBsaXN0KS5sZW5ndGgpXG4gICAge1xuICAgICAgaXRlcmF0ZShsaXN0LCBpdGVyYXRvciwgc3RhdGUsIGl0ZXJhdG9ySGFuZGxlcik7XG4gICAgICByZXR1cm47XG4gICAgfVxuXG4gICAgLy8gZG9uZSBoZXJlXG4gICAgY2FsbGJhY2sobnVsbCwgc3RhdGUucmVzdWx0cyk7XG4gIH0pO1xuXG4gIHJldHVybiB0ZXJtaW5hdG9yLmJpbmQoc3RhdGUsIGNhbGxiYWNrKTtcbn1cblxuLypcbiAqIC0tIFNvcnQgbWV0aG9kc1xuICovXG5cbi8qKlxuICogc29ydCBoZWxwZXIgdG8gc29ydCBhcnJheSBlbGVtZW50cyBpbiBhc2NlbmRpbmcgb3JkZXJcbiAqXG4gKiBAcGFyYW0gICB7bWl4ZWR9IGEgLSBhbiBpdGVtIHRvIGNvbXBhcmVcbiAqIEBwYXJhbSAgIHttaXhlZH0gYiAtIGFuIGl0ZW0gdG8gY29tcGFyZVxuICogQHJldHVybnMge251bWJlcn0gLSBjb21wYXJpc29uIHJlc3VsdFxuICovXG5mdW5jdGlvbiBhc2NlbmRpbmcoYSwgYilcbntcbiAgcmV0dXJuIGEgPCBiID8gLTEgOiBhID4gYiA/IDEgOiAwO1xufVxuXG4vKipcbiAqIHNvcnQgaGVscGVyIHRvIHNvcnQgYXJyYXkgZWxlbWVudHMgaW4gZGVzY2VuZGluZyBvcmRlclxuICpcbiAqIEBwYXJhbSAgIHttaXhlZH0gYSAtIGFuIGl0ZW0gdG8gY29tcGFyZVxuICogQHBhcmFtICAge21peGVkfSBiIC0gYW4gaXRlbSB0byBjb21wYXJlXG4gKiBAcmV0dXJucyB7bnVtYmVyfSAtIGNvbXBhcmlzb24gcmVzdWx0XG4gKi9cbmZ1bmN0aW9uIGRlc2NlbmRpbmcoYSwgYilcbntcbiAgcmV0dXJuIC0xICogYXNjZW5kaW5nKGEsIGIpO1xufVxuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,55 @@
+b825831d2f0b5f3ebae6a9cdce249135
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Inject = Inject;
+const constants_1 = require("../../constants");
+const shared_utils_1 = require("../../utils/shared.utils");
+/**
+ * Decorator that marks a constructor parameter as a target for
+ * [Dependency Injection (DI)](https://docs.nestjs.com/providers#dependency-injection).
+ *
+ * Any injected provider must be visible within the module scope (loosely
+ * speaking, the containing module) of the class it is being injected into. This
+ * can be done by:
+ *
+ * - defining the provider in the same module scope
+ * - exporting the provider from one module scope and importing that module into the
+ *   module scope of the class being injected into
+ * - exporting the provider from a module that is marked as global using the
+ *   `@Global()` decorator
+ *
+ * #### Injection tokens
+ * Can be *types* (class names), *strings* or *symbols*. This depends on how the
+ * provider with which it is associated was defined. Providers defined with the
+ * `@Injectable()` decorator use the class name. Custom Providers may use strings
+ * or symbols as the injection token.
+ *
+ * @param token lookup key for the provider to be injected (assigned to the constructor
+ * parameter).
+ *
+ * @see [Providers](https://docs.nestjs.com/providers)
+ * @see [Custom Providers](https://docs.nestjs.com/fundamentals/custom-providers)
+ * @see [Injection Scopes](https://docs.nestjs.com/fundamentals/injection-scopes)
+ *
+ * @publicApi
+ */
+function Inject(token) {
+    const injectCallHasArguments = arguments.length > 0;
+    return (target, key, index) => {
+        let type = token || Reflect.getMetadata('design:type', target, key);
+        // Try to infer the token in a constructor-based injection
+        if (!type && !injectCallHasArguments) {
+            type = Reflect.getMetadata(constants_1.PARAMTYPES_METADATA, target, key)?.[index];
+        }
+        if (!(0, shared_utils_1.isUndefined)(index)) {
+            let dependencies = Reflect.getMetadata(constants_1.SELF_DECLARED_DEPS_METADATA, target) || [];
+            dependencies = [...dependencies, { index, param: type }];
+            Reflect.defineMetadata(constants_1.SELF_DECLARED_DEPS_METADATA, dependencies, target);
+            return;
+        }
+        let properties = Reflect.getMetadata(constants_1.PROPERTY_DEPS_METADATA, target.constructor) || [];
+        properties = [...properties, { key, type }];
+        Reflect.defineMetadata(constants_1.PROPERTY_DEPS_METADATA, properties, target.constructor);
+    };
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29tbW9uXFxkZWNvcmF0b3JzXFxjb3JlXFxpbmplY3QuZGVjb3JhdG9yLmpzIiwibWFwcGluZ3MiOiJBQUFBLFlBQVksQ0FBQztBQUNiLE1BQU0sQ0FBQyxjQUFjLENBQUMsT0FBTyxFQUFFLFlBQVksRUFBRSxFQUFFLEtBQUssRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO0FBQzlELE9BQU8sQ0FBQyxNQUFNLEdBQUcsTUFBTSxDQUFDO0FBQ3hCLE1BQU0sV0FBVyxHQUFHLE9BQU8sQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDO0FBQy9DLE1BQU0sY0FBYyxHQUFHLE9BQU8sQ0FBQywwQkFBMEIsQ0FBQyxDQUFDO0FBQzNEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBNEJHO0FBQ0gsU0FBUyxNQUFNLENBQUMsS0FBSztJQUNqQixNQUFNLHNCQUFzQixHQUFHLFNBQVMsQ0FBQyxNQUFNLEdBQUcsQ0FBQyxDQUFDO0lBQ3BELE9BQU8sQ0FBQyxNQUFNLEVBQUUsR0FBRyxFQUFFLEtBQUssRUFBRSxFQUFFO1FBQzFCLElBQUksSUFBSSxHQUFHLEtBQUssSUFBSSxPQUFPLENBQUMsV0FBVyxDQUFDLGFBQWEsRUFBRSxNQUFNLEVBQUUsR0FBRyxDQUFDLENBQUM7UUFDcEUsMERBQTBEO1FBQzFELElBQUksQ0FBQyxJQUFJLElBQUksQ0FBQyxzQkFBc0IsRUFBRSxDQUFDO1lBQ25DLElBQUksR0FBRyxPQUFPLENBQUMsV0FBVyxDQUFDLFdBQVcsQ0FBQyxtQkFBbUIsRUFBRSxNQUFNLEVBQUUsR0FBRyxDQUFDLEVBQUUsQ0FBQyxLQUFLLENBQUMsQ0FBQztRQUN0RixDQUFDO1FBQ0QsSUFBSSxDQUFDLENBQUMsQ0FBQyxFQUFFLGNBQWMsQ0FBQyxXQUFXLENBQUMsQ0FBQyxLQUFLLENBQUMsRUFBRSxDQUFDO1lBQzFDLElBQUksWUFBWSxHQUFHLE9BQU8sQ0FBQyxXQUFXLENBQUMsV0FBVyxDQUFDLDJCQUEyQixFQUFFLE1BQU0sQ0FBQyxJQUFJLEVBQUUsQ0FBQztZQUM5RixZQUFZLEdBQUcsQ0FBQyxHQUFHLFlBQVksRUFBRSxFQUFFLEtBQUssRUFBRSxLQUFLLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztZQUN6RCxPQUFPLENBQUMsY0FBYyxDQUFDLFdBQVcsQ0FBQywyQkFBMkIsRUFBRSxZQUFZLEVBQUUsTUFBTSxDQUFDLENBQUM7WUFDdEYsT0FBTztRQUNYLENBQUM7UUFDRCxJQUFJLFVBQVUsR0FBRyxPQUFPLENBQUMsV0FBVyxDQUFDLFdBQVcsQ0FBQyxzQkFBc0IsRUFBRSxNQUFNLENBQUMsV0FBVyxDQUFDLElBQUksRUFBRSxDQUFDO1FBQ25HLFVBQVUsR0FBRyxDQUFDLEdBQUcsVUFBVSxFQUFFLEVBQUUsR0FBRyxFQUFFLElBQUksRUFBRSxDQUFDLENBQUM7UUFDNUMsT0FBTyxDQUFDLGNBQWMsQ0FBQyxXQUFXLENBQUMsc0JBQXNCLEVBQUUsVUFBVSxFQUFFLE1BQU0sQ0FBQyxXQUFXLENBQUMsQ0FBQztJQUMvRixDQUFDLENBQUM7QUFDTixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXEBuZXN0anNcXGNvbW1vblxcZGVjb3JhdG9yc1xcY29yZVxcaW5qZWN0LmRlY29yYXRvci5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJcInVzZSBzdHJpY3RcIjtcbk9iamVjdC5kZWZpbmVQcm9wZXJ0eShleHBvcnRzLCBcIl9fZXNNb2R1bGVcIiwgeyB2YWx1ZTogdHJ1ZSB9KTtcbmV4cG9ydHMuSW5qZWN0ID0gSW5qZWN0O1xuY29uc3QgY29uc3RhbnRzXzEgPSByZXF1aXJlKFwiLi4vLi4vY29uc3RhbnRzXCIpO1xuY29uc3Qgc2hhcmVkX3V0aWxzXzEgPSByZXF1aXJlKFwiLi4vLi4vdXRpbHMvc2hhcmVkLnV0aWxzXCIpO1xuLyoqXG4gKiBEZWNvcmF0b3IgdGhhdCBtYXJrcyBhIGNvbnN0cnVjdG9yIHBhcmFtZXRlciBhcyBhIHRhcmdldCBmb3JcbiAqIFtEZXBlbmRlbmN5IEluamVjdGlvbiAoREkpXShodHRwczovL2RvY3MubmVzdGpzLmNvbS9wcm92aWRlcnMjZGVwZW5kZW5jeS1pbmplY3Rpb24pLlxuICpcbiAqIEFueSBpbmplY3RlZCBwcm92aWRlciBtdXN0IGJlIHZpc2libGUgd2l0aGluIHRoZSBtb2R1bGUgc2NvcGUgKGxvb3NlbHlcbiAqIHNwZWFraW5nLCB0aGUgY29udGFpbmluZyBtb2R1bGUpIG9mIHRoZSBjbGFzcyBpdCBpcyBiZWluZyBpbmplY3RlZCBpbnRvLiBUaGlzXG4gKiBjYW4gYmUgZG9uZSBieTpcbiAqXG4gKiAtIGRlZmluaW5nIHRoZSBwcm92aWRlciBpbiB0aGUgc2FtZSBtb2R1bGUgc2NvcGVcbiAqIC0gZXhwb3J0aW5nIHRoZSBwcm92aWRlciBmcm9tIG9uZSBtb2R1bGUgc2NvcGUgYW5kIGltcG9ydGluZyB0aGF0IG1vZHVsZSBpbnRvIHRoZVxuICogICBtb2R1bGUgc2NvcGUgb2YgdGhlIGNsYXNzIGJlaW5nIGluamVjdGVkIGludG9cbiAqIC0gZXhwb3J0aW5nIHRoZSBwcm92aWRlciBmcm9tIGEgbW9kdWxlIHRoYXQgaXMgbWFya2VkIGFzIGdsb2JhbCB1c2luZyB0aGVcbiAqICAgYEBHbG9iYWwoKWAgZGVjb3JhdG9yXG4gKlxuICogIyMjIyBJbmplY3Rpb24gdG9rZW5zXG4gKiBDYW4gYmUgKnR5cGVzKiAoY2xhc3MgbmFtZXMpLCAqc3RyaW5ncyogb3IgKnN5bWJvbHMqLiBUaGlzIGRlcGVuZHMgb24gaG93IHRoZVxuICogcHJvdmlkZXIgd2l0aCB3aGljaCBpdCBpcyBhc3NvY2lhdGVkIHdhcyBkZWZpbmVkLiBQcm92aWRlcnMgZGVmaW5lZCB3aXRoIHRoZVxuICogYEBJbmplY3RhYmxlKClgIGRlY29yYXRvciB1c2UgdGhlIGNsYXNzIG5hbWUuIEN1c3RvbSBQcm92aWRlcnMgbWF5IHVzZSBzdHJpbmdzXG4gKiBvciBzeW1ib2xzIGFzIHRoZSBpbmplY3Rpb24gdG9rZW4uXG4gKlxuICogQHBhcmFtIHRva2VuIGxvb2t1cCBrZXkgZm9yIHRoZSBwcm92aWRlciB0byBiZSBpbmplY3RlZCAoYXNzaWduZWQgdG8gdGhlIGNvbnN0cnVjdG9yXG4gKiBwYXJhbWV0ZXIpLlxuICpcbiAqIEBzZWUgW1Byb3ZpZGVyc10oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vcHJvdmlkZXJzKVxuICogQHNlZSBbQ3VzdG9tIFByb3ZpZGVyc10oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vZnVuZGFtZW50YWxzL2N1c3RvbS1wcm92aWRlcnMpXG4gKiBAc2VlIFtJbmplY3Rpb24gU2NvcGVzXShodHRwczovL2RvY3MubmVzdGpzLmNvbS9mdW5kYW1lbnRhbHMvaW5qZWN0aW9uLXNjb3BlcylcbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmZ1bmN0aW9uIEluamVjdCh0b2tlbikge1xuICAgIGNvbnN0IGluamVjdENhbGxIYXNBcmd1bWVudHMgPSBhcmd1bWVudHMubGVuZ3RoID4gMDtcbiAgICByZXR1cm4gKHRhcmdldCwga2V5LCBpbmRleCkgPT4ge1xuICAgICAgICBsZXQgdHlwZSA9IHRva2VuIHx8IFJlZmxlY3QuZ2V0TWV0YWRhdGEoJ2Rlc2lnbjp0eXBlJywgdGFyZ2V0LCBrZXkpO1xuICAgICAgICAvLyBUcnkgdG8gaW5mZXIgdGhlIHRva2VuIGluIGEgY29uc3RydWN0b3ItYmFzZWQgaW5qZWN0aW9uXG4gICAgICAgIGlmICghdHlwZSAmJiAhaW5qZWN0Q2FsbEhhc0FyZ3VtZW50cykge1xuICAgICAgICAgICAgdHlwZSA9IFJlZmxlY3QuZ2V0TWV0YWRhdGEoY29uc3RhbnRzXzEuUEFSQU1UWVBFU19NRVRBREFUQSwgdGFyZ2V0LCBrZXkpPy5baW5kZXhdO1xuICAgICAgICB9XG4gICAgICAgIGlmICghKDAsIHNoYXJlZF91dGlsc18xLmlzVW5kZWZpbmVkKShpbmRleCkpIHtcbiAgICAgICAgICAgIGxldCBkZXBlbmRlbmNpZXMgPSBSZWZsZWN0LmdldE1ldGFkYXRhKGNvbnN0YW50c18xLlNFTEZfREVDTEFSRURfREVQU19NRVRBREFUQSwgdGFyZ2V0KSB8fCBbXTtcbiAgICAgICAgICAgIGRlcGVuZGVuY2llcyA9IFsuLi5kZXBlbmRlbmNpZXMsIHsgaW5kZXgsIHBhcmFtOiB0eXBlIH1dO1xuICAgICAgICAgICAgUmVmbGVjdC5kZWZpbmVNZXRhZGF0YShjb25zdGFudHNfMS5TRUxGX0RFQ0xBUkVEX0RFUFNfTUVUQURBVEEsIGRlcGVuZGVuY2llcywgdGFyZ2V0KTtcbiAgICAgICAgICAgIHJldHVybjtcbiAgICAgICAgfVxuICAgICAgICBsZXQgcHJvcGVydGllcyA9IFJlZmxlY3QuZ2V0TWV0YWRhdGEoY29uc3RhbnRzXzEuUFJPUEVSVFlfREVQU19NRVRBREFUQSwgdGFyZ2V0LmNvbnN0cnVjdG9yKSB8fCBbXTtcbiAgICAgICAgcHJvcGVydGllcyA9IFsuLi5wcm9wZXJ0aWVzLCB7IGtleSwgdHlwZSB9XTtcbiAgICAgICAgUmVmbGVjdC5kZWZpbmVNZXRhZGF0YShjb25zdGFudHNfMS5QUk9QRVJUWV9ERVBTX01FVEFEQVRBLCBwcm9wZXJ0aWVzLCB0YXJnZXQuY29uc3RydWN0b3IpO1xuICAgIH07XG59XG4iXSwidmVyc2lvbiI6M30=

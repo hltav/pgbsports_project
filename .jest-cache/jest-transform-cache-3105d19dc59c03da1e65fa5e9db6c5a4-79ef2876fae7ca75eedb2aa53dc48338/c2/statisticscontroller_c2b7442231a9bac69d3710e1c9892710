@@ -1,0 +1,18 @@
+16eb86b108cc7ddd8a28a986b74edd71
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StatisticsController = void 0;
+const common_1 = require("@nestjs/common");
+let StatisticsController = class StatisticsController {
+};
+exports.StatisticsController = StatisticsController;
+exports.StatisticsController = StatisticsController = __decorate([
+    (0, common_1.Controller)('statistics')
+], StatisticsController);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcc3RhdGlzdGljc1xcc3RhdGlzdGljcy5jb250cm9sbGVyLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7OztBQUFBLDJDQUE0QztBQUdyQyxJQUFNLG9CQUFvQixHQUExQixNQUFNLG9CQUFvQjtDQUFHLENBQUE7QUFBdkIsb0RBQW9COytCQUFwQixvQkFBb0I7SUFEaEMsSUFBQSxtQkFBVSxFQUFDLFlBQVksQ0FBQztHQUNaLG9CQUFvQixDQUFHIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxzcmNcXG1vZHVsZXNcXHN0YXRpc3RpY3NcXHN0YXRpc3RpY3MuY29udHJvbGxlci50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBDb250cm9sbGVyIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuXG5AQ29udHJvbGxlcignc3RhdGlzdGljcycpXG5leHBvcnQgY2xhc3MgU3RhdGlzdGljc0NvbnRyb2xsZXIge31cbiJdLCJ2ZXJzaW9uIjozfQ==

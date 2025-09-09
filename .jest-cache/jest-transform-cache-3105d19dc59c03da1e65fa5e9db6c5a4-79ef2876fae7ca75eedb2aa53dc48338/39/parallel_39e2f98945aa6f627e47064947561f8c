@@ -1,0 +1,31 @@
+aba5625127132b73cbcedc17521c3a25
+var iterate = require('./lib/iterate.js'), initState = require('./lib/state.js'), terminator = require('./lib/terminator.js');
+// Public API
+module.exports = parallel;
+/**
+ * Runs iterator over provided array elements in parallel
+ *
+ * @param   {array|object} list - array or object (named list) to iterate over
+ * @param   {function} iterator - iterator to run
+ * @param   {function} callback - invoked when all elements processed
+ * @returns {function} - jobs terminator
+ */
+function parallel(list, iterator, callback) {
+    var state = initState(list);
+    while (state.index < (state['keyedList'] || list).length) {
+        iterate(list, iterator, state, function (error, result) {
+            if (error) {
+                callback(error, result);
+                return;
+            }
+            // looks like it's the last one
+            if (Object.keys(state.jobs).length === 0) {
+                callback(null, state.results);
+                return;
+            }
+        });
+        state.index++;
+    }
+    return terminator.bind(state, callback);
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXHBhcmFsbGVsLmpzIiwibWFwcGluZ3MiOiJBQUFBLElBQUksT0FBTyxHQUFNLE9BQU8sQ0FBQyxrQkFBa0IsQ0FBQyxFQUN4QyxTQUFTLEdBQUksT0FBTyxDQUFDLGdCQUFnQixDQUFDLEVBQ3RDLFVBQVUsR0FBRyxPQUFPLENBQUMscUJBQXFCLENBQUMsQ0FDNUM7QUFFSCxhQUFhO0FBQ2IsTUFBTSxDQUFDLE9BQU8sR0FBRyxRQUFRLENBQUM7QUFFMUI7Ozs7Ozs7R0FPRztBQUNILFNBQVMsUUFBUSxDQUFDLElBQUksRUFBRSxRQUFRLEVBQUUsUUFBUTtJQUV4QyxJQUFJLEtBQUssR0FBRyxTQUFTLENBQUMsSUFBSSxDQUFDLENBQUM7SUFFNUIsT0FBTyxLQUFLLENBQUMsS0FBSyxHQUFHLENBQUMsS0FBSyxDQUFDLFdBQVcsQ0FBQyxJQUFJLElBQUksQ0FBQyxDQUFDLE1BQU0sRUFDeEQsQ0FBQztRQUNDLE9BQU8sQ0FBQyxJQUFJLEVBQUUsUUFBUSxFQUFFLEtBQUssRUFBRSxVQUFTLEtBQUssRUFBRSxNQUFNO1lBRW5ELElBQUksS0FBSyxFQUNULENBQUM7Z0JBQ0MsUUFBUSxDQUFDLEtBQUssRUFBRSxNQUFNLENBQUMsQ0FBQztnQkFDeEIsT0FBTztZQUNULENBQUM7WUFFRCwrQkFBK0I7WUFDL0IsSUFBSSxNQUFNLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsQ0FBQyxNQUFNLEtBQUssQ0FBQyxFQUN4QyxDQUFDO2dCQUNDLFFBQVEsQ0FBQyxJQUFJLEVBQUUsS0FBSyxDQUFDLE9BQU8sQ0FBQyxDQUFDO2dCQUM5QixPQUFPO1lBQ1QsQ0FBQztRQUNILENBQUMsQ0FBQyxDQUFDO1FBRUgsS0FBSyxDQUFDLEtBQUssRUFBRSxDQUFDO0lBQ2hCLENBQUM7SUFFRCxPQUFPLFVBQVUsQ0FBQyxJQUFJLENBQUMsS0FBSyxFQUFFLFFBQVEsQ0FBQyxDQUFDO0FBQzFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXHBhcmFsbGVsLmpzIl0sInNvdXJjZXNDb250ZW50IjpbInZhciBpdGVyYXRlICAgID0gcmVxdWlyZSgnLi9saWIvaXRlcmF0ZS5qcycpXG4gICwgaW5pdFN0YXRlICA9IHJlcXVpcmUoJy4vbGliL3N0YXRlLmpzJylcbiAgLCB0ZXJtaW5hdG9yID0gcmVxdWlyZSgnLi9saWIvdGVybWluYXRvci5qcycpXG4gIDtcblxuLy8gUHVibGljIEFQSVxubW9kdWxlLmV4cG9ydHMgPSBwYXJhbGxlbDtcblxuLyoqXG4gKiBSdW5zIGl0ZXJhdG9yIG92ZXIgcHJvdmlkZWQgYXJyYXkgZWxlbWVudHMgaW4gcGFyYWxsZWxcbiAqXG4gKiBAcGFyYW0gICB7YXJyYXl8b2JqZWN0fSBsaXN0IC0gYXJyYXkgb3Igb2JqZWN0IChuYW1lZCBsaXN0KSB0byBpdGVyYXRlIG92ZXJcbiAqIEBwYXJhbSAgIHtmdW5jdGlvbn0gaXRlcmF0b3IgLSBpdGVyYXRvciB0byBydW5cbiAqIEBwYXJhbSAgIHtmdW5jdGlvbn0gY2FsbGJhY2sgLSBpbnZva2VkIHdoZW4gYWxsIGVsZW1lbnRzIHByb2Nlc3NlZFxuICogQHJldHVybnMge2Z1bmN0aW9ufSAtIGpvYnMgdGVybWluYXRvclxuICovXG5mdW5jdGlvbiBwYXJhbGxlbChsaXN0LCBpdGVyYXRvciwgY2FsbGJhY2spXG57XG4gIHZhciBzdGF0ZSA9IGluaXRTdGF0ZShsaXN0KTtcblxuICB3aGlsZSAoc3RhdGUuaW5kZXggPCAoc3RhdGVbJ2tleWVkTGlzdCddIHx8IGxpc3QpLmxlbmd0aClcbiAge1xuICAgIGl0ZXJhdGUobGlzdCwgaXRlcmF0b3IsIHN0YXRlLCBmdW5jdGlvbihlcnJvciwgcmVzdWx0KVxuICAgIHtcbiAgICAgIGlmIChlcnJvcilcbiAgICAgIHtcbiAgICAgICAgY2FsbGJhY2soZXJyb3IsIHJlc3VsdCk7XG4gICAgICAgIHJldHVybjtcbiAgICAgIH1cblxuICAgICAgLy8gbG9va3MgbGlrZSBpdCdzIHRoZSBsYXN0IG9uZVxuICAgICAgaWYgKE9iamVjdC5rZXlzKHN0YXRlLmpvYnMpLmxlbmd0aCA9PT0gMClcbiAgICAgIHtcbiAgICAgICAgY2FsbGJhY2sobnVsbCwgc3RhdGUucmVzdWx0cyk7XG4gICAgICAgIHJldHVybjtcbiAgICAgIH1cbiAgICB9KTtcblxuICAgIHN0YXRlLmluZGV4Kys7XG4gIH1cblxuICByZXR1cm4gdGVybWluYXRvci5iaW5kKHN0YXRlLCBjYWxsYmFjayk7XG59XG4iXSwidmVyc2lvbiI6M30=

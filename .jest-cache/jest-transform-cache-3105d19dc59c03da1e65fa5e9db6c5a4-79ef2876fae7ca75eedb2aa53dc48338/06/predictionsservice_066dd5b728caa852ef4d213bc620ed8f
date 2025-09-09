@@ -1,0 +1,18 @@
+e86fdc5d2f48181c2ecf4391a9b0c221
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PredictionsService = void 0;
+const common_1 = require("@nestjs/common");
+let PredictionsService = class PredictionsService {
+};
+exports.PredictionsService = PredictionsService;
+exports.PredictionsService = PredictionsService = __decorate([
+    (0, common_1.Injectable)()
+], PredictionsService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xccHJlZGljdGlvbnNcXHByZWRpY3Rpb25zLnNlcnZpY2UudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7O0FBQUEsMkNBQTRDO0FBR3JDLElBQU0sa0JBQWtCLEdBQXhCLE1BQU0sa0JBQWtCO0NBQUcsQ0FBQTtBQUFyQixnREFBa0I7NkJBQWxCLGtCQUFrQjtJQUQ5QixJQUFBLG1CQUFVLEdBQUU7R0FDQSxrQkFBa0IsQ0FBRyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcc3JjXFxtb2R1bGVzXFxwcmVkaWN0aW9uc1xccHJlZGljdGlvbnMuc2VydmljZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgUHJlZGljdGlvbnNTZXJ2aWNlIHt9XG4iXSwidmVyc2lvbiI6M30=

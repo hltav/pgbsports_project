@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-object-atoms\\index.js","mappings":"AAAA,YAAY,CAAC;AAEb,0BAA0B;AAC1B,MAAM,CAAC,OAAO,GAAG,MAAM,CAAC","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-object-atoms\\index.js"],"sourcesContent":["'use strict';\n\n/** @type {import('.')} */\nmodule.exports = Object;\n"],"version":3}

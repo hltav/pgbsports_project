@@ -1,0 +1,97 @@
+cd53d0076b82266441551e4f67d1002c
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BankrollController = void 0;
+/* eslint-disable @typescript-eslint/no-unused-vars */
+const common_1 = require("@nestjs/common");
+const libs_1 = require("./../../libs");
+const bankroll_service_1 = require("./bankroll.service");
+let BankrollController = class BankrollController {
+    constructor(bankrollService) {
+        this.bankrollService = bankrollService;
+    }
+    async findMyBankrolls(req) {
+        const userId = req.user.id;
+        return this.bankrollService.findBankrollsByUserId(userId);
+    }
+    async findBankrollById(id) {
+        return this.bankrollService.findBankrollById(+id);
+    }
+    async findBankrollsByUserId(userId) {
+        return this.bankrollService.findBankrollsByUserId(userId);
+    }
+    async createBankroll(data, req) {
+        return this.bankrollService.createBankroll(data);
+    }
+    async updateBankroll(id, data) {
+        return this.bankrollService.updateBankroll(+id, data);
+    }
+    async deleteBankroll(id) {
+        return this.bankrollService.deleteBankroll(+id);
+    }
+};
+exports.BankrollController = BankrollController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], BankrollController.prototype, "findMyBankrolls", null);
+__decorate([
+    (0, common_1.Get)(':id/bank'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], BankrollController.prototype, "findBankrollById", null);
+__decorate([
+    (0, common_1.Get)('user/:userId'),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], BankrollController.prototype, "findBankrollsByUserId", null);
+__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe({ transform: true })),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], BankrollController.prototype, "createBankroll", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], BankrollController.prototype, "updateBankroll", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], BankrollController.prototype, "deleteBankroll", null);
+exports.BankrollController = BankrollController = __decorate([
+    (0, common_1.Controller)('bankrolls'),
+    (0, common_1.UseGuards)(libs_1.JwtAuthGuard, libs_1.RolesGuard),
+    (0, libs_1.Roles)('USER', 'TEST_USER'),
+    __metadata("design:paramtypes", [bankroll_service_1.BankrollService])
+], BankrollController);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcYmFua3JvbGxcXGJhbmtyb2xsLmNvbnRyb2xsZXIudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7O0FBQUEsc0RBQXNEO0FBQ3RELDJDQWF3QjtBQUN4Qix1Q0FBK0Q7QUFFL0QseURBQXFEO0FBTTlDLElBQU0sa0JBQWtCLEdBQXhCLE1BQU0sa0JBQWtCO0lBQzdCLFlBQTZCLGVBQWdDO1FBQWhDLG9CQUFlLEdBQWYsZUFBZSxDQUFpQjtJQUFHLENBQUM7SUFHM0QsQUFBTixLQUFLLENBQUMsZUFBZSxDQUNaLEdBQXlCO1FBRWhDLE1BQU0sTUFBTSxHQUFHLEdBQUcsQ0FBQyxJQUFJLENBQUMsRUFBRSxDQUFDO1FBQzNCLE9BQU8sSUFBSSxDQUFDLGVBQWUsQ0FBQyxxQkFBcUIsQ0FBQyxNQUFNLENBQUMsQ0FBQztJQUM1RCxDQUFDO0lBR0ssQUFBTixLQUFLLENBQUMsZ0JBQWdCLENBQWMsRUFBVTtRQUM1QyxPQUFPLElBQUksQ0FBQyxlQUFlLENBQUMsZ0JBQWdCLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQztJQUNwRCxDQUFDO0lBR0ssQUFBTixLQUFLLENBQUMscUJBQXFCLENBQ00sTUFBYztRQUU3QyxPQUFPLElBQUksQ0FBQyxlQUFlLENBQUMscUJBQXFCLENBQUMsTUFBTSxDQUFDLENBQUM7SUFDNUQsQ0FBQztJQUlLLEFBQU4sS0FBSyxDQUFDLGNBQWMsQ0FDVixJQUF1QixFQUN4QixHQUF5QjtRQUVoQyxPQUFPLElBQUksQ0FBQyxlQUFlLENBQUMsY0FBYyxDQUFDLElBQUksQ0FBQyxDQUFDO0lBQ25ELENBQUM7SUFHSyxBQUFOLEtBQUssQ0FBQyxjQUFjLENBQ0wsRUFBVSxFQUNmLElBQXVCO1FBRS9CLE9BQU8sSUFBSSxDQUFDLGVBQWUsQ0FBQyxjQUFjLENBQUMsQ0FBQyxFQUFFLEVBQUUsSUFBSSxDQUFDLENBQUM7SUFDeEQsQ0FBQztJQUdLLEFBQU4sS0FBSyxDQUFDLGNBQWMsQ0FBYyxFQUFVO1FBQzFDLE9BQU8sSUFBSSxDQUFDLGVBQWUsQ0FBQyxjQUFjLENBQUMsQ0FBQyxFQUFFLENBQUMsQ0FBQztJQUNsRCxDQUFDO0NBQ0YsQ0FBQTtBQTVDWSxnREFBa0I7QUFJdkI7SUFETCxJQUFBLFlBQUcsR0FBRTtJQUVILFdBQUEsSUFBQSxZQUFHLEdBQUUsQ0FBQTs7Ozt5REFJUDtBQUdLO0lBREwsSUFBQSxZQUFHLEVBQUMsVUFBVSxDQUFDO0lBQ1EsV0FBQSxJQUFBLGNBQUssRUFBQyxJQUFJLENBQUMsQ0FBQTs7OzswREFFbEM7QUFHSztJQURMLElBQUEsWUFBRyxFQUFDLGNBQWMsQ0FBQztJQUVqQixXQUFBLElBQUEsY0FBSyxFQUFDLFFBQVEsRUFBRSxxQkFBWSxDQUFDLENBQUE7Ozs7K0RBRy9CO0FBSUs7SUFGTCxJQUFBLGFBQUksR0FBRTtJQUNOLElBQUEsaUJBQVEsRUFBQyxJQUFJLHVCQUFjLENBQUMsRUFBRSxTQUFTLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztJQUUvQyxXQUFBLElBQUEsYUFBSSxHQUFFLENBQUE7SUFDTixXQUFBLElBQUEsWUFBRyxHQUFFLENBQUE7Ozs7d0RBR1A7QUFHSztJQURMLElBQUEsWUFBRyxFQUFDLEtBQUssQ0FBQztJQUVSLFdBQUEsSUFBQSxjQUFLLEVBQUMsSUFBSSxDQUFDLENBQUE7SUFDWCxXQUFBLElBQUEsYUFBSSxHQUFFLENBQUE7Ozs7d0RBR1I7QUFHSztJQURMLElBQUEsZUFBTSxFQUFDLEtBQUssQ0FBQztJQUNRLFdBQUEsSUFBQSxjQUFLLEVBQUMsSUFBSSxDQUFDLENBQUE7Ozs7d0RBRWhDOzZCQTNDVSxrQkFBa0I7SUFIOUIsSUFBQSxtQkFBVSxFQUFDLFdBQVcsQ0FBQztJQUN2QixJQUFBLGtCQUFTLEVBQUMsbUJBQVksRUFBRSxpQkFBVSxDQUFDO0lBQ25DLElBQUEsWUFBSyxFQUFDLE1BQU0sRUFBRSxXQUFXLENBQUM7cUNBRXFCLGtDQUFlO0dBRGxELGtCQUFrQixDQTRDOUIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcYmFua3JvbGxcXGJhbmtyb2xsLmNvbnRyb2xsZXIudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyogZXNsaW50LWRpc2FibGUgQHR5cGVzY3JpcHQtZXNsaW50L25vLXVudXNlZC12YXJzICovXG5pbXBvcnQge1xuICBDb250cm9sbGVyLFxuICBHZXQsXG4gIFBvc3QsXG4gIEJvZHksXG4gIFBhcmFtLFxuICBQdXQsXG4gIERlbGV0ZSxcbiAgVXNlUGlwZXMsXG4gIFZhbGlkYXRpb25QaXBlLFxuICBVc2VHdWFyZHMsXG4gIFJlcSxcbiAgUGFyc2VJbnRQaXBlLFxufSBmcm9tICdAbmVzdGpzL2NvbW1vbic7XG5pbXBvcnQgeyBKd3RBdXRoR3VhcmQsIFJvbGVzR3VhcmQsIFJvbGVzIH0gZnJvbSAnLi8uLi8uLi9saWJzJztcbmltcG9ydCB7IEF1dGhlbnRpY2F0ZWRSZXF1ZXN0IH0gZnJvbSAnLi4vYXV0aC9kdG8vYXV0aC5zY2hlbWEnO1xuaW1wb3J0IHsgQmFua3JvbGxTZXJ2aWNlIH0gZnJvbSAnLi9iYW5rcm9sbC5zZXJ2aWNlJztcbmltcG9ydCB7IEdldEJhbmtyb2xsRFRPLCBDcmVhdGVCYW5rcm9sbERUTywgVXBkYXRlQmFua3JvbGxEVE8gfSBmcm9tICcuL3ouZHRvJztcblxuQENvbnRyb2xsZXIoJ2Jhbmtyb2xscycpXG5AVXNlR3VhcmRzKEp3dEF1dGhHdWFyZCwgUm9sZXNHdWFyZClcbkBSb2xlcygnVVNFUicsICdURVNUX1VTRVInKVxuZXhwb3J0IGNsYXNzIEJhbmtyb2xsQ29udHJvbGxlciB7XG4gIGNvbnN0cnVjdG9yKHByaXZhdGUgcmVhZG9ubHkgYmFua3JvbGxTZXJ2aWNlOiBCYW5rcm9sbFNlcnZpY2UpIHt9XG5cbiAgQEdldCgpXG4gIGFzeW5jIGZpbmRNeUJhbmtyb2xscyhcbiAgICBAUmVxKCkgcmVxOiBBdXRoZW50aWNhdGVkUmVxdWVzdCxcbiAgKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUT1tdPiB7XG4gICAgY29uc3QgdXNlcklkID0gcmVxLnVzZXIuaWQ7XG4gICAgcmV0dXJuIHRoaXMuYmFua3JvbGxTZXJ2aWNlLmZpbmRCYW5rcm9sbHNCeVVzZXJJZCh1c2VySWQpO1xuICB9XG5cbiAgQEdldCgnOmlkL2JhbmsnKVxuICBhc3luYyBmaW5kQmFua3JvbGxCeUlkKEBQYXJhbSgnaWQnKSBpZDogc3RyaW5nKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUTz4ge1xuICAgIHJldHVybiB0aGlzLmJhbmtyb2xsU2VydmljZS5maW5kQmFua3JvbGxCeUlkKCtpZCk7XG4gIH1cblxuICBAR2V0KCd1c2VyLzp1c2VySWQnKVxuICBhc3luYyBmaW5kQmFua3JvbGxzQnlVc2VySWQoXG4gICAgQFBhcmFtKCd1c2VySWQnLCBQYXJzZUludFBpcGUpIHVzZXJJZDogbnVtYmVyLFxuICApOiBQcm9taXNlPEdldEJhbmtyb2xsRFRPW10+IHtcbiAgICByZXR1cm4gdGhpcy5iYW5rcm9sbFNlcnZpY2UuZmluZEJhbmtyb2xsc0J5VXNlcklkKHVzZXJJZCk7XG4gIH1cblxuICBAUG9zdCgpXG4gIEBVc2VQaXBlcyhuZXcgVmFsaWRhdGlvblBpcGUoeyB0cmFuc2Zvcm06IHRydWUgfSkpXG4gIGFzeW5jIGNyZWF0ZUJhbmtyb2xsKFxuICAgIEBCb2R5KCkgZGF0YTogQ3JlYXRlQmFua3JvbGxEVE8sXG4gICAgQFJlcSgpIHJlcTogQXV0aGVudGljYXRlZFJlcXVlc3QsXG4gICk6IFByb21pc2U8R2V0QmFua3JvbGxEVE8+IHtcbiAgICByZXR1cm4gdGhpcy5iYW5rcm9sbFNlcnZpY2UuY3JlYXRlQmFua3JvbGwoZGF0YSk7XG4gIH1cblxuICBAUHV0KCc6aWQnKVxuICBhc3luYyB1cGRhdGVCYW5rcm9sbChcbiAgICBAUGFyYW0oJ2lkJykgaWQ6IG51bWJlcixcbiAgICBAQm9keSgpIGRhdGE6IFVwZGF0ZUJhbmtyb2xsRFRPLFxuICApOiBQcm9taXNlPEdldEJhbmtyb2xsRFRPPiB7XG4gICAgcmV0dXJuIHRoaXMuYmFua3JvbGxTZXJ2aWNlLnVwZGF0ZUJhbmtyb2xsKCtpZCwgZGF0YSk7XG4gIH1cblxuICBARGVsZXRlKCc6aWQnKVxuICBhc3luYyBkZWxldGVCYW5rcm9sbChAUGFyYW0oJ2lkJykgaWQ6IG51bWJlcik6IFByb21pc2U8R2V0QmFua3JvbGxEVE8+IHtcbiAgICByZXR1cm4gdGhpcy5iYW5rcm9sbFNlcnZpY2UuZGVsZXRlQmFua3JvbGwoK2lkKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MailService } from './mail.service';
+import { EmailService } from './mail.service';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 
 describe('MailService', () => {
-  let service: MailService;
+  let service: EmailService;
   let mockSendMail: jest.Mock;
 
   beforeEach(async () => {
@@ -12,7 +12,7 @@ describe('MailService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        MailService,
+        EmailService,
         {
           provide: MailerService,
           useValue: { sendMail: mockSendMail },
@@ -24,7 +24,7 @@ describe('MailService', () => {
       ],
     }).compile();
 
-    service = module.get(MailService);
+    service = module.get(EmailService);
   });
 
   it('should send email with correct options', async () => {

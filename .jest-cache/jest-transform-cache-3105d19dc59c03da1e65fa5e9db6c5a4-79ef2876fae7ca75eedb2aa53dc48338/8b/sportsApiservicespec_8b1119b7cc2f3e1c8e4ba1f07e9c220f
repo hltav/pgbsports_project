@@ -1,0 +1,64 @@
+c505c68ed6059b3402b3d6813223ed51
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const testing_1 = require("@nestjs/testing");
+const axios_1 = require("@nestjs/axios");
+const rxjs_1 = require("rxjs");
+const sportsApi_service_1 = require("../api/sportsApi.service");
+const axios_2 = require("axios");
+describe('SportsApiService', () => {
+    let service;
+    let httpService;
+    let httpServiceGetSpy;
+    beforeEach(async () => {
+        process.env.APISPORTS_API_KEY = 'fake-key';
+        const module = await testing_1.Test.createTestingModule({
+            providers: [
+                sportsApi_service_1.SportsApiService,
+                {
+                    provide: axios_1.HttpService,
+                    useValue: {
+                        get: () => (0, rxjs_1.of)({}),
+                    },
+                },
+            ],
+        }).compile();
+        service = module.get(sportsApi_service_1.SportsApiService);
+        httpService = module.get(axios_1.HttpService);
+        httpServiceGetSpy = jest.spyOn(httpService, 'get');
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+    it('deve estar definido', () => {
+        expect(service).toBeDefined();
+    });
+    it('deve lançar erro se a API_KEY não estiver definida', () => {
+        delete process.env.APISPORTS_API_KEY;
+        expect(() => new sportsApi_service_1.SportsApiService(httpService)).toThrowError('APISPORTS_API_KEY is not defined in environment variables');
+    });
+    it('deve chamar a API com headers e params corretos', async () => {
+        const mockData = { result: 'ok' };
+        const mockHeaders = new axios_2.AxiosHeaders();
+        mockHeaders.set('content-type', 'application/json');
+        const mockResponse = {
+            data: mockData,
+            status: 200,
+            statusText: 'OK',
+            headers: {},
+            config: {
+                headers: mockHeaders,
+            },
+        };
+        httpServiceGetSpy.mockReturnValueOnce((0, rxjs_1.of)(mockResponse));
+        const result = await service.get('/leagues', {
+            country: 'Brazil',
+        });
+        expect(httpServiceGetSpy).toHaveBeenCalledWith('https://v3.football.api-sports.io/leagues', {
+            headers: { 'x-apisports-key': 'fake-key' },
+            params: { country: 'Brazil' },
+        });
+        expect(result).toEqual(mockData);
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcc2hhcmVkXFxhcGktc3BvcnRzXFx0ZXN0XFxzcG9ydHNBcGkuc2VydmljZS5zcGVjLnRzIiwibWFwcGluZ3MiOiI7O0FBQUEsNkNBQXNEO0FBQ3RELHlDQUE0QztBQUM1QywrQkFBMEI7QUFDMUIsZ0VBQTREO0FBQzVELGlDQUFvRDtBQUVwRCxRQUFRLENBQUMsa0JBQWtCLEVBQUUsR0FBRyxFQUFFO0lBQ2hDLElBQUksT0FBeUIsQ0FBQztJQUM5QixJQUFJLFdBQXdCLENBQUM7SUFDN0IsSUFBSSxpQkFBbUMsQ0FBQztJQUV4QyxVQUFVLENBQUMsS0FBSyxJQUFJLEVBQUU7UUFDcEIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxpQkFBaUIsR0FBRyxVQUFVLENBQUM7UUFFM0MsTUFBTSxNQUFNLEdBQWtCLE1BQU0sY0FBSSxDQUFDLG1CQUFtQixDQUFDO1lBQzNELFNBQVMsRUFBRTtnQkFDVCxvQ0FBZ0I7Z0JBQ2hCO29CQUNFLE9BQU8sRUFBRSxtQkFBVztvQkFDcEIsUUFBUSxFQUFFO3dCQUNSLEdBQUcsRUFBRSxHQUFHLEVBQUUsQ0FBQyxJQUFBLFNBQUUsRUFBQyxFQUFFLENBQUM7cUJBQ2xCO2lCQUNGO2FBQ0Y7U0FDRixDQUFDLENBQUMsT0FBTyxFQUFFLENBQUM7UUFFYixPQUFPLEdBQUcsTUFBTSxDQUFDLEdBQUcsQ0FBbUIsb0NBQWdCLENBQUMsQ0FBQztRQUN6RCxXQUFXLEdBQUcsTUFBTSxDQUFDLEdBQUcsQ0FBYyxtQkFBVyxDQUFDLENBQUM7UUFFbkQsaUJBQWlCLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxXQUFXLEVBQUUsS0FBSyxDQUFDLENBQUM7SUFDckQsQ0FBQyxDQUFDLENBQUM7SUFFSCxTQUFTLENBQUMsR0FBRyxFQUFFO1FBQ2IsSUFBSSxDQUFDLGFBQWEsRUFBRSxDQUFDO0lBQ3ZCLENBQUMsQ0FBQyxDQUFDO0lBRUgsRUFBRSxDQUFDLHFCQUFxQixFQUFFLEdBQUcsRUFBRTtRQUM3QixNQUFNLENBQUMsT0FBTyxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7SUFDaEMsQ0FBQyxDQUFDLENBQUM7SUFFSCxFQUFFLENBQUMsb0RBQW9ELEVBQUUsR0FBRyxFQUFFO1FBQzVELE9BQU8sT0FBTyxDQUFDLEdBQUcsQ0FBQyxpQkFBaUIsQ0FBQztRQUNyQyxNQUFNLENBQUMsR0FBRyxFQUFFLENBQUMsSUFBSSxvQ0FBZ0IsQ0FBQyxXQUFXLENBQUMsQ0FBQyxDQUFDLFlBQVksQ0FDMUQsMkRBQTJELENBQzVELENBQUM7SUFDSixDQUFDLENBQUMsQ0FBQztJQUVILEVBQUUsQ0FBQyxpREFBaUQsRUFBRSxLQUFLLElBQUksRUFBRTtRQUMvRCxNQUFNLFFBQVEsR0FBRyxFQUFFLE1BQU0sRUFBRSxJQUFJLEVBQUUsQ0FBQztRQUVsQyxNQUFNLFdBQVcsR0FBRyxJQUFJLG9CQUFZLEVBQUUsQ0FBQztRQUV2QyxXQUFXLENBQUMsR0FBRyxDQUFDLGNBQWMsRUFBRSxrQkFBa0IsQ0FBQyxDQUFDO1FBQ3BELE1BQU0sWUFBWSxHQUFrQjtZQUNsQyxJQUFJLEVBQUUsUUFBUTtZQUNkLE1BQU0sRUFBRSxHQUFHO1lBQ1gsVUFBVSxFQUFFLElBQUk7WUFDaEIsT0FBTyxFQUFFLEVBQUU7WUFDWCxNQUFNLEVBQUU7Z0JBQ04sT0FBTyxFQUFFLFdBQVc7YUFDckI7U0FDRixDQUFDO1FBRUYsaUJBQWlCLENBQUMsbUJBQW1CLENBQUMsSUFBQSxTQUFFLEVBQUMsWUFBWSxDQUFDLENBQUMsQ0FBQztRQUV4RCxNQUFNLE1BQU0sR0FBRyxNQUFNLE9BQU8sQ0FBQyxHQUFHLENBQXFCLFVBQVUsRUFBRTtZQUMvRCxPQUFPLEVBQUUsUUFBUTtTQUNsQixDQUFDLENBQUM7UUFFSCxNQUFNLENBQUMsaUJBQWlCLENBQUMsQ0FBQyxvQkFBb0IsQ0FDNUMsMkNBQTJDLEVBQzNDO1lBQ0UsT0FBTyxFQUFFLEVBQUUsaUJBQWlCLEVBQUUsVUFBVSxFQUFFO1lBQzFDLE1BQU0sRUFBRSxFQUFFLE9BQU8sRUFBRSxRQUFRLEVBQUU7U0FDOUIsQ0FDRixDQUFDO1FBQ0YsTUFBTSxDQUFDLE1BQU0sQ0FBQyxDQUFDLE9BQU8sQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUNuQyxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxzcmNcXHNoYXJlZFxcYXBpLXNwb3J0c1xcdGVzdFxcc3BvcnRzQXBpLnNlcnZpY2Uuc3BlYy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBUZXN0LCBUZXN0aW5nTW9kdWxlIH0gZnJvbSAnQG5lc3Rqcy90ZXN0aW5nJztcbmltcG9ydCB7IEh0dHBTZXJ2aWNlIH0gZnJvbSAnQG5lc3Rqcy9heGlvcyc7XG5pbXBvcnQgeyBvZiB9IGZyb20gJ3J4anMnO1xuaW1wb3J0IHsgU3BvcnRzQXBpU2VydmljZSB9IGZyb20gJy4uL2FwaS9zcG9ydHNBcGkuc2VydmljZSc7XG5pbXBvcnQgeyBBeGlvc0hlYWRlcnMsIEF4aW9zUmVzcG9uc2UgfSBmcm9tICdheGlvcyc7XG5cbmRlc2NyaWJlKCdTcG9ydHNBcGlTZXJ2aWNlJywgKCkgPT4ge1xuICBsZXQgc2VydmljZTogU3BvcnRzQXBpU2VydmljZTtcbiAgbGV0IGh0dHBTZXJ2aWNlOiBIdHRwU2VydmljZTtcbiAgbGV0IGh0dHBTZXJ2aWNlR2V0U3B5OiBqZXN0LlNweUluc3RhbmNlO1xuXG4gIGJlZm9yZUVhY2goYXN5bmMgKCkgPT4ge1xuICAgIHByb2Nlc3MuZW52LkFQSVNQT1JUU19BUElfS0VZID0gJ2Zha2Uta2V5JztcblxuICAgIGNvbnN0IG1vZHVsZTogVGVzdGluZ01vZHVsZSA9IGF3YWl0IFRlc3QuY3JlYXRlVGVzdGluZ01vZHVsZSh7XG4gICAgICBwcm92aWRlcnM6IFtcbiAgICAgICAgU3BvcnRzQXBpU2VydmljZSxcbiAgICAgICAge1xuICAgICAgICAgIHByb3ZpZGU6IEh0dHBTZXJ2aWNlLFxuICAgICAgICAgIHVzZVZhbHVlOiB7XG4gICAgICAgICAgICBnZXQ6ICgpID0+IG9mKHt9KSxcbiAgICAgICAgICB9LFxuICAgICAgICB9LFxuICAgICAgXSxcbiAgICB9KS5jb21waWxlKCk7XG5cbiAgICBzZXJ2aWNlID0gbW9kdWxlLmdldDxTcG9ydHNBcGlTZXJ2aWNlPihTcG9ydHNBcGlTZXJ2aWNlKTtcbiAgICBodHRwU2VydmljZSA9IG1vZHVsZS5nZXQ8SHR0cFNlcnZpY2U+KEh0dHBTZXJ2aWNlKTtcblxuICAgIGh0dHBTZXJ2aWNlR2V0U3B5ID0gamVzdC5zcHlPbihodHRwU2VydmljZSwgJ2dldCcpO1xuICB9KTtcblxuICBhZnRlckVhY2goKCkgPT4ge1xuICAgIGplc3QuY2xlYXJBbGxNb2NrcygpO1xuICB9KTtcblxuICBpdCgnZGV2ZSBlc3RhciBkZWZpbmlkbycsICgpID0+IHtcbiAgICBleHBlY3Qoc2VydmljZSkudG9CZURlZmluZWQoKTtcbiAgfSk7XG5cbiAgaXQoJ2RldmUgbGFuw6dhciBlcnJvIHNlIGEgQVBJX0tFWSBuw6NvIGVzdGl2ZXIgZGVmaW5pZGEnLCAoKSA9PiB7XG4gICAgZGVsZXRlIHByb2Nlc3MuZW52LkFQSVNQT1JUU19BUElfS0VZO1xuICAgIGV4cGVjdCgoKSA9PiBuZXcgU3BvcnRzQXBpU2VydmljZShodHRwU2VydmljZSkpLnRvVGhyb3dFcnJvcihcbiAgICAgICdBUElTUE9SVFNfQVBJX0tFWSBpcyBub3QgZGVmaW5lZCBpbiBlbnZpcm9ubWVudCB2YXJpYWJsZXMnLFxuICAgICk7XG4gIH0pO1xuXG4gIGl0KCdkZXZlIGNoYW1hciBhIEFQSSBjb20gaGVhZGVycyBlIHBhcmFtcyBjb3JyZXRvcycsIGFzeW5jICgpID0+IHtcbiAgICBjb25zdCBtb2NrRGF0YSA9IHsgcmVzdWx0OiAnb2snIH07XG5cbiAgICBjb25zdCBtb2NrSGVhZGVycyA9IG5ldyBBeGlvc0hlYWRlcnMoKTtcblxuICAgIG1vY2tIZWFkZXJzLnNldCgnY29udGVudC10eXBlJywgJ2FwcGxpY2F0aW9uL2pzb24nKTtcbiAgICBjb25zdCBtb2NrUmVzcG9uc2U6IEF4aW9zUmVzcG9uc2UgPSB7XG4gICAgICBkYXRhOiBtb2NrRGF0YSxcbiAgICAgIHN0YXR1czogMjAwLFxuICAgICAgc3RhdHVzVGV4dDogJ09LJyxcbiAgICAgIGhlYWRlcnM6IHt9LFxuICAgICAgY29uZmlnOiB7XG4gICAgICAgIGhlYWRlcnM6IG1vY2tIZWFkZXJzLFxuICAgICAgfSxcbiAgICB9O1xuXG4gICAgaHR0cFNlcnZpY2VHZXRTcHkubW9ja1JldHVyblZhbHVlT25jZShvZihtb2NrUmVzcG9uc2UpKTtcblxuICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHNlcnZpY2UuZ2V0PHsgcmVzdWx0OiBzdHJpbmcgfT4oJy9sZWFndWVzJywge1xuICAgICAgY291bnRyeTogJ0JyYXppbCcsXG4gICAgfSk7XG5cbiAgICBleHBlY3QoaHR0cFNlcnZpY2VHZXRTcHkpLnRvSGF2ZUJlZW5DYWxsZWRXaXRoKFxuICAgICAgJ2h0dHBzOi8vdjMuZm9vdGJhbGwuYXBpLXNwb3J0cy5pby9sZWFndWVzJyxcbiAgICAgIHtcbiAgICAgICAgaGVhZGVyczogeyAneC1hcGlzcG9ydHMta2V5JzogJ2Zha2Uta2V5JyB9LFxuICAgICAgICBwYXJhbXM6IHsgY291bnRyeTogJ0JyYXppbCcgfSxcbiAgICAgIH0sXG4gICAgKTtcbiAgICBleHBlY3QocmVzdWx0KS50b0VxdWFsKG1vY2tEYXRhKTtcbiAgfSk7XG59KTtcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,50 @@
+ccc140f8fc12981140b7ae32c9fdfba2
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UpdateBankrollService = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_1 = require("./../../../libs/database/prisma");
+let UpdateBankrollService = class UpdateBankrollService {
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
+    async updateBankroll(id, updateData) {
+        const bankroll = await this.prisma.bankroll.findUnique({
+            where: { id },
+        });
+        if (!bankroll) {
+            throw new common_1.NotFoundException('Bankroll not found!');
+        }
+        const updatedBankroll = await this.prisma.bankroll.update({
+            where: { id },
+            data: updateData,
+            select: {
+                id: true,
+                userId: true,
+                name: true,
+                balance: true,
+                unidValue: true,
+                bookmaker: true,
+            },
+        });
+        return {
+            ...updatedBankroll,
+            statusSync: 'Synchronized',
+        };
+    }
+};
+exports.UpdateBankrollService = UpdateBankrollService;
+exports.UpdateBankrollService = UpdateBankrollService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_1.PrismaService])
+], UpdateBankrollService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcYmFua3JvbGxcXHNlcnZpY2VzXFx1cGRhdGUtYmFua3JvbGwuc2VydmljZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7QUFBQSwyQ0FBK0Q7QUFDL0QsNERBQWdFO0FBSXpELElBQU0scUJBQXFCLEdBQTNCLE1BQU0scUJBQXFCO0lBQ2hDLFlBQW9CLE1BQXFCO1FBQXJCLFdBQU0sR0FBTixNQUFNLENBQWU7SUFBRyxDQUFDO0lBRTdDLEtBQUssQ0FBQyxjQUFjLENBQ2xCLEVBQVUsRUFDVixVQUFzQztRQUV0QyxNQUFNLFFBQVEsR0FBRyxNQUFNLElBQUksQ0FBQyxNQUFNLENBQUMsUUFBUSxDQUFDLFVBQVUsQ0FBQztZQUNyRCxLQUFLLEVBQUUsRUFBRSxFQUFFLEVBQUU7U0FDZCxDQUFDLENBQUM7UUFFSCxJQUFJLENBQUMsUUFBUSxFQUFFLENBQUM7WUFDZCxNQUFNLElBQUksMEJBQWlCLENBQUMscUJBQXFCLENBQUMsQ0FBQztRQUNyRCxDQUFDO1FBRUQsTUFBTSxlQUFlLEdBQUcsTUFBTSxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUM7WUFDeEQsS0FBSyxFQUFFLEVBQUUsRUFBRSxFQUFFO1lBQ2IsSUFBSSxFQUFFLFVBQVU7WUFDaEIsTUFBTSxFQUFFO2dCQUNOLEVBQUUsRUFBRSxJQUFJO2dCQUNSLE1BQU0sRUFBRSxJQUFJO2dCQUNaLElBQUksRUFBRSxJQUFJO2dCQUNWLE9BQU8sRUFBRSxJQUFJO2dCQUNiLFNBQVMsRUFBRSxJQUFJO2dCQUNmLFNBQVMsRUFBRSxJQUFJO2FBQ2hCO1NBQ0YsQ0FBQyxDQUFDO1FBRUgsT0FBTztZQUNMLEdBQUcsZUFBZTtZQUNsQixVQUFVLEVBQUUsY0FBYztTQUMzQixDQUFDO0lBQ0osQ0FBQztDQUNGLENBQUE7QUFqQ1ksc0RBQXFCO2dDQUFyQixxQkFBcUI7SUFEakMsSUFBQSxtQkFBVSxHQUFFO3FDQUVpQixzQkFBYTtHQUQ5QixxQkFBcUIsQ0FpQ2pDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxzcmNcXG1vZHVsZXNcXGJhbmtyb2xsXFxzZXJ2aWNlc1xcdXBkYXRlLWJhbmtyb2xsLnNlcnZpY2UudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgSW5qZWN0YWJsZSwgTm90Rm91bmRFeGNlcHRpb24gfSBmcm9tICdAbmVzdGpzL2NvbW1vbic7XG5pbXBvcnQgeyBQcmlzbWFTZXJ2aWNlIH0gZnJvbSAnLi8uLi8uLi8uLi9saWJzL2RhdGFiYXNlL3ByaXNtYSc7XG5pbXBvcnQgeyBVcGRhdGVCYW5rcm9sbERUTywgR2V0QmFua3JvbGxEVE8gfSBmcm9tICcuLi96LmR0byc7XG5cbkBJbmplY3RhYmxlKClcbmV4cG9ydCBjbGFzcyBVcGRhdGVCYW5rcm9sbFNlcnZpY2Uge1xuICBjb25zdHJ1Y3Rvcihwcml2YXRlIHByaXNtYTogUHJpc21hU2VydmljZSkge31cblxuICBhc3luYyB1cGRhdGVCYW5rcm9sbChcbiAgICBpZDogbnVtYmVyLFxuICAgIHVwZGF0ZURhdGE6IFBhcnRpYWw8VXBkYXRlQmFua3JvbGxEVE8+LFxuICApOiBQcm9taXNlPEdldEJhbmtyb2xsRFRPPiB7XG4gICAgY29uc3QgYmFua3JvbGwgPSBhd2FpdCB0aGlzLnByaXNtYS5iYW5rcm9sbC5maW5kVW5pcXVlKHtcbiAgICAgIHdoZXJlOiB7IGlkIH0sXG4gICAgfSk7XG5cbiAgICBpZiAoIWJhbmtyb2xsKSB7XG4gICAgICB0aHJvdyBuZXcgTm90Rm91bmRFeGNlcHRpb24oJ0Jhbmtyb2xsIG5vdCBmb3VuZCEnKTtcbiAgICB9XG5cbiAgICBjb25zdCB1cGRhdGVkQmFua3JvbGwgPSBhd2FpdCB0aGlzLnByaXNtYS5iYW5rcm9sbC51cGRhdGUoe1xuICAgICAgd2hlcmU6IHsgaWQgfSxcbiAgICAgIGRhdGE6IHVwZGF0ZURhdGEsXG4gICAgICBzZWxlY3Q6IHtcbiAgICAgICAgaWQ6IHRydWUsXG4gICAgICAgIHVzZXJJZDogdHJ1ZSxcbiAgICAgICAgbmFtZTogdHJ1ZSxcbiAgICAgICAgYmFsYW5jZTogdHJ1ZSxcbiAgICAgICAgdW5pZFZhbHVlOiB0cnVlLFxuICAgICAgICBib29rbWFrZXI6IHRydWUsXG4gICAgICB9LFxuICAgIH0pO1xuXG4gICAgcmV0dXJuIHtcbiAgICAgIC4uLnVwZGF0ZWRCYW5rcm9sbCxcbiAgICAgIHN0YXR1c1N5bmM6ICdTeW5jaHJvbml6ZWQnLFxuICAgIH07XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

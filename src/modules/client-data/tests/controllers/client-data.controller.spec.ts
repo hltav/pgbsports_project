@@ -9,6 +9,8 @@ import {
   UpdateClientDataService,
   UpdateClientImageService,
 } from '../../services';
+import { ImageService } from './../../../../modules/image/image.service';
+import { LocalStorageService } from './../../../../modules/image/storage';
 
 describe('ClientDataController', () => {
   let controller: ClientDataController;
@@ -19,6 +21,11 @@ describe('ClientDataController', () => {
       providers: [
         ClientDataService,
         PrismaService,
+        ImageService,
+        {
+          provide: 'StorageService',
+          useClass: LocalStorageService,
+        },
         CreateClientDataService,
         GetMyClientDataService,
         GetClientDataService,

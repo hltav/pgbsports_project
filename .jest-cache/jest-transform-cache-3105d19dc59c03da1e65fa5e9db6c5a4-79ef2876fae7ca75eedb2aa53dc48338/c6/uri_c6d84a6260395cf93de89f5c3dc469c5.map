@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\uri.js","mappings":"AAAA,YAAY,CAAC;AAEb,8BAA8B;AAC9B,MAAM,CAAC,OAAO,GAAG,QAAQ,CAAC","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\uri.js"],"sourcesContent":["'use strict';\n\n/** @type {import('./uri')} */\nmodule.exports = URIError;\n"],"version":3}

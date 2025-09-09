@@ -1,0 +1,21 @@
+ec74e982e4b09c3c4720956cf1fe086a
+/**
+ * Module dependencies.
+ */
+var initialize = require('../middleware/initialize'), authenticate = require('../middleware/authenticate');
+/**
+ * Framework support for Connect/Express.
+ *
+ * This module provides support for using Passport with Express.  It exposes
+ * middleware that conform to the `fn(req, res, next)` signature.
+ *
+ * @return {Object}
+ * @api protected
+ */
+exports = module.exports = function () {
+    return {
+        initialize: initialize,
+        authenticate: authenticate
+    };
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xccGFzc3BvcnRcXGxpYlxcZnJhbWV3b3JrXFxjb25uZWN0LmpzIiwibWFwcGluZ3MiOiJBQUFBOztHQUVHO0FBQ0gsSUFBSSxVQUFVLEdBQUcsT0FBTyxDQUFDLDBCQUEwQixDQUFDLEVBQ2hELFlBQVksR0FBRyxPQUFPLENBQUMsNEJBQTRCLENBQUMsQ0FBQztBQUV6RDs7Ozs7Ozs7R0FRRztBQUNILE9BQU8sR0FBRyxNQUFNLENBQUMsT0FBTyxHQUFHO0lBRXpCLE9BQU87UUFDTCxVQUFVLEVBQUUsVUFBVTtRQUN0QixZQUFZLEVBQUUsWUFBWTtLQUMzQixDQUFDO0FBQ0osQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXHBhc3Nwb3J0XFxsaWJcXGZyYW1ld29ya1xcY29ubmVjdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIE1vZHVsZSBkZXBlbmRlbmNpZXMuXG4gKi9cbnZhciBpbml0aWFsaXplID0gcmVxdWlyZSgnLi4vbWlkZGxld2FyZS9pbml0aWFsaXplJylcbiAgLCBhdXRoZW50aWNhdGUgPSByZXF1aXJlKCcuLi9taWRkbGV3YXJlL2F1dGhlbnRpY2F0ZScpO1xuICBcbi8qKlxuICogRnJhbWV3b3JrIHN1cHBvcnQgZm9yIENvbm5lY3QvRXhwcmVzcy5cbiAqXG4gKiBUaGlzIG1vZHVsZSBwcm92aWRlcyBzdXBwb3J0IGZvciB1c2luZyBQYXNzcG9ydCB3aXRoIEV4cHJlc3MuICBJdCBleHBvc2VzXG4gKiBtaWRkbGV3YXJlIHRoYXQgY29uZm9ybSB0byB0aGUgYGZuKHJlcSwgcmVzLCBuZXh0KWAgc2lnbmF0dXJlLlxuICpcbiAqIEByZXR1cm4ge09iamVjdH1cbiAqIEBhcGkgcHJvdGVjdGVkXG4gKi9cbmV4cG9ydHMgPSBtb2R1bGUuZXhwb3J0cyA9IGZ1bmN0aW9uKCkge1xuICBcbiAgcmV0dXJuIHtcbiAgICBpbml0aWFsaXplOiBpbml0aWFsaXplLFxuICAgIGF1dGhlbnRpY2F0ZTogYXV0aGVudGljYXRlXG4gIH07XG59O1xuIl0sInZlcnNpb24iOjN9

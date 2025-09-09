@@ -1,0 +1,21 @@
+30cff506999608344253a23c35326a64
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Bind = Bind;
+/**
+ * Decorator that binds *parameter decorators* to the method that follows.
+ *
+ * Useful when the language doesn't provide a 'Parameter Decorator' feature
+ * (i.e., vanilla JavaScript).
+ *
+ * @param decorators one or more parameter decorators (e.g., `Req()`)
+ *
+ * @publicApi
+ */
+function Bind(...decorators) {
+    return (target, key, descriptor) => {
+        decorators.forEach((fn, index) => fn(target, key, index));
+        return descriptor;
+    };
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29tbW9uXFxkZWNvcmF0b3JzXFxjb3JlXFxiaW5kLmRlY29yYXRvci5qcyIsIm1hcHBpbmdzIjoiQUFBQSxZQUFZLENBQUM7QUFDYixNQUFNLENBQUMsY0FBYyxDQUFDLE9BQU8sRUFBRSxZQUFZLEVBQUUsRUFBRSxLQUFLLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztBQUM5RCxPQUFPLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQztBQUNwQjs7Ozs7Ozs7O0dBU0c7QUFDSCxTQUFTLElBQUksQ0FBQyxHQUFHLFVBQVU7SUFDdkIsT0FBTyxDQUFDLE1BQU0sRUFBRSxHQUFHLEVBQUUsVUFBVSxFQUFFLEVBQUU7UUFDL0IsVUFBVSxDQUFDLE9BQU8sQ0FBQyxDQUFDLEVBQUUsRUFBRSxLQUFLLEVBQUUsRUFBRSxDQUFDLEVBQUUsQ0FBQyxNQUFNLEVBQUUsR0FBRyxFQUFFLEtBQUssQ0FBQyxDQUFDLENBQUM7UUFDMUQsT0FBTyxVQUFVLENBQUM7SUFDdEIsQ0FBQyxDQUFDO0FBQ04sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcbm9kZV9tb2R1bGVzXFxAbmVzdGpzXFxjb21tb25cXGRlY29yYXRvcnNcXGNvcmVcXGJpbmQuZGVjb3JhdG9yLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuT2JqZWN0LmRlZmluZVByb3BlcnR5KGV4cG9ydHMsIFwiX19lc01vZHVsZVwiLCB7IHZhbHVlOiB0cnVlIH0pO1xuZXhwb3J0cy5CaW5kID0gQmluZDtcbi8qKlxuICogRGVjb3JhdG9yIHRoYXQgYmluZHMgKnBhcmFtZXRlciBkZWNvcmF0b3JzKiB0byB0aGUgbWV0aG9kIHRoYXQgZm9sbG93cy5cbiAqXG4gKiBVc2VmdWwgd2hlbiB0aGUgbGFuZ3VhZ2UgZG9lc24ndCBwcm92aWRlIGEgJ1BhcmFtZXRlciBEZWNvcmF0b3InIGZlYXR1cmVcbiAqIChpLmUuLCB2YW5pbGxhIEphdmFTY3JpcHQpLlxuICpcbiAqIEBwYXJhbSBkZWNvcmF0b3JzIG9uZSBvciBtb3JlIHBhcmFtZXRlciBkZWNvcmF0b3JzIChlLmcuLCBgUmVxKClgKVxuICpcbiAqIEBwdWJsaWNBcGlcbiAqL1xuZnVuY3Rpb24gQmluZCguLi5kZWNvcmF0b3JzKSB7XG4gICAgcmV0dXJuICh0YXJnZXQsIGtleSwgZGVzY3JpcHRvcikgPT4ge1xuICAgICAgICBkZWNvcmF0b3JzLmZvckVhY2goKGZuLCBpbmRleCkgPT4gZm4odGFyZ2V0LCBrZXksIGluZGV4KSk7XG4gICAgICAgIHJldHVybiBkZXNjcmlwdG9yO1xuICAgIH07XG59XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\index.js","mappings":"AAAA,YAAY,CAAC;AAEb,0BAA0B;AAC1B,MAAM,CAAC,OAAO,GAAG,KAAK,CAAC","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\index.js"],"sourcesContent":["'use strict';\n\n/** @type {import('.')} */\nmodule.exports = Error;\n"],"version":3}

@@ -1,0 +1,18 @@
+33c0a4bcb95a7a57b784e8d72a376091
+"use strict";
+var os = require("os");
+var hasUnicode = module.exports = function () {
+    // Recent Win32 platforms (>XP) CAN support unicode in the console but
+    // don't have to, and in non-english locales often use traditional local
+    // code pages. There's no way, short of windows system calls or execing
+    // the chcp command line program to figure this out. As such, we default
+    // this to false and encourage your users to override it via config if
+    // appropriate.
+    if (os.type() == "Windows_NT") {
+        return false;
+    }
+    var isUTF8 = /UTF-?8$/i;
+    var ctype = process.env.LC_ALL || process.env.LC_CTYPE || process.env.LANG;
+    return isUTF8.test(ctype);
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcaGFzLXVuaWNvZGVcXGluZGV4LmpzIiwibWFwcGluZ3MiOiJBQUFBLFlBQVksQ0FBQTtBQUNaLElBQUksRUFBRSxHQUFHLE9BQU8sQ0FBQyxJQUFJLENBQUMsQ0FBQTtBQUV0QixJQUFJLFVBQVUsR0FBRyxNQUFNLENBQUMsT0FBTyxHQUFHO0lBQ2hDLHNFQUFzRTtJQUN0RSx3RUFBd0U7SUFDeEUsdUVBQXVFO0lBQ3ZFLHdFQUF3RTtJQUN4RSxzRUFBc0U7SUFDdEUsZUFBZTtJQUNmLElBQUksRUFBRSxDQUFDLElBQUksRUFBRSxJQUFJLFlBQVksRUFBRSxDQUFDO1FBQUMsT0FBTyxLQUFLLENBQUE7SUFBQyxDQUFDO0lBRS9DLElBQUksTUFBTSxHQUFHLFVBQVUsQ0FBQTtJQUN2QixJQUFJLEtBQUssR0FBRyxPQUFPLENBQUMsR0FBRyxDQUFDLE1BQU0sSUFBSSxPQUFPLENBQUMsR0FBRyxDQUFDLFFBQVEsSUFBSSxPQUFPLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQTtJQUMxRSxPQUFPLE1BQU0sQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLENBQUE7QUFDM0IsQ0FBQyxDQUFBIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXGhhcy11bmljb2RlXFxpbmRleC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJcInVzZSBzdHJpY3RcIlxudmFyIG9zID0gcmVxdWlyZShcIm9zXCIpXG5cbnZhciBoYXNVbmljb2RlID0gbW9kdWxlLmV4cG9ydHMgPSBmdW5jdGlvbiAoKSB7XG4gIC8vIFJlY2VudCBXaW4zMiBwbGF0Zm9ybXMgKD5YUCkgQ0FOIHN1cHBvcnQgdW5pY29kZSBpbiB0aGUgY29uc29sZSBidXRcbiAgLy8gZG9uJ3QgaGF2ZSB0bywgYW5kIGluIG5vbi1lbmdsaXNoIGxvY2FsZXMgb2Z0ZW4gdXNlIHRyYWRpdGlvbmFsIGxvY2FsXG4gIC8vIGNvZGUgcGFnZXMuIFRoZXJlJ3Mgbm8gd2F5LCBzaG9ydCBvZiB3aW5kb3dzIHN5c3RlbSBjYWxscyBvciBleGVjaW5nXG4gIC8vIHRoZSBjaGNwIGNvbW1hbmQgbGluZSBwcm9ncmFtIHRvIGZpZ3VyZSB0aGlzIG91dC4gQXMgc3VjaCwgd2UgZGVmYXVsdFxuICAvLyB0aGlzIHRvIGZhbHNlIGFuZCBlbmNvdXJhZ2UgeW91ciB1c2VycyB0byBvdmVycmlkZSBpdCB2aWEgY29uZmlnIGlmXG4gIC8vIGFwcHJvcHJpYXRlLlxuICBpZiAob3MudHlwZSgpID09IFwiV2luZG93c19OVFwiKSB7IHJldHVybiBmYWxzZSB9XG5cbiAgdmFyIGlzVVRGOCA9IC9VVEYtPzgkL2lcbiAgdmFyIGN0eXBlID0gcHJvY2Vzcy5lbnYuTENfQUxMIHx8IHByb2Nlc3MuZW52LkxDX0NUWVBFIHx8IHByb2Nlc3MuZW52LkxBTkdcbiAgcmV0dXJuIGlzVVRGOC50ZXN0KGN0eXBlKVxufVxuIl0sInZlcnNpb24iOjN9

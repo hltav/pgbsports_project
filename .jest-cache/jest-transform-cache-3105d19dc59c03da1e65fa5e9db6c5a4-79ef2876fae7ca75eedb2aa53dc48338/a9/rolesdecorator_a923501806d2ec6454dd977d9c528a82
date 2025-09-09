@@ -1,0 +1,8 @@
+46405b1f05d3b3c1f86571a1c913e942
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Roles = void 0;
+const common_1 = require("@nestjs/common");
+const Roles = (...roles) => (0, common_1.SetMetadata)('roles', roles);
+exports.Roles = Roles;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcY29tbW9uXFxkZWNvcmF0b3JcXHJvbGVzLmRlY29yYXRvci50cyIsIm1hcHBpbmdzIjoiOzs7QUFBQSwyQ0FBNkM7QUFFdEMsTUFBTSxLQUFLLEdBQUcsQ0FBQyxHQUFHLEtBQWUsRUFBRSxFQUFFLENBQUMsSUFBQSxvQkFBVyxFQUFDLE9BQU8sRUFBRSxLQUFLLENBQUMsQ0FBQztBQUE1RCxRQUFBLEtBQUssU0FBdUQiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcY29tbW9uXFxkZWNvcmF0b3JcXHJvbGVzLmRlY29yYXRvci50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBTZXRNZXRhZGF0YSB9IGZyb20gJ0BuZXN0anMvY29tbW9uJztcblxuZXhwb3J0IGNvbnN0IFJvbGVzID0gKC4uLnJvbGVzOiBzdHJpbmdbXSkgPT4gU2V0TWV0YWRhdGEoJ3JvbGVzJywgcm9sZXMpO1xuIl0sInZlcnNpb24iOjN9

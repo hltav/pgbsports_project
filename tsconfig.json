@@ -20,7 +20,8 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["zod", "node"]
+    "types": ["zod", "node", "jest"]
   },
+  "include": ["src/**/*", "jest.config.js"],
   "exclude": ["node_modules", "ecosystem.config.js", "dist"]
 }

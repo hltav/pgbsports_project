@@ -1,0 +1,25 @@
+eb2d2c97d82e0f4ba9cb78875a985589
+// API
+module.exports = abort;
+/**
+ * Aborts leftover active jobs
+ *
+ * @param {object} state - current state object
+ */
+function abort(state) {
+    Object.keys(state.jobs).forEach(clean.bind(state));
+    // reset leftover jobs
+    state.jobs = {};
+}
+/**
+ * Cleans up leftover job by invoking abort function for the provided job id
+ *
+ * @this  state
+ * @param {string|number} key - job id to abort
+ */
+function clean(key) {
+    if (typeof this.jobs[key] == 'function') {
+        this.jobs[key]();
+    }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXGxpYlxcYWJvcnQuanMiLCJtYXBwaW5ncyI6IkFBQUEsTUFBTTtBQUNOLE1BQU0sQ0FBQyxPQUFPLEdBQUcsS0FBSyxDQUFDO0FBRXZCOzs7O0dBSUc7QUFDSCxTQUFTLEtBQUssQ0FBQyxLQUFLO0lBRWxCLE1BQU0sQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxDQUFDLE9BQU8sQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUM7SUFFbkQsc0JBQXNCO0lBQ3RCLEtBQUssQ0FBQyxJQUFJLEdBQUcsRUFBRSxDQUFDO0FBQ2xCLENBQUM7QUFFRDs7Ozs7R0FLRztBQUNILFNBQVMsS0FBSyxDQUFDLEdBQUc7SUFFaEIsSUFBSSxPQUFPLElBQUksQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDLElBQUksVUFBVSxFQUN2QyxDQUFDO1FBQ0MsSUFBSSxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUMsRUFBRSxDQUFDO0lBQ25CLENBQUM7QUFDSCxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXGFzeW5ja2l0XFxsaWJcXGFib3J0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEFQSVxubW9kdWxlLmV4cG9ydHMgPSBhYm9ydDtcblxuLyoqXG4gKiBBYm9ydHMgbGVmdG92ZXIgYWN0aXZlIGpvYnNcbiAqXG4gKiBAcGFyYW0ge29iamVjdH0gc3RhdGUgLSBjdXJyZW50IHN0YXRlIG9iamVjdFxuICovXG5mdW5jdGlvbiBhYm9ydChzdGF0ZSlcbntcbiAgT2JqZWN0LmtleXMoc3RhdGUuam9icykuZm9yRWFjaChjbGVhbi5iaW5kKHN0YXRlKSk7XG5cbiAgLy8gcmVzZXQgbGVmdG92ZXIgam9ic1xuICBzdGF0ZS5qb2JzID0ge307XG59XG5cbi8qKlxuICogQ2xlYW5zIHVwIGxlZnRvdmVyIGpvYiBieSBpbnZva2luZyBhYm9ydCBmdW5jdGlvbiBmb3IgdGhlIHByb3ZpZGVkIGpvYiBpZFxuICpcbiAqIEB0aGlzICBzdGF0ZVxuICogQHBhcmFtIHtzdHJpbmd8bnVtYmVyfSBrZXkgLSBqb2IgaWQgdG8gYWJvcnRcbiAqL1xuZnVuY3Rpb24gY2xlYW4oa2V5KVxue1xuICBpZiAodHlwZW9mIHRoaXMuam9ic1trZXldID09ICdmdW5jdGlvbicpXG4gIHtcbiAgICB0aGlzLmpvYnNba2V5XSgpO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

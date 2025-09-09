@@ -1,0 +1,40 @@
+7b3068cb78439a3d72ff2d3a4e92c110
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CacheService = void 0;
+const common_1 = require("@nestjs/common");
+const cache_manager_1 = require("@nestjs/cache-manager");
+let CacheService = class CacheService {
+    constructor(cacheManager) {
+        this.cacheManager = cacheManager;
+    }
+    async set(key, value, ttl) {
+        await this.cacheManager.set(key, value, ttl);
+    }
+    async get(key) {
+        const result = await this.cacheManager.get(key);
+        return result === null ? undefined : result;
+    }
+    async del(key) {
+        await this.cacheManager.del(key);
+    }
+};
+exports.CacheService = CacheService;
+exports.CacheService = CacheService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __metadata("design:paramtypes", [Object])
+], CacheService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcc2VydmljZXNcXGNhY2hlXFxjYWNoZS5zZXJ2aWNlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7OztBQUFBLDJDQUFvRDtBQUVwRCx5REFBc0Q7QUFHL0MsSUFBTSxZQUFZLEdBQWxCLE1BQU0sWUFBWTtJQUN2QixZQUFvRCxZQUFtQjtRQUFuQixpQkFBWSxHQUFaLFlBQVksQ0FBTztJQUFHLENBQUM7SUFFM0UsS0FBSyxDQUFDLEdBQUcsQ0FBQyxHQUFXLEVBQUUsS0FBVSxFQUFFLEdBQVk7UUFDN0MsTUFBTSxJQUFJLENBQUMsWUFBWSxDQUFDLEdBQUcsQ0FBQyxHQUFHLEVBQUUsS0FBSyxFQUFFLEdBQUcsQ0FBQyxDQUFDO0lBQy9DLENBQUM7SUFFRCxLQUFLLENBQUMsR0FBRyxDQUFJLEdBQVc7UUFDdEIsTUFBTSxNQUFNLEdBQUcsTUFBTSxJQUFJLENBQUMsWUFBWSxDQUFDLEdBQUcsQ0FBSSxHQUFHLENBQUMsQ0FBQztRQUNuRCxPQUFPLE1BQU0sS0FBSyxJQUFJLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUMsTUFBTSxDQUFDO0lBQzlDLENBQUM7SUFFRCxLQUFLLENBQUMsR0FBRyxDQUFDLEdBQVc7UUFDbkIsTUFBTSxJQUFJLENBQUMsWUFBWSxDQUFDLEdBQUcsQ0FBQyxHQUFHLENBQUMsQ0FBQztJQUNuQyxDQUFDO0NBQ0YsQ0FBQTtBQWZZLG9DQUFZO3VCQUFaLFlBQVk7SUFEeEIsSUFBQSxtQkFBVSxHQUFFO0lBRUUsV0FBQSxJQUFBLGVBQU0sRUFBQyw2QkFBYSxDQUFDLENBQUE7O0dBRHZCLFlBQVksQ0FleEIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcc2VydmljZXNcXGNhY2hlXFxjYWNoZS5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdGFibGUsIEluamVjdCB9IGZyb20gJ0BuZXN0anMvY29tbW9uJztcbmltcG9ydCB7IENhY2hlIH0gZnJvbSAnY2FjaGUtbWFuYWdlcic7XG5pbXBvcnQgeyBDQUNIRV9NQU5BR0VSIH0gZnJvbSAnQG5lc3Rqcy9jYWNoZS1tYW5hZ2VyJztcblxuQEluamVjdGFibGUoKVxuZXhwb3J0IGNsYXNzIENhY2hlU2VydmljZSB7XG4gIGNvbnN0cnVjdG9yKEBJbmplY3QoQ0FDSEVfTUFOQUdFUikgcHJpdmF0ZSByZWFkb25seSBjYWNoZU1hbmFnZXI6IENhY2hlKSB7fVxuXG4gIGFzeW5jIHNldChrZXk6IHN0cmluZywgdmFsdWU6IGFueSwgdHRsPzogbnVtYmVyKSB7XG4gICAgYXdhaXQgdGhpcy5jYWNoZU1hbmFnZXIuc2V0KGtleSwgdmFsdWUsIHR0bCk7XG4gIH1cblxuICBhc3luYyBnZXQ8VD4oa2V5OiBzdHJpbmcpOiBQcm9taXNlPFQgfCB1bmRlZmluZWQ+IHtcbiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCB0aGlzLmNhY2hlTWFuYWdlci5nZXQ8VD4oa2V5KTtcbiAgICByZXR1cm4gcmVzdWx0ID09PSBudWxsID8gdW5kZWZpbmVkIDogcmVzdWx0O1xuICB9XG5cbiAgYXN5bmMgZGVsKGtleTogc3RyaW5nKSB7XG4gICAgYXdhaXQgdGhpcy5jYWNoZU1hbmFnZXIuZGVsKGtleSk7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

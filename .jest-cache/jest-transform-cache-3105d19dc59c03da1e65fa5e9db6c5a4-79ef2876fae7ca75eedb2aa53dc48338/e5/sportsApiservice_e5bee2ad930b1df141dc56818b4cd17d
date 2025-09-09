@@ -1,0 +1,41 @@
+a0a287fa8cbeced0a613c311dfbc92f1
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SportsApiService = void 0;
+const common_1 = require("@nestjs/common");
+const axios_1 = require("@nestjs/axios");
+const rxjs_1 = require("rxjs");
+let SportsApiService = class SportsApiService {
+    constructor(httpService) {
+        this.httpService = httpService;
+        this.API_URL = 'https://v3.football.api-sports.io';
+        const apiKey = process.env.APISPORTS_API_KEY;
+        if (!apiKey) {
+            throw new Error('APISPORTS_API_KEY is not defined in environment variables');
+        }
+        this.API_KEY = apiKey;
+    }
+    async get(endpoint, params) {
+        const url = `${this.API_URL}${endpoint}`;
+        const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(url, {
+            headers: { 'x-apisports-key': this.API_KEY },
+            params,
+        }));
+        return response.data;
+    }
+};
+exports.SportsApiService = SportsApiService;
+exports.SportsApiService = SportsApiService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [axios_1.HttpService])
+], SportsApiService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcc2hhcmVkXFxhcGktc3BvcnRzXFxhcGlcXHNwb3J0c0FwaS5zZXJ2aWNlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQUFBLDJDQUE0QztBQUM1Qyx5Q0FBNEM7QUFDNUMsK0JBQXNDO0FBRy9CLElBQU0sZ0JBQWdCLEdBQXRCLE1BQU0sZ0JBQWdCO0lBSTNCLFlBQTZCLFdBQXdCO1FBQXhCLGdCQUFXLEdBQVgsV0FBVyxDQUFhO1FBSHBDLFlBQU8sR0FBRyxtQ0FBbUMsQ0FBQztRQUk3RCxNQUFNLE1BQU0sR0FBRyxPQUFPLENBQUMsR0FBRyxDQUFDLGlCQUFpQixDQUFDO1FBQzdDLElBQUksQ0FBQyxNQUFNLEVBQUUsQ0FBQztZQUNaLE1BQU0sSUFBSSxLQUFLLENBQ2IsMkRBQTJELENBQzVELENBQUM7UUFDSixDQUFDO1FBQ0QsSUFBSSxDQUFDLE9BQU8sR0FBRyxNQUFNLENBQUM7SUFDeEIsQ0FBQztJQUVELEtBQUssQ0FBQyxHQUFHLENBQUksUUFBZ0IsRUFBRSxNQUE0QjtRQUN6RCxNQUFNLEdBQUcsR0FBRyxHQUFHLElBQUksQ0FBQyxPQUFPLEdBQUcsUUFBUSxFQUFFLENBQUM7UUFDekMsTUFBTSxRQUFRLEdBQUcsTUFBTSxJQUFBLHFCQUFjLEVBQ25DLElBQUksQ0FBQyxXQUFXLENBQUMsR0FBRyxDQUFDLEdBQUcsRUFBRTtZQUN4QixPQUFPLEVBQUUsRUFBRSxpQkFBaUIsRUFBRSxJQUFJLENBQUMsT0FBTyxFQUFFO1lBQzVDLE1BQU07U0FDUCxDQUFDLENBQ0gsQ0FBQztRQUNGLE9BQU8sUUFBUSxDQUFDLElBQVMsQ0FBQztJQUM1QixDQUFDO0NBQ0YsQ0FBQTtBQXhCWSw0Q0FBZ0I7MkJBQWhCLGdCQUFnQjtJQUQ1QixJQUFBLG1CQUFVLEdBQUU7cUNBSytCLG1CQUFXO0dBSjFDLGdCQUFnQixDQXdCNUIiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcc2hhcmVkXFxhcGktc3BvcnRzXFxhcGlcXHNwb3J0c0FwaS5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdGFibGUgfSBmcm9tICdAbmVzdGpzL2NvbW1vbic7XG5pbXBvcnQgeyBIdHRwU2VydmljZSB9IGZyb20gJ0BuZXN0anMvYXhpb3MnO1xuaW1wb3J0IHsgZmlyc3RWYWx1ZUZyb20gfSBmcm9tICdyeGpzJztcblxuQEluamVjdGFibGUoKVxuZXhwb3J0IGNsYXNzIFNwb3J0c0FwaVNlcnZpY2Uge1xuICBwcml2YXRlIHJlYWRvbmx5IEFQSV9VUkwgPSAnaHR0cHM6Ly92My5mb290YmFsbC5hcGktc3BvcnRzLmlvJztcbiAgcHJpdmF0ZSByZWFkb25seSBBUElfS0VZOiBzdHJpbmc7XG5cbiAgY29uc3RydWN0b3IocHJpdmF0ZSByZWFkb25seSBodHRwU2VydmljZTogSHR0cFNlcnZpY2UpIHtcbiAgICBjb25zdCBhcGlLZXkgPSBwcm9jZXNzLmVudi5BUElTUE9SVFNfQVBJX0tFWTtcbiAgICBpZiAoIWFwaUtleSkge1xuICAgICAgdGhyb3cgbmV3IEVycm9yKFxuICAgICAgICAnQVBJU1BPUlRTX0FQSV9LRVkgaXMgbm90IGRlZmluZWQgaW4gZW52aXJvbm1lbnQgdmFyaWFibGVzJyxcbiAgICAgICk7XG4gICAgfVxuICAgIHRoaXMuQVBJX0tFWSA9IGFwaUtleTtcbiAgfVxuXG4gIGFzeW5jIGdldDxUPihlbmRwb2ludDogc3RyaW5nLCBwYXJhbXM/OiBSZWNvcmQ8c3RyaW5nLCBhbnk+KTogUHJvbWlzZTxUPiB7XG4gICAgY29uc3QgdXJsID0gYCR7dGhpcy5BUElfVVJMfSR7ZW5kcG9pbnR9YDtcbiAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IGZpcnN0VmFsdWVGcm9tKFxuICAgICAgdGhpcy5odHRwU2VydmljZS5nZXQodXJsLCB7XG4gICAgICAgIGhlYWRlcnM6IHsgJ3gtYXBpc3BvcnRzLWtleSc6IHRoaXMuQVBJX0tFWSB9LFxuICAgICAgICBwYXJhbXMsXG4gICAgICB9KSxcbiAgICApO1xuICAgIHJldHVybiByZXNwb25zZS5kYXRhIGFzIFQ7XG4gIH1cbn1cbiJdLCJ2ZXJzaW9uIjozfQ==

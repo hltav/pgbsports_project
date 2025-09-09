@@ -1,0 +1,8 @@
+3bb57a230f3a6ffa4d9b72a3a04bd4ce
+module.exports =
+    {
+        parallel: require('./parallel.js'),
+        serial: require('./serial.js'),
+        serialOrdered: require('./serialOrdered.js')
+    };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXGluZGV4LmpzIiwibWFwcGluZ3MiOiJBQUFBLE1BQU0sQ0FBQyxPQUFPO0lBQ2Q7UUFDRSxRQUFRLEVBQVEsT0FBTyxDQUFDLGVBQWUsQ0FBQztRQUN4QyxNQUFNLEVBQVUsT0FBTyxDQUFDLGFBQWEsQ0FBQztRQUN0QyxhQUFhLEVBQUcsT0FBTyxDQUFDLG9CQUFvQixDQUFDO0tBQzlDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXGluZGV4LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIm1vZHVsZS5leHBvcnRzID1cbntcbiAgcGFyYWxsZWwgICAgICA6IHJlcXVpcmUoJy4vcGFyYWxsZWwuanMnKSxcbiAgc2VyaWFsICAgICAgICA6IHJlcXVpcmUoJy4vc2VyaWFsLmpzJyksXG4gIHNlcmlhbE9yZGVyZWQgOiByZXF1aXJlKCcuL3NlcmlhbE9yZGVyZWQuanMnKVxufTtcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,27 @@
+6953da233b454de4eff635317abf1712
+/**
+ * Creates an instance of `Strategy`.
+ *
+ * @constructor
+ * @api public
+ */
+function Strategy() {
+}
+/**
+ * Authenticate request.
+ *
+ * This function must be overridden by subclasses.  In abstract form, it always
+ * throws an exception.
+ *
+ * @param {Object} req The request to authenticate.
+ * @param {Object} [options] Strategy-specific options.
+ * @api public
+ */
+Strategy.prototype.authenticate = function (req, options) {
+    throw new Error('Strategy#authenticate must be overridden by subclass');
+};
+/**
+ * Expose `Strategy`.
+ */
+module.exports = Strategy;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xccGFzc3BvcnQtc3RyYXRlZ3lcXGxpYlxcc3RyYXRlZ3kuanMiLCJtYXBwaW5ncyI6IkFBQUE7Ozs7O0dBS0c7QUFDSCxTQUFTLFFBQVE7QUFDakIsQ0FBQztBQUVEOzs7Ozs7Ozs7R0FTRztBQUNILFFBQVEsQ0FBQyxTQUFTLENBQUMsWUFBWSxHQUFHLFVBQVMsR0FBRyxFQUFFLE9BQU87SUFDckQsTUFBTSxJQUFJLEtBQUssQ0FBQyxzREFBc0QsQ0FBQyxDQUFDO0FBQzFFLENBQUMsQ0FBQztBQUdGOztHQUVHO0FBQ0gsTUFBTSxDQUFDLE9BQU8sR0FBRyxRQUFRLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xccGFzc3BvcnQtc3RyYXRlZ3lcXGxpYlxcc3RyYXRlZ3kuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBDcmVhdGVzIGFuIGluc3RhbmNlIG9mIGBTdHJhdGVneWAuXG4gKlxuICogQGNvbnN0cnVjdG9yXG4gKiBAYXBpIHB1YmxpY1xuICovXG5mdW5jdGlvbiBTdHJhdGVneSgpIHtcbn1cblxuLyoqXG4gKiBBdXRoZW50aWNhdGUgcmVxdWVzdC5cbiAqXG4gKiBUaGlzIGZ1bmN0aW9uIG11c3QgYmUgb3ZlcnJpZGRlbiBieSBzdWJjbGFzc2VzLiAgSW4gYWJzdHJhY3QgZm9ybSwgaXQgYWx3YXlzXG4gKiB0aHJvd3MgYW4gZXhjZXB0aW9uLlxuICpcbiAqIEBwYXJhbSB7T2JqZWN0fSByZXEgVGhlIHJlcXVlc3QgdG8gYXV0aGVudGljYXRlLlxuICogQHBhcmFtIHtPYmplY3R9IFtvcHRpb25zXSBTdHJhdGVneS1zcGVjaWZpYyBvcHRpb25zLlxuICogQGFwaSBwdWJsaWNcbiAqL1xuU3RyYXRlZ3kucHJvdG90eXBlLmF1dGhlbnRpY2F0ZSA9IGZ1bmN0aW9uKHJlcSwgb3B0aW9ucykge1xuICB0aHJvdyBuZXcgRXJyb3IoJ1N0cmF0ZWd5I2F1dGhlbnRpY2F0ZSBtdXN0IGJlIG92ZXJyaWRkZW4gYnkgc3ViY2xhc3MnKTtcbn07XG5cblxuLyoqXG4gKiBFeHBvc2UgYFN0cmF0ZWd5YC5cbiAqL1xubW9kdWxlLmV4cG9ydHMgPSBTdHJhdGVneTtcbiJdLCJ2ZXJzaW9uIjozfQ==

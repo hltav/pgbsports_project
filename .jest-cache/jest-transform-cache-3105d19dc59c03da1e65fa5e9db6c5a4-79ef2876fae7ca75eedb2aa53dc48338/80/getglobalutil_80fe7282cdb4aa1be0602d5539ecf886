@@ -1,0 +1,34 @@
+c0490291f7870dc2541d72d31291ab70
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getGlobal = void 0;
+/**
+ * This function returns the global object across Node and browsers.
+ *
+ * Note: `globalThis` is the standardized approach however it has been added to
+ * Node.js in version 12. We need to include this snippet until Node 12 EOL.
+ */
+function getGlobal() {
+    if (typeof globalThis !== 'undefined') {
+        return globalThis;
+    }
+    if (typeof global !== 'undefined') {
+        return global;
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: Cannot find name 'window'.
+    if (typeof window !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: Cannot find name 'window'.
+        return window;
+    }
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: Cannot find name 'self'.
+    if (typeof self !== 'undefined') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: Cannot find name 'self'.
+        return self;
+    }
+}
+exports.getGlobal = getGlobal;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcY2xhc3MtdHJhbnNmb3JtZXJcXGNqc1xcdXRpbHNcXGdldC1nbG9iYWwudXRpbC5qcyIsIm1hcHBpbmdzIjoiQUFBQSxZQUFZLENBQUM7QUFDYixNQUFNLENBQUMsY0FBYyxDQUFDLE9BQU8sRUFBRSxZQUFZLEVBQUUsRUFBRSxLQUFLLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztBQUM5RCxPQUFPLENBQUMsU0FBUyxHQUFHLEtBQUssQ0FBQyxDQUFDO0FBQzNCOzs7OztHQUtHO0FBQ0gsU0FBUyxTQUFTO0lBQ2QsSUFBSSxPQUFPLFVBQVUsS0FBSyxXQUFXLEVBQUUsQ0FBQztRQUNwQyxPQUFPLFVBQVUsQ0FBQztJQUN0QixDQUFDO0lBQ0QsSUFBSSxPQUFPLE1BQU0sS0FBSyxXQUFXLEVBQUUsQ0FBQztRQUNoQyxPQUFPLE1BQU0sQ0FBQztJQUNsQixDQUFDO0lBQ0QsNkRBQTZEO0lBQzdELHlDQUF5QztJQUN6QyxJQUFJLE9BQU8sTUFBTSxLQUFLLFdBQVcsRUFBRSxDQUFDO1FBQ2hDLDZEQUE2RDtRQUM3RCx5Q0FBeUM7UUFDekMsT0FBTyxNQUFNLENBQUM7SUFDbEIsQ0FBQztJQUNELDZEQUE2RDtJQUM3RCx1Q0FBdUM7SUFDdkMsSUFBSSxPQUFPLElBQUksS0FBSyxXQUFXLEVBQUUsQ0FBQztRQUM5Qiw2REFBNkQ7UUFDN0QsdUNBQXVDO1FBQ3ZDLE9BQU8sSUFBSSxDQUFDO0lBQ2hCLENBQUM7QUFDTCxDQUFDO0FBQ0QsT0FBTyxDQUFDLFNBQVMsR0FBRyxTQUFTLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcY2xhc3MtdHJhbnNmb3JtZXJcXGNqc1xcdXRpbHNcXGdldC1nbG9iYWwudXRpbC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJcInVzZSBzdHJpY3RcIjtcbk9iamVjdC5kZWZpbmVQcm9wZXJ0eShleHBvcnRzLCBcIl9fZXNNb2R1bGVcIiwgeyB2YWx1ZTogdHJ1ZSB9KTtcbmV4cG9ydHMuZ2V0R2xvYmFsID0gdm9pZCAwO1xuLyoqXG4gKiBUaGlzIGZ1bmN0aW9uIHJldHVybnMgdGhlIGdsb2JhbCBvYmplY3QgYWNyb3NzIE5vZGUgYW5kIGJyb3dzZXJzLlxuICpcbiAqIE5vdGU6IGBnbG9iYWxUaGlzYCBpcyB0aGUgc3RhbmRhcmRpemVkIGFwcHJvYWNoIGhvd2V2ZXIgaXQgaGFzIGJlZW4gYWRkZWQgdG9cbiAqIE5vZGUuanMgaW4gdmVyc2lvbiAxMi4gV2UgbmVlZCB0byBpbmNsdWRlIHRoaXMgc25pcHBldCB1bnRpbCBOb2RlIDEyIEVPTC5cbiAqL1xuZnVuY3Rpb24gZ2V0R2xvYmFsKCkge1xuICAgIGlmICh0eXBlb2YgZ2xvYmFsVGhpcyAhPT0gJ3VuZGVmaW5lZCcpIHtcbiAgICAgICAgcmV0dXJuIGdsb2JhbFRoaXM7XG4gICAgfVxuICAgIGlmICh0eXBlb2YgZ2xvYmFsICE9PSAndW5kZWZpbmVkJykge1xuICAgICAgICByZXR1cm4gZ2xvYmFsO1xuICAgIH1cbiAgICAvLyBlc2xpbnQtZGlzYWJsZS1uZXh0LWxpbmUgQHR5cGVzY3JpcHQtZXNsaW50L2Jhbi10cy1jb21tZW50XG4gICAgLy8gQHRzLWlnbm9yZTogQ2Fubm90IGZpbmQgbmFtZSAnd2luZG93Jy5cbiAgICBpZiAodHlwZW9mIHdpbmRvdyAhPT0gJ3VuZGVmaW5lZCcpIHtcbiAgICAgICAgLy8gZXNsaW50LWRpc2FibGUtbmV4dC1saW5lIEB0eXBlc2NyaXB0LWVzbGludC9iYW4tdHMtY29tbWVudFxuICAgICAgICAvLyBAdHMtaWdub3JlOiBDYW5ub3QgZmluZCBuYW1lICd3aW5kb3cnLlxuICAgICAgICByZXR1cm4gd2luZG93O1xuICAgIH1cbiAgICAvLyBlc2xpbnQtZGlzYWJsZS1uZXh0LWxpbmUgQHR5cGVzY3JpcHQtZXNsaW50L2Jhbi10cy1jb21tZW50XG4gICAgLy8gQHRzLWlnbm9yZTogQ2Fubm90IGZpbmQgbmFtZSAnc2VsZicuXG4gICAgaWYgKHR5cGVvZiBzZWxmICE9PSAndW5kZWZpbmVkJykge1xuICAgICAgICAvLyBlc2xpbnQtZGlzYWJsZS1uZXh0LWxpbmUgQHR5cGVzY3JpcHQtZXNsaW50L2Jhbi10cy1jb21tZW50XG4gICAgICAgIC8vIEB0cy1pZ25vcmU6IENhbm5vdCBmaW5kIG5hbWUgJ3NlbGYnLlxuICAgICAgICByZXR1cm4gc2VsZjtcbiAgICB9XG59XG5leHBvcnRzLmdldEdsb2JhbCA9IGdldEdsb2JhbDtcbi8vIyBzb3VyY2VNYXBwaW5nVVJMPWdldC1nbG9iYWwudXRpbC5qcy5tYXAiXSwidmVyc2lvbiI6M30=

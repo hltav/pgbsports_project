@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { FootballModule } from './football/football.module';
+import { SoccerModule } from './endpoints/soccer/soccer.module';
 
 @Module({
-  imports: [FootballModule],
-  exports: [FootballModule],
+  imports: [SoccerModule],
+  exports: [SoccerModule],
 })
 export class ApiSportsModule {}

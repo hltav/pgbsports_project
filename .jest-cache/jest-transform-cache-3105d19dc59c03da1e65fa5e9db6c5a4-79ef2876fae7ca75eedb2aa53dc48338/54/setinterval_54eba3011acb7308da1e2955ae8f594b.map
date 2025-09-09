@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\gauge\\set-interval.js","mappings":"AAAA,YAAY,CAAA;AACZ,kDAAkD;AAClD,MAAM,CAAC,OAAO,GAAG,WAAW,CAAA","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\gauge\\set-interval.js"],"sourcesContent":["'use strict'\n// this exists so we can replace it during testing\nmodule.exports = setInterval\n"],"version":3}

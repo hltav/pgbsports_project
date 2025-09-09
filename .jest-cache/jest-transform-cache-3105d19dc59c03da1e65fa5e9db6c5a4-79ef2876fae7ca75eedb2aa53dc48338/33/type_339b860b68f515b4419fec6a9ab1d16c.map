@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\type.js","mappings":"AAAA,YAAY,CAAC;AAEb,+BAA+B;AAC/B,MAAM,CAAC,OAAO,GAAG,SAAS,CAAC","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\type.js"],"sourcesContent":["'use strict';\n\n/** @type {import('./type')} */\nmodule.exports = TypeError;\n"],"version":3}

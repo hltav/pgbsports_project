@@ -1,0 +1,75 @@
+247f50113e6b616fb6a59106399407db
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HttpAdapterHost = void 0;
+const rxjs_1 = require("rxjs");
+/**
+ * Defines the `HttpAdapterHost` object.
+ *
+ * `HttpAdapterHost` wraps the underlying
+ * platform-specific `HttpAdapter`.  The `HttpAdapter` is a wrapper around the underlying
+ * native HTTP server library (e.g., Express).  The `HttpAdapterHost` object
+ * provides methods to `get` and `set` the underlying HttpAdapter.
+ *
+ * @see [Http adapter](https://docs.nestjs.com/faq/http-adapter)
+ *
+ * @publicApi
+ */
+class HttpAdapterHost {
+    constructor() {
+        this._listen$ = new rxjs_1.Subject();
+        this._init$ = new rxjs_1.ReplaySubject();
+        this.isListening = false;
+    }
+    /**
+     * Accessor for the underlying `HttpAdapter`
+     *
+     * @param httpAdapter reference to the `HttpAdapter` to be set
+     */
+    set httpAdapter(httpAdapter) {
+        this._httpAdapter = httpAdapter;
+        this._init$.next();
+        this._init$.complete();
+    }
+    /**
+     * Accessor for the underlying `HttpAdapter`
+     *
+     * @example
+     * `const httpAdapter = adapterHost.httpAdapter;`
+     */
+    get httpAdapter() {
+        return this._httpAdapter;
+    }
+    /**
+     * Observable that allows to subscribe to the `listen` event.
+     * This event is emitted when the HTTP application is listening for incoming requests.
+     */
+    get listen$() {
+        return this._listen$.asObservable();
+    }
+    /**
+     * Observable that allows to subscribe to the `init` event.
+     * This event is emitted when the HTTP application is initialized.
+     */
+    get init$() {
+        return this._init$.asObservable();
+    }
+    /**
+     * Sets the listening state of the application.
+     */
+    set listening(listening) {
+        this.isListening = listening;
+        if (listening) {
+            this._listen$.next();
+            this._listen$.complete();
+        }
+    }
+    /**
+     * Returns a boolean indicating whether the application is listening for incoming requests.
+     */
+    get listening() {
+        return this.isListening;
+    }
+}
+exports.HttpAdapterHost = HttpAdapterHost;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29yZVxcaGVscGVyc1xcaHR0cC1hZGFwdGVyLWhvc3QuanMiLCJtYXBwaW5ncyI6IkFBQUEsWUFBWSxDQUFDO0FBQ2IsTUFBTSxDQUFDLGNBQWMsQ0FBQyxPQUFPLEVBQUUsWUFBWSxFQUFFLEVBQUUsS0FBSyxFQUFFLElBQUksRUFBRSxDQUFDLENBQUM7QUFDOUQsT0FBTyxDQUFDLGVBQWUsR0FBRyxLQUFLLENBQUMsQ0FBQztBQUNqQyxNQUFNLE1BQU0sR0FBRyxPQUFPLENBQUMsTUFBTSxDQUFDLENBQUM7QUFDL0I7Ozs7Ozs7Ozs7O0dBV0c7QUFDSCxNQUFNLGVBQWU7SUFDakI7UUFDSSxJQUFJLENBQUMsUUFBUSxHQUFHLElBQUksTUFBTSxDQUFDLE9BQU8sRUFBRSxDQUFDO1FBQ3JDLElBQUksQ0FBQyxNQUFNLEdBQUcsSUFBSSxNQUFNLENBQUMsYUFBYSxFQUFFLENBQUM7UUFDekMsSUFBSSxDQUFDLFdBQVcsR0FBRyxLQUFLLENBQUM7SUFDN0IsQ0FBQztJQUNEOzs7O09BSUc7SUFDSCxJQUFJLFdBQVcsQ0FBQyxXQUFXO1FBQ3ZCLElBQUksQ0FBQyxZQUFZLEdBQUcsV0FBVyxDQUFDO1FBQ2hDLElBQUksQ0FBQyxNQUFNLENBQUMsSUFBSSxFQUFFLENBQUM7UUFDbkIsSUFBSSxDQUFDLE1BQU0sQ0FBQyxRQUFRLEVBQUUsQ0FBQztJQUMzQixDQUFDO0lBQ0Q7Ozs7O09BS0c7SUFDSCxJQUFJLFdBQVc7UUFDWCxPQUFPLElBQUksQ0FBQyxZQUFZLENBQUM7SUFDN0IsQ0FBQztJQUNEOzs7T0FHRztJQUNILElBQUksT0FBTztRQUNQLE9BQU8sSUFBSSxDQUFDLFFBQVEsQ0FBQyxZQUFZLEVBQUUsQ0FBQztJQUN4QyxDQUFDO0lBQ0Q7OztPQUdHO0lBQ0gsSUFBSSxLQUFLO1FBQ0wsT0FBTyxJQUFJLENBQUMsTUFBTSxDQUFDLFlBQVksRUFBRSxDQUFDO0lBQ3RDLENBQUM7SUFDRDs7T0FFRztJQUNILElBQUksU0FBUyxDQUFDLFNBQVM7UUFDbkIsSUFBSSxDQUFDLFdBQVcsR0FBRyxTQUFTLENBQUM7UUFDN0IsSUFBSSxTQUFTLEVBQUUsQ0FBQztZQUNaLElBQUksQ0FBQyxRQUFRLENBQUMsSUFBSSxFQUFFLENBQUM7WUFDckIsSUFBSSxDQUFDLFFBQVEsQ0FBQyxRQUFRLEVBQUUsQ0FBQztRQUM3QixDQUFDO0lBQ0wsQ0FBQztJQUNEOztPQUVHO0lBQ0gsSUFBSSxTQUFTO1FBQ1QsT0FBTyxJQUFJLENBQUMsV0FBVyxDQUFDO0lBQzVCLENBQUM7Q0FDSjtBQUNELE9BQU8sQ0FBQyxlQUFlLEdBQUcsZUFBZSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXEBuZXN0anNcXGNvcmVcXGhlbHBlcnNcXGh0dHAtYWRhcHRlci1ob3N0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuT2JqZWN0LmRlZmluZVByb3BlcnR5KGV4cG9ydHMsIFwiX19lc01vZHVsZVwiLCB7IHZhbHVlOiB0cnVlIH0pO1xuZXhwb3J0cy5IdHRwQWRhcHRlckhvc3QgPSB2b2lkIDA7XG5jb25zdCByeGpzXzEgPSByZXF1aXJlKFwicnhqc1wiKTtcbi8qKlxuICogRGVmaW5lcyB0aGUgYEh0dHBBZGFwdGVySG9zdGAgb2JqZWN0LlxuICpcbiAqIGBIdHRwQWRhcHRlckhvc3RgIHdyYXBzIHRoZSB1bmRlcmx5aW5nXG4gKiBwbGF0Zm9ybS1zcGVjaWZpYyBgSHR0cEFkYXB0ZXJgLiAgVGhlIGBIdHRwQWRhcHRlcmAgaXMgYSB3cmFwcGVyIGFyb3VuZCB0aGUgdW5kZXJseWluZ1xuICogbmF0aXZlIEhUVFAgc2VydmVyIGxpYnJhcnkgKGUuZy4sIEV4cHJlc3MpLiAgVGhlIGBIdHRwQWRhcHRlckhvc3RgIG9iamVjdFxuICogcHJvdmlkZXMgbWV0aG9kcyB0byBgZ2V0YCBhbmQgYHNldGAgdGhlIHVuZGVybHlpbmcgSHR0cEFkYXB0ZXIuXG4gKlxuICogQHNlZSBbSHR0cCBhZGFwdGVyXShodHRwczovL2RvY3MubmVzdGpzLmNvbS9mYXEvaHR0cC1hZGFwdGVyKVxuICpcbiAqIEBwdWJsaWNBcGlcbiAqL1xuY2xhc3MgSHR0cEFkYXB0ZXJIb3N0IHtcbiAgICBjb25zdHJ1Y3RvcigpIHtcbiAgICAgICAgdGhpcy5fbGlzdGVuJCA9IG5ldyByeGpzXzEuU3ViamVjdCgpO1xuICAgICAgICB0aGlzLl9pbml0JCA9IG5ldyByeGpzXzEuUmVwbGF5U3ViamVjdCgpO1xuICAgICAgICB0aGlzLmlzTGlzdGVuaW5nID0gZmFsc2U7XG4gICAgfVxuICAgIC8qKlxuICAgICAqIEFjY2Vzc29yIGZvciB0aGUgdW5kZXJseWluZyBgSHR0cEFkYXB0ZXJgXG4gICAgICpcbiAgICAgKiBAcGFyYW0gaHR0cEFkYXB0ZXIgcmVmZXJlbmNlIHRvIHRoZSBgSHR0cEFkYXB0ZXJgIHRvIGJlIHNldFxuICAgICAqL1xuICAgIHNldCBodHRwQWRhcHRlcihodHRwQWRhcHRlcikge1xuICAgICAgICB0aGlzLl9odHRwQWRhcHRlciA9IGh0dHBBZGFwdGVyO1xuICAgICAgICB0aGlzLl9pbml0JC5uZXh0KCk7XG4gICAgICAgIHRoaXMuX2luaXQkLmNvbXBsZXRlKCk7XG4gICAgfVxuICAgIC8qKlxuICAgICAqIEFjY2Vzc29yIGZvciB0aGUgdW5kZXJseWluZyBgSHR0cEFkYXB0ZXJgXG4gICAgICpcbiAgICAgKiBAZXhhbXBsZVxuICAgICAqIGBjb25zdCBodHRwQWRhcHRlciA9IGFkYXB0ZXJIb3N0Lmh0dHBBZGFwdGVyO2BcbiAgICAgKi9cbiAgICBnZXQgaHR0cEFkYXB0ZXIoKSB7XG4gICAgICAgIHJldHVybiB0aGlzLl9odHRwQWRhcHRlcjtcbiAgICB9XG4gICAgLyoqXG4gICAgICogT2JzZXJ2YWJsZSB0aGF0IGFsbG93cyB0byBzdWJzY3JpYmUgdG8gdGhlIGBsaXN0ZW5gIGV2ZW50LlxuICAgICAqIFRoaXMgZXZlbnQgaXMgZW1pdHRlZCB3aGVuIHRoZSBIVFRQIGFwcGxpY2F0aW9uIGlzIGxpc3RlbmluZyBmb3IgaW5jb21pbmcgcmVxdWVzdHMuXG4gICAgICovXG4gICAgZ2V0IGxpc3RlbiQoKSB7XG4gICAgICAgIHJldHVybiB0aGlzLl9saXN0ZW4kLmFzT2JzZXJ2YWJsZSgpO1xuICAgIH1cbiAgICAvKipcbiAgICAgKiBPYnNlcnZhYmxlIHRoYXQgYWxsb3dzIHRvIHN1YnNjcmliZSB0byB0aGUgYGluaXRgIGV2ZW50LlxuICAgICAqIFRoaXMgZXZlbnQgaXMgZW1pdHRlZCB3aGVuIHRoZSBIVFRQIGFwcGxpY2F0aW9uIGlzIGluaXRpYWxpemVkLlxuICAgICAqL1xuICAgIGdldCBpbml0JCgpIHtcbiAgICAgICAgcmV0dXJuIHRoaXMuX2luaXQkLmFzT2JzZXJ2YWJsZSgpO1xuICAgIH1cbiAgICAvKipcbiAgICAgKiBTZXRzIHRoZSBsaXN0ZW5pbmcgc3RhdGUgb2YgdGhlIGFwcGxpY2F0aW9uLlxuICAgICAqL1xuICAgIHNldCBsaXN0ZW5pbmcobGlzdGVuaW5nKSB7XG4gICAgICAgIHRoaXMuaXNMaXN0ZW5pbmcgPSBsaXN0ZW5pbmc7XG4gICAgICAgIGlmIChsaXN0ZW5pbmcpIHtcbiAgICAgICAgICAgIHRoaXMuX2xpc3RlbiQubmV4dCgpO1xuICAgICAgICAgICAgdGhpcy5fbGlzdGVuJC5jb21wbGV0ZSgpO1xuICAgICAgICB9XG4gICAgfVxuICAgIC8qKlxuICAgICAqIFJldHVybnMgYSBib29sZWFuIGluZGljYXRpbmcgd2hldGhlciB0aGUgYXBwbGljYXRpb24gaXMgbGlzdGVuaW5nIGZvciBpbmNvbWluZyByZXF1ZXN0cy5cbiAgICAgKi9cbiAgICBnZXQgbGlzdGVuaW5nKCkge1xuICAgICAgICByZXR1cm4gdGhpcy5pc0xpc3RlbmluZztcbiAgICB9XG59XG5leHBvcnRzLkh0dHBBZGFwdGVySG9zdCA9IEh0dHBBZGFwdGVySG9zdDtcbiJdLCJ2ZXJzaW9uIjozfQ==

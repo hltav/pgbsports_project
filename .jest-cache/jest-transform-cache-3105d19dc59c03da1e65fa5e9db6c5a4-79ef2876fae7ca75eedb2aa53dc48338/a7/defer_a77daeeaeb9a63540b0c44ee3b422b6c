@@ -1,0 +1,21 @@
+48732789e1424f7217d13d272d21509b
+module.exports = defer;
+/**
+ * Runs provided function on next iteration of the event loop
+ *
+ * @param {function} fn - function to run
+ */
+function defer(fn) {
+    var nextTick = typeof setImmediate == 'function'
+        ? setImmediate
+        : (typeof process == 'object' && typeof process.nextTick == 'function'
+            ? process.nextTick
+            : null);
+    if (nextTick) {
+        nextTick(fn);
+    }
+    else {
+        setTimeout(fn, 0);
+    }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXGxpYlxcZGVmZXIuanMiLCJtYXBwaW5ncyI6IkFBQUEsTUFBTSxDQUFDLE9BQU8sR0FBRyxLQUFLLENBQUM7QUFFdkI7Ozs7R0FJRztBQUNILFNBQVMsS0FBSyxDQUFDLEVBQUU7SUFFZixJQUFJLFFBQVEsR0FBRyxPQUFPLFlBQVksSUFBSSxVQUFVO1FBQzlDLENBQUMsQ0FBQyxZQUFZO1FBQ2QsQ0FBQyxDQUFDLENBQ0EsT0FBTyxPQUFPLElBQUksUUFBUSxJQUFJLE9BQU8sT0FBTyxDQUFDLFFBQVEsSUFBSSxVQUFVO1lBQ25FLENBQUMsQ0FBQyxPQUFPLENBQUMsUUFBUTtZQUNsQixDQUFDLENBQUMsSUFBSSxDQUNQLENBQUM7SUFFSixJQUFJLFFBQVEsRUFDWixDQUFDO1FBQ0MsUUFBUSxDQUFDLEVBQUUsQ0FBQyxDQUFDO0lBQ2YsQ0FBQztTQUVELENBQUM7UUFDQyxVQUFVLENBQUMsRUFBRSxFQUFFLENBQUMsQ0FBQyxDQUFDO0lBQ3BCLENBQUM7QUFDSCxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXGFzeW5ja2l0XFxsaWJcXGRlZmVyLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIm1vZHVsZS5leHBvcnRzID0gZGVmZXI7XG5cbi8qKlxuICogUnVucyBwcm92aWRlZCBmdW5jdGlvbiBvbiBuZXh0IGl0ZXJhdGlvbiBvZiB0aGUgZXZlbnQgbG9vcFxuICpcbiAqIEBwYXJhbSB7ZnVuY3Rpb259IGZuIC0gZnVuY3Rpb24gdG8gcnVuXG4gKi9cbmZ1bmN0aW9uIGRlZmVyKGZuKVxue1xuICB2YXIgbmV4dFRpY2sgPSB0eXBlb2Ygc2V0SW1tZWRpYXRlID09ICdmdW5jdGlvbidcbiAgICA/IHNldEltbWVkaWF0ZVxuICAgIDogKFxuICAgICAgdHlwZW9mIHByb2Nlc3MgPT0gJ29iamVjdCcgJiYgdHlwZW9mIHByb2Nlc3MubmV4dFRpY2sgPT0gJ2Z1bmN0aW9uJ1xuICAgICAgPyBwcm9jZXNzLm5leHRUaWNrXG4gICAgICA6IG51bGxcbiAgICApO1xuXG4gIGlmIChuZXh0VGljaylcbiAge1xuICAgIG5leHRUaWNrKGZuKTtcbiAgfVxuICBlbHNlXG4gIHtcbiAgICBzZXRUaW1lb3V0KGZuLCAwKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

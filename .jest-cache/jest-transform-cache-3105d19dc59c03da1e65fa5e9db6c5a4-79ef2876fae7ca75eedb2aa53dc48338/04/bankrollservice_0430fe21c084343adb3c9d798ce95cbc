@@ -1,0 +1,53 @@
+90665dfd04f992009f3cac6f6cfb6e35
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BankrollService = void 0;
+const common_1 = require("@nestjs/common");
+const services_1 = require("./services");
+let BankrollService = class BankrollService {
+    constructor(createService, readService, updateService, deleteService) {
+        this.createService = createService;
+        this.readService = readService;
+        this.updateService = updateService;
+        this.deleteService = deleteService;
+    }
+    async createBankroll(data) {
+        return this.createService.createBankroll(data);
+    }
+    async findAllBankrolls() {
+        return this.readService.findAllBankrolls();
+    }
+    async findBankrollById(id) {
+        return this.readService.findBankrollById(id);
+    }
+    async findBankrollsByUserId(userId) {
+        return this.readService.findBankrollsByUserId(userId);
+    }
+    async findBankrollByName(name) {
+        return this.readService.findBankrollByName(name);
+    }
+    async updateBankroll(id, data) {
+        return this.updateService.updateBankroll(id, data);
+    }
+    async deleteBankroll(id) {
+        return this.deleteService.deleteBankroll(id);
+    }
+};
+exports.BankrollService = BankrollService;
+exports.BankrollService = BankrollService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [services_1.CreateBankrollService,
+        services_1.FindBankrollService,
+        services_1.UpdateBankrollService,
+        services_1.DeleteBankrollService])
+], BankrollService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcYmFua3JvbGxcXGJhbmtyb2xsLnNlcnZpY2UudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7O0FBQUEsMkNBQTRDO0FBQzVDLHlDQUtvQjtBQUliLElBQU0sZUFBZSxHQUFyQixNQUFNLGVBQWU7SUFDMUIsWUFDbUIsYUFBb0MsRUFDcEMsV0FBZ0MsRUFDaEMsYUFBb0MsRUFDcEMsYUFBb0M7UUFIcEMsa0JBQWEsR0FBYixhQUFhLENBQXVCO1FBQ3BDLGdCQUFXLEdBQVgsV0FBVyxDQUFxQjtRQUNoQyxrQkFBYSxHQUFiLGFBQWEsQ0FBdUI7UUFDcEMsa0JBQWEsR0FBYixhQUFhLENBQXVCO0lBQ3BELENBQUM7SUFFSixLQUFLLENBQUMsY0FBYyxDQUFDLElBQXVCO1FBQzFDLE9BQU8sSUFBSSxDQUFDLGFBQWEsQ0FBQyxjQUFjLENBQUMsSUFBSSxDQUFDLENBQUM7SUFDakQsQ0FBQztJQUVELEtBQUssQ0FBQyxnQkFBZ0I7UUFDcEIsT0FBTyxJQUFJLENBQUMsV0FBVyxDQUFDLGdCQUFnQixFQUFFLENBQUM7SUFDN0MsQ0FBQztJQUVELEtBQUssQ0FBQyxnQkFBZ0IsQ0FBQyxFQUFVO1FBQy9CLE9BQU8sSUFBSSxDQUFDLFdBQVcsQ0FBQyxnQkFBZ0IsQ0FBQyxFQUFFLENBQUMsQ0FBQztJQUMvQyxDQUFDO0lBRUQsS0FBSyxDQUFDLHFCQUFxQixDQUFDLE1BQWM7UUFDeEMsT0FBTyxJQUFJLENBQUMsV0FBVyxDQUFDLHFCQUFxQixDQUFDLE1BQU0sQ0FBQyxDQUFDO0lBQ3hELENBQUM7SUFFRCxLQUFLLENBQUMsa0JBQWtCLENBQUMsSUFBWTtRQUNuQyxPQUFPLElBQUksQ0FBQyxXQUFXLENBQUMsa0JBQWtCLENBQUMsSUFBSSxDQUFDLENBQUM7SUFDbkQsQ0FBQztJQUVELEtBQUssQ0FBQyxjQUFjLENBQ2xCLEVBQVUsRUFDVixJQUF1QjtRQUV2QixPQUFPLElBQUksQ0FBQyxhQUFhLENBQUMsY0FBYyxDQUFDLEVBQUUsRUFBRSxJQUFJLENBQUMsQ0FBQztJQUNyRCxDQUFDO0lBRUQsS0FBSyxDQUFDLGNBQWMsQ0FBQyxFQUFVO1FBQzdCLE9BQU8sSUFBSSxDQUFDLGFBQWEsQ0FBQyxjQUFjLENBQUMsRUFBRSxDQUFDLENBQUM7SUFDL0MsQ0FBQztDQUNGLENBQUE7QUF0Q1ksMENBQWU7MEJBQWYsZUFBZTtJQUQzQixJQUFBLG1CQUFVLEdBQUU7cUNBR3VCLGdDQUFxQjtRQUN2Qiw4QkFBbUI7UUFDakIsZ0NBQXFCO1FBQ3JCLGdDQUFxQjtHQUw1QyxlQUFlLENBc0MzQiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcc3JjXFxtb2R1bGVzXFxiYW5rcm9sbFxcYmFua3JvbGwuc2VydmljZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuaW1wb3J0IHtcbiAgQ3JlYXRlQmFua3JvbGxTZXJ2aWNlLFxuICBEZWxldGVCYW5rcm9sbFNlcnZpY2UsXG4gIEZpbmRCYW5rcm9sbFNlcnZpY2UsXG4gIFVwZGF0ZUJhbmtyb2xsU2VydmljZSxcbn0gZnJvbSAnLi9zZXJ2aWNlcyc7XG5pbXBvcnQgeyBDcmVhdGVCYW5rcm9sbERUTywgR2V0QmFua3JvbGxEVE8sIFVwZGF0ZUJhbmtyb2xsRFRPIH0gZnJvbSAnLi96LmR0byc7XG5cbkBJbmplY3RhYmxlKClcbmV4cG9ydCBjbGFzcyBCYW5rcm9sbFNlcnZpY2Uge1xuICBjb25zdHJ1Y3RvcihcbiAgICBwcml2YXRlIHJlYWRvbmx5IGNyZWF0ZVNlcnZpY2U6IENyZWF0ZUJhbmtyb2xsU2VydmljZSxcbiAgICBwcml2YXRlIHJlYWRvbmx5IHJlYWRTZXJ2aWNlOiBGaW5kQmFua3JvbGxTZXJ2aWNlLFxuICAgIHByaXZhdGUgcmVhZG9ubHkgdXBkYXRlU2VydmljZTogVXBkYXRlQmFua3JvbGxTZXJ2aWNlLFxuICAgIHByaXZhdGUgcmVhZG9ubHkgZGVsZXRlU2VydmljZTogRGVsZXRlQmFua3JvbGxTZXJ2aWNlLFxuICApIHt9XG5cbiAgYXN5bmMgY3JlYXRlQmFua3JvbGwoZGF0YTogQ3JlYXRlQmFua3JvbGxEVE8pOiBQcm9taXNlPEdldEJhbmtyb2xsRFRPPiB7XG4gICAgcmV0dXJuIHRoaXMuY3JlYXRlU2VydmljZS5jcmVhdGVCYW5rcm9sbChkYXRhKTtcbiAgfVxuXG4gIGFzeW5jIGZpbmRBbGxCYW5rcm9sbHMoKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUT1tdPiB7XG4gICAgcmV0dXJuIHRoaXMucmVhZFNlcnZpY2UuZmluZEFsbEJhbmtyb2xscygpO1xuICB9XG5cbiAgYXN5bmMgZmluZEJhbmtyb2xsQnlJZChpZDogbnVtYmVyKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUTz4ge1xuICAgIHJldHVybiB0aGlzLnJlYWRTZXJ2aWNlLmZpbmRCYW5rcm9sbEJ5SWQoaWQpO1xuICB9XG5cbiAgYXN5bmMgZmluZEJhbmtyb2xsc0J5VXNlcklkKHVzZXJJZDogbnVtYmVyKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUT1tdPiB7XG4gICAgcmV0dXJuIHRoaXMucmVhZFNlcnZpY2UuZmluZEJhbmtyb2xsc0J5VXNlcklkKHVzZXJJZCk7XG4gIH1cblxuICBhc3luYyBmaW5kQmFua3JvbGxCeU5hbWUobmFtZTogc3RyaW5nKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUTyB8IG51bGw+IHtcbiAgICByZXR1cm4gdGhpcy5yZWFkU2VydmljZS5maW5kQmFua3JvbGxCeU5hbWUobmFtZSk7XG4gIH1cblxuICBhc3luYyB1cGRhdGVCYW5rcm9sbChcbiAgICBpZDogbnVtYmVyLFxuICAgIGRhdGE6IFVwZGF0ZUJhbmtyb2xsRFRPLFxuICApOiBQcm9taXNlPEdldEJhbmtyb2xsRFRPPiB7XG4gICAgcmV0dXJuIHRoaXMudXBkYXRlU2VydmljZS51cGRhdGVCYW5rcm9sbChpZCwgZGF0YSk7XG4gIH1cblxuICBhc3luYyBkZWxldGVCYW5rcm9sbChpZDogbnVtYmVyKTogUHJvbWlzZTxHZXRCYW5rcm9sbERUTz4ge1xuICAgIHJldHVybiB0aGlzLmRlbGV0ZVNlcnZpY2UuZGVsZXRlQmFua3JvbGwoaWQpO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

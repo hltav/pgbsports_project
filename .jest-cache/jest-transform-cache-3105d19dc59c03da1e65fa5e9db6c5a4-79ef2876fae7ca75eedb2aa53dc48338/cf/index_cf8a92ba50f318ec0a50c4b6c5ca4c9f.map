@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\src\\libs\\database\\index.ts","mappings":";;;;;;;;;;;;;;;;AAAA,2CAAyB","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\src\\libs\\database\\index.ts"],"sourcesContent":["export * from './prisma';\n"],"version":3}

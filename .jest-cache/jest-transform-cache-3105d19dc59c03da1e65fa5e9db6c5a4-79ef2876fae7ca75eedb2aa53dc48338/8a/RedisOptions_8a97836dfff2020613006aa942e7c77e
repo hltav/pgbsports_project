@@ -1,0 +1,58 @@
+e4a281405cb0596fcad162f399932054
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DEFAULT_REDIS_OPTIONS = {
+    // Connection
+    port: 6379,
+    host: "localhost",
+    family: 4,
+    connectTimeout: 10000,
+    disconnectTimeout: 2000,
+    retryStrategy: function (times) {
+        return Math.min(times * 50, 2000);
+    },
+    keepAlive: 0,
+    noDelay: true,
+    connectionName: null,
+    // Sentinel
+    sentinels: null,
+    name: null,
+    role: "master",
+    sentinelRetryStrategy: function (times) {
+        return Math.min(times * 10, 1000);
+    },
+    sentinelReconnectStrategy: function () {
+        // This strategy only applies when sentinels are used for detecting
+        // a failover, not during initial master resolution.
+        // The deployment can still function when some of the sentinels are down
+        // for a long period of time, so we may not want to attempt reconnection
+        // very often. Therefore the default interval is fairly long (1 minute).
+        return 60000;
+    },
+    natMap: null,
+    enableTLSForSentinelMode: false,
+    updateSentinels: true,
+    failoverDetector: false,
+    // Status
+    username: null,
+    password: null,
+    db: 0,
+    // Others
+    dropBufferSupport: false,
+    enableOfflineQueue: true,
+    enableReadyCheck: true,
+    autoResubscribe: true,
+    autoResendUnfulfilledCommands: true,
+    lazyConnect: false,
+    keyPrefix: "",
+    reconnectOnError: null,
+    readOnly: false,
+    stringNumbers: false,
+    maxRetriesPerRequest: 20,
+    maxLoadingRetryTime: 10000,
+    enableAutoPipelining: false,
+    autoPipeliningIgnoredCommands: [],
+    maxScriptsCachingTime: 60000,
+    sentinelMaxConnections: 10,
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcY2FjaGUtbWFuYWdlci1pb3JlZGlzXFxub2RlX21vZHVsZXNcXGlvcmVkaXNcXGJ1aWx0XFxyZWRpc1xcUmVkaXNPcHRpb25zLmpzIiwibWFwcGluZ3MiOiJBQUFBLFlBQVksQ0FBQztBQUNiLE1BQU0sQ0FBQyxjQUFjLENBQUMsT0FBTyxFQUFFLFlBQVksRUFBRSxFQUFFLEtBQUssRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO0FBQzlELE9BQU8sQ0FBQyxxQkFBcUIsR0FBRztJQUM1QixhQUFhO0lBQ2IsSUFBSSxFQUFFLElBQUk7SUFDVixJQUFJLEVBQUUsV0FBVztJQUNqQixNQUFNLEVBQUUsQ0FBQztJQUNULGNBQWMsRUFBRSxLQUFLO0lBQ3JCLGlCQUFpQixFQUFFLElBQUk7SUFDdkIsYUFBYSxFQUFFLFVBQVUsS0FBSztRQUMxQixPQUFPLElBQUksQ0FBQyxHQUFHLENBQUMsS0FBSyxHQUFHLEVBQUUsRUFBRSxJQUFJLENBQUMsQ0FBQztJQUN0QyxDQUFDO0lBQ0QsU0FBUyxFQUFFLENBQUM7SUFDWixPQUFPLEVBQUUsSUFBSTtJQUNiLGNBQWMsRUFBRSxJQUFJO0lBQ3BCLFdBQVc7SUFDWCxTQUFTLEVBQUUsSUFBSTtJQUNmLElBQUksRUFBRSxJQUFJO0lBQ1YsSUFBSSxFQUFFLFFBQVE7SUFDZCxxQkFBcUIsRUFBRSxVQUFVLEtBQUs7UUFDbEMsT0FBTyxJQUFJLENBQUMsR0FBRyxDQUFDLEtBQUssR0FBRyxFQUFFLEVBQUUsSUFBSSxDQUFDLENBQUM7SUFDdEMsQ0FBQztJQUNELHlCQUF5QixFQUFFO1FBQ3ZCLG1FQUFtRTtRQUNuRSxvREFBb0Q7UUFDcEQsd0VBQXdFO1FBQ3hFLHdFQUF3RTtRQUN4RSx3RUFBd0U7UUFDeEUsT0FBTyxLQUFLLENBQUM7SUFDakIsQ0FBQztJQUNELE1BQU0sRUFBRSxJQUFJO0lBQ1osd0JBQXdCLEVBQUUsS0FBSztJQUMvQixlQUFlLEVBQUUsSUFBSTtJQUNyQixnQkFBZ0IsRUFBRSxLQUFLO0lBQ3ZCLFNBQVM7SUFDVCxRQUFRLEVBQUUsSUFBSTtJQUNkLFFBQVEsRUFBRSxJQUFJO0lBQ2QsRUFBRSxFQUFFLENBQUM7SUFDTCxTQUFTO0lBQ1QsaUJBQWlCLEVBQUUsS0FBSztJQUN4QixrQkFBa0IsRUFBRSxJQUFJO0lBQ3hCLGdCQUFnQixFQUFFLElBQUk7SUFDdEIsZUFBZSxFQUFFLElBQUk7SUFDckIsNkJBQTZCLEVBQUUsSUFBSTtJQUNuQyxXQUFXLEVBQUUsS0FBSztJQUNsQixTQUFTLEVBQUUsRUFBRTtJQUNiLGdCQUFnQixFQUFFLElBQUk7SUFDdEIsUUFBUSxFQUFFLEtBQUs7SUFDZixhQUFhLEVBQUUsS0FBSztJQUNwQixvQkFBb0IsRUFBRSxFQUFFO0lBQ3hCLG1CQUFtQixFQUFFLEtBQUs7SUFDMUIsb0JBQW9CLEVBQUUsS0FBSztJQUMzQiw2QkFBNkIsRUFBRSxFQUFFO0lBQ2pDLHFCQUFxQixFQUFFLEtBQUs7SUFDNUIsc0JBQXNCLEVBQUUsRUFBRTtDQUM3QixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXGNhY2hlLW1hbmFnZXItaW9yZWRpc1xcbm9kZV9tb2R1bGVzXFxpb3JlZGlzXFxidWlsdFxccmVkaXNcXFJlZGlzT3B0aW9ucy5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyJcInVzZSBzdHJpY3RcIjtcbk9iamVjdC5kZWZpbmVQcm9wZXJ0eShleHBvcnRzLCBcIl9fZXNNb2R1bGVcIiwgeyB2YWx1ZTogdHJ1ZSB9KTtcbmV4cG9ydHMuREVGQVVMVF9SRURJU19PUFRJT05TID0ge1xuICAgIC8vIENvbm5lY3Rpb25cbiAgICBwb3J0OiA2Mzc5LFxuICAgIGhvc3Q6IFwibG9jYWxob3N0XCIsXG4gICAgZmFtaWx5OiA0LFxuICAgIGNvbm5lY3RUaW1lb3V0OiAxMDAwMCxcbiAgICBkaXNjb25uZWN0VGltZW91dDogMjAwMCxcbiAgICByZXRyeVN0cmF0ZWd5OiBmdW5jdGlvbiAodGltZXMpIHtcbiAgICAgICAgcmV0dXJuIE1hdGgubWluKHRpbWVzICogNTAsIDIwMDApO1xuICAgIH0sXG4gICAga2VlcEFsaXZlOiAwLFxuICAgIG5vRGVsYXk6IHRydWUsXG4gICAgY29ubmVjdGlvbk5hbWU6IG51bGwsXG4gICAgLy8gU2VudGluZWxcbiAgICBzZW50aW5lbHM6IG51bGwsXG4gICAgbmFtZTogbnVsbCxcbiAgICByb2xlOiBcIm1hc3RlclwiLFxuICAgIHNlbnRpbmVsUmV0cnlTdHJhdGVneTogZnVuY3Rpb24gKHRpbWVzKSB7XG4gICAgICAgIHJldHVybiBNYXRoLm1pbih0aW1lcyAqIDEwLCAxMDAwKTtcbiAgICB9LFxuICAgIHNlbnRpbmVsUmVjb25uZWN0U3RyYXRlZ3k6IGZ1bmN0aW9uICgpIHtcbiAgICAgICAgLy8gVGhpcyBzdHJhdGVneSBvbmx5IGFwcGxpZXMgd2hlbiBzZW50aW5lbHMgYXJlIHVzZWQgZm9yIGRldGVjdGluZ1xuICAgICAgICAvLyBhIGZhaWxvdmVyLCBub3QgZHVyaW5nIGluaXRpYWwgbWFzdGVyIHJlc29sdXRpb24uXG4gICAgICAgIC8vIFRoZSBkZXBsb3ltZW50IGNhbiBzdGlsbCBmdW5jdGlvbiB3aGVuIHNvbWUgb2YgdGhlIHNlbnRpbmVscyBhcmUgZG93blxuICAgICAgICAvLyBmb3IgYSBsb25nIHBlcmlvZCBvZiB0aW1lLCBzbyB3ZSBtYXkgbm90IHdhbnQgdG8gYXR0ZW1wdCByZWNvbm5lY3Rpb25cbiAgICAgICAgLy8gdmVyeSBvZnRlbi4gVGhlcmVmb3JlIHRoZSBkZWZhdWx0IGludGVydmFsIGlzIGZhaXJseSBsb25nICgxIG1pbnV0ZSkuXG4gICAgICAgIHJldHVybiA2MDAwMDtcbiAgICB9LFxuICAgIG5hdE1hcDogbnVsbCxcbiAgICBlbmFibGVUTFNGb3JTZW50aW5lbE1vZGU6IGZhbHNlLFxuICAgIHVwZGF0ZVNlbnRpbmVsczogdHJ1ZSxcbiAgICBmYWlsb3ZlckRldGVjdG9yOiBmYWxzZSxcbiAgICAvLyBTdGF0dXNcbiAgICB1c2VybmFtZTogbnVsbCxcbiAgICBwYXNzd29yZDogbnVsbCxcbiAgICBkYjogMCxcbiAgICAvLyBPdGhlcnNcbiAgICBkcm9wQnVmZmVyU3VwcG9ydDogZmFsc2UsXG4gICAgZW5hYmxlT2ZmbGluZVF1ZXVlOiB0cnVlLFxuICAgIGVuYWJsZVJlYWR5Q2hlY2s6IHRydWUsXG4gICAgYXV0b1Jlc3Vic2NyaWJlOiB0cnVlLFxuICAgIGF1dG9SZXNlbmRVbmZ1bGZpbGxlZENvbW1hbmRzOiB0cnVlLFxuICAgIGxhenlDb25uZWN0OiBmYWxzZSxcbiAgICBrZXlQcmVmaXg6IFwiXCIsXG4gICAgcmVjb25uZWN0T25FcnJvcjogbnVsbCxcbiAgICByZWFkT25seTogZmFsc2UsXG4gICAgc3RyaW5nTnVtYmVyczogZmFsc2UsXG4gICAgbWF4UmV0cmllc1BlclJlcXVlc3Q6IDIwLFxuICAgIG1heExvYWRpbmdSZXRyeVRpbWU6IDEwMDAwLFxuICAgIGVuYWJsZUF1dG9QaXBlbGluaW5nOiBmYWxzZSxcbiAgICBhdXRvUGlwZWxpbmluZ0lnbm9yZWRDb21tYW5kczogW10sXG4gICAgbWF4U2NyaXB0c0NhY2hpbmdUaW1lOiA2MDAwMCxcbiAgICBzZW50aW5lbE1heENvbm5lY3Rpb25zOiAxMCxcbn07XG4iXSwidmVyc2lvbiI6M30=

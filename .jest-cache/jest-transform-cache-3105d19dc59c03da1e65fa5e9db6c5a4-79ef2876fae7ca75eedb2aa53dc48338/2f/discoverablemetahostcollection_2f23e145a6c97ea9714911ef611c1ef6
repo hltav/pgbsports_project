@@ -1,0 +1,100 @@
+7e9c5f173e7894467ec847da591114bc
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DiscoverableMetaHostCollection = void 0;
+class DiscoverableMetaHostCollection {
+    /**
+     * Adds a link between a class reference and a metadata key.
+     * @param target The class reference.
+     * @param metadataKey The metadata key.
+     */
+    static addClassMetaHostLink(target, metadataKey) {
+        this.metaHostLinks.set(target, metadataKey);
+    }
+    /**
+     * Inspects a provider instance wrapper and adds it to the collection of providers
+     * if it has a metadata key.
+     * @param hostContainerRef A reference to the modules container.
+     * @param instanceWrapper A provider instance wrapper.
+     * @returns void
+     */
+    static inspectProvider(hostContainerRef, instanceWrapper) {
+        return this.inspectInstanceWrapper(hostContainerRef, instanceWrapper, this.providersByMetaKey);
+    }
+    /**
+     * Inspects a controller instance wrapper and adds it to the collection of controllers
+     * if it has a metadata key.
+     * @param hostContainerRef A reference to the modules container.
+     * @param instanceWrapper A controller's instance wrapper.
+     * @returns void
+     */
+    static inspectController(hostContainerRef, instanceWrapper) {
+        return this.inspectInstanceWrapper(hostContainerRef, instanceWrapper, this.controllersByMetaKey);
+    }
+    static insertByMetaKey(metaKey, instanceWrapper, collection) {
+        if (collection.has(metaKey)) {
+            const wrappers = collection.get(metaKey);
+            wrappers.add(instanceWrapper);
+        }
+        else {
+            const wrappers = new Set();
+            wrappers.add(instanceWrapper);
+            collection.set(metaKey, wrappers);
+        }
+    }
+    static getProvidersByMetaKey(hostContainerRef, metaKey) {
+        const wrappersByMetaKey = this.providersByMetaKey.get(hostContainerRef);
+        return wrappersByMetaKey?.get(metaKey) ?? new Set();
+    }
+    static getControllersByMetaKey(hostContainerRef, metaKey) {
+        const wrappersByMetaKey = this.controllersByMetaKey.get(hostContainerRef);
+        return wrappersByMetaKey?.get(metaKey) ?? new Set();
+    }
+    static inspectInstanceWrapper(hostContainerRef, instanceWrapper, wrapperByMetaKeyMap) {
+        const metaKey = DiscoverableMetaHostCollection.getMetaKeyByInstanceWrapper(instanceWrapper);
+        if (!metaKey) {
+            return;
+        }
+        let collection;
+        if (wrapperByMetaKeyMap.has(hostContainerRef)) {
+            collection = wrapperByMetaKeyMap.get(hostContainerRef);
+        }
+        else {
+            collection = new Map();
+            wrapperByMetaKeyMap.set(hostContainerRef, collection);
+        }
+        this.insertByMetaKey(metaKey, instanceWrapper, collection);
+    }
+    static getMetaKeyByInstanceWrapper(instanceWrapper) {
+        return this.metaHostLinks.get(
+        // NOTE: Regarding the ternary statement below,
+        // - The condition `!wrapper.metatype` is needed because when we use `useValue`
+        // the value of `wrapper.metatype` will be `null`.
+        // - The condition `wrapper.inject` is needed here because when we use
+        // `useFactory`, the value of `wrapper.metatype` will be the supplied
+        // factory function.
+        // For both cases, we should use `wrapper.instance.constructor` instead
+        // of `wrapper.metatype` to resolve processor's class properly.
+        // But since calling `wrapper.instance` could degrade overall performance
+        // we must defer it as much we can.
+        instanceWrapper.metatype || instanceWrapper.inject
+            ? (instanceWrapper.instance?.constructor ?? instanceWrapper.metatype)
+            : instanceWrapper.metatype);
+    }
+}
+exports.DiscoverableMetaHostCollection = DiscoverableMetaHostCollection;
+/**
+ * A map of class references to metadata keys.
+ */
+DiscoverableMetaHostCollection.metaHostLinks = new Map();
+/**
+ * A map of metadata keys to instance wrappers (providers) with the corresponding metadata key.
+ * The map is weakly referenced by the modules container (unique per application).
+ */
+DiscoverableMetaHostCollection.providersByMetaKey = new WeakMap();
+/**
+ * A map of metadata keys to instance wrappers (controllers) with the corresponding metadata key.
+ * The map is weakly referenced by the modules container (unique per application).
+ */
+DiscoverableMetaHostCollection.controllersByMetaKey = new WeakMap();
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29yZVxcZGlzY292ZXJ5XFxkaXNjb3ZlcmFibGUtbWV0YS1ob3N0LWNvbGxlY3Rpb24uanMiLCJtYXBwaW5ncyI6IkFBQUEsWUFBWSxDQUFDO0FBQ2IsTUFBTSxDQUFDLGNBQWMsQ0FBQyxPQUFPLEVBQUUsWUFBWSxFQUFFLEVBQUUsS0FBSyxFQUFFLElBQUksRUFBRSxDQUFDLENBQUM7QUFDOUQsT0FBTyxDQUFDLDhCQUE4QixHQUFHLEtBQUssQ0FBQyxDQUFDO0FBQ2hELE1BQU0sOEJBQThCO0lBQ2hDOzs7O09BSUc7SUFDSCxNQUFNLENBQUMsb0JBQW9CLENBQUMsTUFBTSxFQUFFLFdBQVc7UUFDM0MsSUFBSSxDQUFDLGFBQWEsQ0FBQyxHQUFHLENBQUMsTUFBTSxFQUFFLFdBQVcsQ0FBQyxDQUFDO0lBQ2hELENBQUM7SUFDRDs7Ozs7O09BTUc7SUFDSCxNQUFNLENBQUMsZUFBZSxDQUFDLGdCQUFnQixFQUFFLGVBQWU7UUFDcEQsT0FBTyxJQUFJLENBQUMsc0JBQXNCLENBQUMsZ0JBQWdCLEVBQUUsZUFBZSxFQUFFLElBQUksQ0FBQyxrQkFBa0IsQ0FBQyxDQUFDO0lBQ25HLENBQUM7SUFDRDs7Ozs7O09BTUc7SUFDSCxNQUFNLENBQUMsaUJBQWlCLENBQUMsZ0JBQWdCLEVBQUUsZUFBZTtRQUN0RCxPQUFPLElBQUksQ0FBQyxzQkFBc0IsQ0FBQyxnQkFBZ0IsRUFBRSxlQUFlLEVBQUUsSUFBSSxDQUFDLG9CQUFvQixDQUFDLENBQUM7SUFDckcsQ0FBQztJQUNELE1BQU0sQ0FBQyxlQUFlLENBQUMsT0FBTyxFQUFFLGVBQWUsRUFBRSxVQUFVO1FBQ3ZELElBQUksVUFBVSxDQUFDLEdBQUcsQ0FBQyxPQUFPLENBQUMsRUFBRSxDQUFDO1lBQzFCLE1BQU0sUUFBUSxHQUFHLFVBQVUsQ0FBQyxHQUFHLENBQUMsT0FBTyxDQUFDLENBQUM7WUFDekMsUUFBUSxDQUFDLEdBQUcsQ0FBQyxlQUFlLENBQUMsQ0FBQztRQUNsQyxDQUFDO2FBQ0ksQ0FBQztZQUNGLE1BQU0sUUFBUSxHQUFHLElBQUksR0FBRyxFQUFFLENBQUM7WUFDM0IsUUFBUSxDQUFDLEdBQUcsQ0FBQyxlQUFlLENBQUMsQ0FBQztZQUM5QixVQUFVLENBQUMsR0FBRyxDQUFDLE9BQU8sRUFBRSxRQUFRLENBQUMsQ0FBQztRQUN0QyxDQUFDO0lBQ0wsQ0FBQztJQUNELE1BQU0sQ0FBQyxxQkFBcUIsQ0FBQyxnQkFBZ0IsRUFBRSxPQUFPO1FBQ2xELE1BQU0saUJBQWlCLEdBQUcsSUFBSSxDQUFDLGtCQUFrQixDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO1FBQ3hFLE9BQU8saUJBQWlCLEVBQUUsR0FBRyxDQUFDLE9BQU8sQ0FBQyxJQUFJLElBQUksR0FBRyxFQUFFLENBQUM7SUFDeEQsQ0FBQztJQUNELE1BQU0sQ0FBQyx1QkFBdUIsQ0FBQyxnQkFBZ0IsRUFBRSxPQUFPO1FBQ3BELE1BQU0saUJBQWlCLEdBQUcsSUFBSSxDQUFDLG9CQUFvQixDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO1FBQzFFLE9BQU8saUJBQWlCLEVBQUUsR0FBRyxDQUFDLE9BQU8sQ0FBQyxJQUFJLElBQUksR0FBRyxFQUFFLENBQUM7SUFDeEQsQ0FBQztJQUNELE1BQU0sQ0FBQyxzQkFBc0IsQ0FBQyxnQkFBZ0IsRUFBRSxlQUFlLEVBQUUsbUJBQW1CO1FBQ2hGLE1BQU0sT0FBTyxHQUFHLDhCQUE4QixDQUFDLDJCQUEyQixDQUFDLGVBQWUsQ0FBQyxDQUFDO1FBQzVGLElBQUksQ0FBQyxPQUFPLEVBQUUsQ0FBQztZQUNYLE9BQU87UUFDWCxDQUFDO1FBQ0QsSUFBSSxVQUFVLENBQUM7UUFDZixJQUFJLG1CQUFtQixDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsQ0FBQyxFQUFFLENBQUM7WUFDNUMsVUFBVSxHQUFHLG1CQUFtQixDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO1FBQzNELENBQUM7YUFDSSxDQUFDO1lBQ0YsVUFBVSxHQUFHLElBQUksR0FBRyxFQUFFLENBQUM7WUFDdkIsbUJBQW1CLENBQUMsR0FBRyxDQUFDLGdCQUFnQixFQUFFLFVBQVUsQ0FBQyxDQUFDO1FBQzFELENBQUM7UUFDRCxJQUFJLENBQUMsZUFBZSxDQUFDLE9BQU8sRUFBRSxlQUFlLEVBQUUsVUFBVSxDQUFDLENBQUM7SUFDL0QsQ0FBQztJQUNELE1BQU0sQ0FBQywyQkFBMkIsQ0FBQyxlQUFlO1FBQzlDLE9BQU8sSUFBSSxDQUFDLGFBQWEsQ0FBQyxHQUFHO1FBQzdCLCtDQUErQztRQUMvQywrRUFBK0U7UUFDL0Usa0RBQWtEO1FBQ2xELHNFQUFzRTtRQUN0RSxxRUFBcUU7UUFDckUsb0JBQW9CO1FBQ3BCLHVFQUF1RTtRQUN2RSwrREFBK0Q7UUFDL0QseUVBQXlFO1FBQ3pFLG1DQUFtQztRQUNuQyxlQUFlLENBQUMsUUFBUSxJQUFJLGVBQWUsQ0FBQyxNQUFNO1lBQzlDLENBQUMsQ0FBQyxDQUFDLGVBQWUsQ0FBQyxRQUFRLEVBQUUsV0FBVyxJQUFJLGVBQWUsQ0FBQyxRQUFRLENBQUM7WUFDckUsQ0FBQyxDQUFDLGVBQWUsQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUNwQyxDQUFDO0NBQ0o7QUFDRCxPQUFPLENBQUMsOEJBQThCLEdBQUcsOEJBQThCLENBQUM7QUFDeEU7O0dBRUc7QUFDSCw4QkFBOEIsQ0FBQyxhQUFhLEdBQUcsSUFBSSxHQUFHLEVBQUUsQ0FBQztBQUN6RDs7O0dBR0c7QUFDSCw4QkFBOEIsQ0FBQyxrQkFBa0IsR0FBRyxJQUFJLE9BQU8sRUFBRSxDQUFDO0FBQ2xFOzs7R0FHRztBQUNILDhCQUE4QixDQUFDLG9CQUFvQixHQUFHLElBQUksT0FBTyxFQUFFLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29yZVxcZGlzY292ZXJ5XFxkaXNjb3ZlcmFibGUtbWV0YS1ob3N0LWNvbGxlY3Rpb24uanMiXSwic291cmNlc0NvbnRlbnQiOlsiXCJ1c2Ugc3RyaWN0XCI7XG5PYmplY3QuZGVmaW5lUHJvcGVydHkoZXhwb3J0cywgXCJfX2VzTW9kdWxlXCIsIHsgdmFsdWU6IHRydWUgfSk7XG5leHBvcnRzLkRpc2NvdmVyYWJsZU1ldGFIb3N0Q29sbGVjdGlvbiA9IHZvaWQgMDtcbmNsYXNzIERpc2NvdmVyYWJsZU1ldGFIb3N0Q29sbGVjdGlvbiB7XG4gICAgLyoqXG4gICAgICogQWRkcyBhIGxpbmsgYmV0d2VlbiBhIGNsYXNzIHJlZmVyZW5jZSBhbmQgYSBtZXRhZGF0YSBrZXkuXG4gICAgICogQHBhcmFtIHRhcmdldCBUaGUgY2xhc3MgcmVmZXJlbmNlLlxuICAgICAqIEBwYXJhbSBtZXRhZGF0YUtleSBUaGUgbWV0YWRhdGEga2V5LlxuICAgICAqL1xuICAgIHN0YXRpYyBhZGRDbGFzc01ldGFIb3N0TGluayh0YXJnZXQsIG1ldGFkYXRhS2V5KSB7XG4gICAgICAgIHRoaXMubWV0YUhvc3RMaW5rcy5zZXQodGFyZ2V0LCBtZXRhZGF0YUtleSk7XG4gICAgfVxuICAgIC8qKlxuICAgICAqIEluc3BlY3RzIGEgcHJvdmlkZXIgaW5zdGFuY2Ugd3JhcHBlciBhbmQgYWRkcyBpdCB0byB0aGUgY29sbGVjdGlvbiBvZiBwcm92aWRlcnNcbiAgICAgKiBpZiBpdCBoYXMgYSBtZXRhZGF0YSBrZXkuXG4gICAgICogQHBhcmFtIGhvc3RDb250YWluZXJSZWYgQSByZWZlcmVuY2UgdG8gdGhlIG1vZHVsZXMgY29udGFpbmVyLlxuICAgICAqIEBwYXJhbSBpbnN0YW5jZVdyYXBwZXIgQSBwcm92aWRlciBpbnN0YW5jZSB3cmFwcGVyLlxuICAgICAqIEByZXR1cm5zIHZvaWRcbiAgICAgKi9cbiAgICBzdGF0aWMgaW5zcGVjdFByb3ZpZGVyKGhvc3RDb250YWluZXJSZWYsIGluc3RhbmNlV3JhcHBlcikge1xuICAgICAgICByZXR1cm4gdGhpcy5pbnNwZWN0SW5zdGFuY2VXcmFwcGVyKGhvc3RDb250YWluZXJSZWYsIGluc3RhbmNlV3JhcHBlciwgdGhpcy5wcm92aWRlcnNCeU1ldGFLZXkpO1xuICAgIH1cbiAgICAvKipcbiAgICAgKiBJbnNwZWN0cyBhIGNvbnRyb2xsZXIgaW5zdGFuY2Ugd3JhcHBlciBhbmQgYWRkcyBpdCB0byB0aGUgY29sbGVjdGlvbiBvZiBjb250cm9sbGVyc1xuICAgICAqIGlmIGl0IGhhcyBhIG1ldGFkYXRhIGtleS5cbiAgICAgKiBAcGFyYW0gaG9zdENvbnRhaW5lclJlZiBBIHJlZmVyZW5jZSB0byB0aGUgbW9kdWxlcyBjb250YWluZXIuXG4gICAgICogQHBhcmFtIGluc3RhbmNlV3JhcHBlciBBIGNvbnRyb2xsZXIncyBpbnN0YW5jZSB3cmFwcGVyLlxuICAgICAqIEByZXR1cm5zIHZvaWRcbiAgICAgKi9cbiAgICBzdGF0aWMgaW5zcGVjdENvbnRyb2xsZXIoaG9zdENvbnRhaW5lclJlZiwgaW5zdGFuY2VXcmFwcGVyKSB7XG4gICAgICAgIHJldHVybiB0aGlzLmluc3BlY3RJbnN0YW5jZVdyYXBwZXIoaG9zdENvbnRhaW5lclJlZiwgaW5zdGFuY2VXcmFwcGVyLCB0aGlzLmNvbnRyb2xsZXJzQnlNZXRhS2V5KTtcbiAgICB9XG4gICAgc3RhdGljIGluc2VydEJ5TWV0YUtleShtZXRhS2V5LCBpbnN0YW5jZVdyYXBwZXIsIGNvbGxlY3Rpb24pIHtcbiAgICAgICAgaWYgKGNvbGxlY3Rpb24uaGFzKG1ldGFLZXkpKSB7XG4gICAgICAgICAgICBjb25zdCB3cmFwcGVycyA9IGNvbGxlY3Rpb24uZ2V0KG1ldGFLZXkpO1xuICAgICAgICAgICAgd3JhcHBlcnMuYWRkKGluc3RhbmNlV3JhcHBlcik7XG4gICAgICAgIH1cbiAgICAgICAgZWxzZSB7XG4gICAgICAgICAgICBjb25zdCB3cmFwcGVycyA9IG5ldyBTZXQoKTtcbiAgICAgICAgICAgIHdyYXBwZXJzLmFkZChpbnN0YW5jZVdyYXBwZXIpO1xuICAgICAgICAgICAgY29sbGVjdGlvbi5zZXQobWV0YUtleSwgd3JhcHBlcnMpO1xuICAgICAgICB9XG4gICAgfVxuICAgIHN0YXRpYyBnZXRQcm92aWRlcnNCeU1ldGFLZXkoaG9zdENvbnRhaW5lclJlZiwgbWV0YUtleSkge1xuICAgICAgICBjb25zdCB3cmFwcGVyc0J5TWV0YUtleSA9IHRoaXMucHJvdmlkZXJzQnlNZXRhS2V5LmdldChob3N0Q29udGFpbmVyUmVmKTtcbiAgICAgICAgcmV0dXJuIHdyYXBwZXJzQnlNZXRhS2V5Py5nZXQobWV0YUtleSkgPz8gbmV3IFNldCgpO1xuICAgIH1cbiAgICBzdGF0aWMgZ2V0Q29udHJvbGxlcnNCeU1ldGFLZXkoaG9zdENvbnRhaW5lclJlZiwgbWV0YUtleSkge1xuICAgICAgICBjb25zdCB3cmFwcGVyc0J5TWV0YUtleSA9IHRoaXMuY29udHJvbGxlcnNCeU1ldGFLZXkuZ2V0KGhvc3RDb250YWluZXJSZWYpO1xuICAgICAgICByZXR1cm4gd3JhcHBlcnNCeU1ldGFLZXk/LmdldChtZXRhS2V5KSA/PyBuZXcgU2V0KCk7XG4gICAgfVxuICAgIHN0YXRpYyBpbnNwZWN0SW5zdGFuY2VXcmFwcGVyKGhvc3RDb250YWluZXJSZWYsIGluc3RhbmNlV3JhcHBlciwgd3JhcHBlckJ5TWV0YUtleU1hcCkge1xuICAgICAgICBjb25zdCBtZXRhS2V5ID0gRGlzY292ZXJhYmxlTWV0YUhvc3RDb2xsZWN0aW9uLmdldE1ldGFLZXlCeUluc3RhbmNlV3JhcHBlcihpbnN0YW5jZVdyYXBwZXIpO1xuICAgICAgICBpZiAoIW1ldGFLZXkpIHtcbiAgICAgICAgICAgIHJldHVybjtcbiAgICAgICAgfVxuICAgICAgICBsZXQgY29sbGVjdGlvbjtcbiAgICAgICAgaWYgKHdyYXBwZXJCeU1ldGFLZXlNYXAuaGFzKGhvc3RDb250YWluZXJSZWYpKSB7XG4gICAgICAgICAgICBjb2xsZWN0aW9uID0gd3JhcHBlckJ5TWV0YUtleU1hcC5nZXQoaG9zdENvbnRhaW5lclJlZik7XG4gICAgICAgIH1cbiAgICAgICAgZWxzZSB7XG4gICAgICAgICAgICBjb2xsZWN0aW9uID0gbmV3IE1hcCgpO1xuICAgICAgICAgICAgd3JhcHBlckJ5TWV0YUtleU1hcC5zZXQoaG9zdENvbnRhaW5lclJlZiwgY29sbGVjdGlvbik7XG4gICAgICAgIH1cbiAgICAgICAgdGhpcy5pbnNlcnRCeU1ldGFLZXkobWV0YUtleSwgaW5zdGFuY2VXcmFwcGVyLCBjb2xsZWN0aW9uKTtcbiAgICB9XG4gICAgc3RhdGljIGdldE1ldGFLZXlCeUluc3RhbmNlV3JhcHBlcihpbnN0YW5jZVdyYXBwZXIpIHtcbiAgICAgICAgcmV0dXJuIHRoaXMubWV0YUhvc3RMaW5rcy5nZXQoXG4gICAgICAgIC8vIE5PVEU6IFJlZ2FyZGluZyB0aGUgdGVybmFyeSBzdGF0ZW1lbnQgYmVsb3csXG4gICAgICAgIC8vIC0gVGhlIGNvbmRpdGlvbiBgIXdyYXBwZXIubWV0YXR5cGVgIGlzIG5lZWRlZCBiZWNhdXNlIHdoZW4gd2UgdXNlIGB1c2VWYWx1ZWBcbiAgICAgICAgLy8gdGhlIHZhbHVlIG9mIGB3cmFwcGVyLm1ldGF0eXBlYCB3aWxsIGJlIGBudWxsYC5cbiAgICAgICAgLy8gLSBUaGUgY29uZGl0aW9uIGB3cmFwcGVyLmluamVjdGAgaXMgbmVlZGVkIGhlcmUgYmVjYXVzZSB3aGVuIHdlIHVzZVxuICAgICAgICAvLyBgdXNlRmFjdG9yeWAsIHRoZSB2YWx1ZSBvZiBgd3JhcHBlci5tZXRhdHlwZWAgd2lsbCBiZSB0aGUgc3VwcGxpZWRcbiAgICAgICAgLy8gZmFjdG9yeSBmdW5jdGlvbi5cbiAgICAgICAgLy8gRm9yIGJvdGggY2FzZXMsIHdlIHNob3VsZCB1c2UgYHdyYXBwZXIuaW5zdGFuY2UuY29uc3RydWN0b3JgIGluc3RlYWRcbiAgICAgICAgLy8gb2YgYHdyYXBwZXIubWV0YXR5cGVgIHRvIHJlc29sdmUgcHJvY2Vzc29yJ3MgY2xhc3MgcHJvcGVybHkuXG4gICAgICAgIC8vIEJ1dCBzaW5jZSBjYWxsaW5nIGB3cmFwcGVyLmluc3RhbmNlYCBjb3VsZCBkZWdyYWRlIG92ZXJhbGwgcGVyZm9ybWFuY2VcbiAgICAgICAgLy8gd2UgbXVzdCBkZWZlciBpdCBhcyBtdWNoIHdlIGNhbi5cbiAgICAgICAgaW5zdGFuY2VXcmFwcGVyLm1ldGF0eXBlIHx8IGluc3RhbmNlV3JhcHBlci5pbmplY3RcbiAgICAgICAgICAgID8gKGluc3RhbmNlV3JhcHBlci5pbnN0YW5jZT8uY29uc3RydWN0b3IgPz8gaW5zdGFuY2VXcmFwcGVyLm1ldGF0eXBlKVxuICAgICAgICAgICAgOiBpbnN0YW5jZVdyYXBwZXIubWV0YXR5cGUpO1xuICAgIH1cbn1cbmV4cG9ydHMuRGlzY292ZXJhYmxlTWV0YUhvc3RDb2xsZWN0aW9uID0gRGlzY292ZXJhYmxlTWV0YUhvc3RDb2xsZWN0aW9uO1xuLyoqXG4gKiBBIG1hcCBvZiBjbGFzcyByZWZlcmVuY2VzIHRvIG1ldGFkYXRhIGtleXMuXG4gKi9cbkRpc2NvdmVyYWJsZU1ldGFIb3N0Q29sbGVjdGlvbi5tZXRhSG9zdExpbmtzID0gbmV3IE1hcCgpO1xuLyoqXG4gKiBBIG1hcCBvZiBtZXRhZGF0YSBrZXlzIHRvIGluc3RhbmNlIHdyYXBwZXJzIChwcm92aWRlcnMpIHdpdGggdGhlIGNvcnJlc3BvbmRpbmcgbWV0YWRhdGEga2V5LlxuICogVGhlIG1hcCBpcyB3ZWFrbHkgcmVmZXJlbmNlZCBieSB0aGUgbW9kdWxlcyBjb250YWluZXIgKHVuaXF1ZSBwZXIgYXBwbGljYXRpb24pLlxuICovXG5EaXNjb3ZlcmFibGVNZXRhSG9zdENvbGxlY3Rpb24ucHJvdmlkZXJzQnlNZXRhS2V5ID0gbmV3IFdlYWtNYXAoKTtcbi8qKlxuICogQSBtYXAgb2YgbWV0YWRhdGEga2V5cyB0byBpbnN0YW5jZSB3cmFwcGVycyAoY29udHJvbGxlcnMpIHdpdGggdGhlIGNvcnJlc3BvbmRpbmcgbWV0YWRhdGEga2V5LlxuICogVGhlIG1hcCBpcyB3ZWFrbHkgcmVmZXJlbmNlZCBieSB0aGUgbW9kdWxlcyBjb250YWluZXIgKHVuaXF1ZSBwZXIgYXBwbGljYXRpb24pLlxuICovXG5EaXNjb3ZlcmFibGVNZXRhSG9zdENvbGxlY3Rpb24uY29udHJvbGxlcnNCeU1ldGFLZXkgPSBuZXcgV2Vha01hcCgpO1xuIl0sInZlcnNpb24iOjN9

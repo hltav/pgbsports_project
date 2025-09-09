@@ -1,0 +1,267 @@
+6aa09fe2211a901b704d03cfb6e02ee9
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Res = exports.Req = exports.Headers = exports.Session = exports.Ip = exports.Next = exports.Response = exports.Request = void 0;
+exports.assignMetadata = assignMetadata;
+exports.UploadedFile = UploadedFile;
+exports.UploadedFiles = UploadedFiles;
+exports.Query = Query;
+exports.Body = Body;
+exports.RawBody = RawBody;
+exports.Param = Param;
+exports.HostParam = HostParam;
+const constants_1 = require("../../constants");
+const route_paramtypes_enum_1 = require("../../enums/route-paramtypes.enum");
+const shared_utils_1 = require("../../utils/shared.utils");
+function assignMetadata(args, paramtype, index, data, ...pipes) {
+    return {
+        ...args,
+        [`${paramtype}:${index}`]: {
+            index,
+            data,
+            pipes,
+        },
+    };
+}
+function createRouteParamDecorator(paramtype) {
+    return (data) => (target, key, index) => {
+        const args = Reflect.getMetadata(constants_1.ROUTE_ARGS_METADATA, target.constructor, key) ||
+            {};
+        Reflect.defineMetadata(constants_1.ROUTE_ARGS_METADATA, assignMetadata(args, paramtype, index, data), target.constructor, key);
+    };
+}
+const createPipesRouteParamDecorator = (paramtype) => (data, ...pipes) => (target, key, index) => {
+    const args = Reflect.getMetadata(constants_1.ROUTE_ARGS_METADATA, target.constructor, key) || {};
+    const hasParamData = (0, shared_utils_1.isNil)(data) || (0, shared_utils_1.isString)(data);
+    const paramData = hasParamData ? data : undefined;
+    const paramPipes = hasParamData ? pipes : [data, ...pipes];
+    Reflect.defineMetadata(constants_1.ROUTE_ARGS_METADATA, assignMetadata(args, paramtype, index, paramData, ...paramPipes), target.constructor, key);
+};
+/**
+ * Route handler parameter decorator. Extracts the `Request`
+ * object from the underlying platform and populates the decorated
+ * parameter with the value of `Request`.
+ *
+ * Example: `logout(@Request() req)`
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ *
+ * @publicApi
+ */
+exports.Request = createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.REQUEST);
+/**
+ * Route handler parameter decorator. Extracts the `Response`
+ * object from the underlying platform and populates the decorated
+ * parameter with the value of `Response`.
+ *
+ * Example: `logout(@Response() res)`
+ *
+ * @publicApi
+ */
+const Response = (options) => (target, key, index) => {
+    if (options?.passthrough) {
+        Reflect.defineMetadata(constants_1.RESPONSE_PASSTHROUGH_METADATA, options?.passthrough, target.constructor, key);
+    }
+    return createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.RESPONSE)()(target, key, index);
+};
+exports.Response = Response;
+/**
+ * Route handler parameter decorator. Extracts reference to the `Next` function
+ * from the underlying platform and populates the decorated
+ * parameter with the value of `Next`.
+ *
+ * @publicApi
+ */
+exports.Next = createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.NEXT);
+/**
+ * Route handler parameter decorator. Extracts the `Ip` property
+ * from the `req` object and populates the decorated
+ * parameter with the value of `ip`.
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ *
+ * @publicApi
+ */
+exports.Ip = createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.IP);
+/**
+ * Route handler parameter decorator. Extracts the `Session` object
+ * from the underlying platform and populates the decorated
+ * parameter with the value of `Session`.
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ *
+ * @publicApi
+ */
+exports.Session = createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.SESSION);
+/**
+ * Route handler parameter decorator. Extracts the `file` object
+ * and populates the decorated parameter with the value of `file`.
+ * Used in conjunction with
+ * [multer middleware](https://github.com/expressjs/multer) for Express-based applications.
+ *
+ * For example:
+ * ```typescript
+ * uploadFile(@UploadedFile() file) {
+ *   console.log(file);
+ * }
+ * ```
+ * @see [Request object](https://docs.nestjs.com/techniques/file-upload)
+ *
+ * @publicApi
+ */
+function UploadedFile(fileKey, ...pipes) {
+    return createPipesRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.FILE)(fileKey, ...pipes);
+}
+/**
+ * Route handler parameter decorator. Extracts the `files` object
+ * and populates the decorated parameter with the value of `files`.
+ * Used in conjunction with
+ * [multer middleware](https://github.com/expressjs/multer) for Express-based applications.
+ *
+ * For example:
+ * ```typescript
+ * uploadFile(@UploadedFiles() files) {
+ *   console.log(files);
+ * }
+ * ```
+ * @see [Request object](https://docs.nestjs.com/techniques/file-upload)
+ *
+ * @publicApi
+ */
+function UploadedFiles(...pipes) {
+    return createPipesRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.FILES)(undefined, ...pipes);
+}
+/**
+ * Route handler parameter decorator. Extracts the `headers`
+ * property from the `req` object and populates the decorated
+ * parameter with the value of `headers`.
+ *
+ * For example: `async update(@Headers('Cache-Control') cacheControl: string)`
+ *
+ * @param property name of single header property to extract.
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ *
+ * @publicApi
+ */
+exports.Headers = createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.HEADERS);
+/**
+ * Route handler parameter decorator. Extracts the `query`
+ * property from the `req` object and populates the decorated
+ * parameter with the value of `query`. May also apply pipes to the bound
+ * query parameter.
+ *
+ * For example:
+ * ```typescript
+ * async find(@Query('user') user: string)
+ * ```
+ *
+ * @param property name of single property to extract from the `query` object
+ * @param pipes one or more pipes to apply to the bound query parameter
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ *
+ * @publicApi
+ */
+function Query(property, ...pipes) {
+    return createPipesRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.QUERY)(property, ...pipes);
+}
+/**
+ * Route handler parameter decorator. Extracts the entire `body` object
+ * property, or optionally a named property of the `body` object, from
+ * the `req` object and populates the decorated parameter with that value.
+ * Also applies pipes to the bound body parameter.
+ *
+ * For example:
+ * ```typescript
+ * async create(@Body('role', new ValidationPipe()) role: string)
+ * ```
+ *
+ * @param property name of single property to extract from the `body` object
+ * @param pipes one or more pipes - either instances or classes - to apply to
+ * the bound body parameter.
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ * @see [Working with pipes](https://docs.nestjs.com/custom-decorators#working-with-pipes)
+ *
+ * @publicApi
+ */
+function Body(property, ...pipes) {
+    return createPipesRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.BODY)(property, ...pipes);
+}
+/**
+ * Route handler parameter decorator. Extracts the `rawBody` Buffer
+ * property from the `req` object and populates the decorated parameter with that value.
+ * Also applies pipes to the bound rawBody parameter.
+ *
+ * For example:
+ * ```typescript
+ * async create(@RawBody(new ValidationPipe()) rawBody: Buffer)
+ * ```
+ *
+ * @param pipes one or more pipes - either instances or classes - to apply to
+ * the bound body parameter.
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ * @see [Raw body](https://docs.nestjs.com/faq/raw-body)
+ * @see [Working with pipes](https://docs.nestjs.com/custom-decorators#working-with-pipes)
+ *
+ * @publicApi
+ */
+function RawBody(...pipes) {
+    return createPipesRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.RAW_BODY)(undefined, ...pipes);
+}
+/**
+ * Route handler parameter decorator. Extracts the `params`
+ * property from the `req` object and populates the decorated
+ * parameter with the value of `params`. May also apply pipes to the bound
+ * parameter.
+ *
+ * For example, extracting all params:
+ * ```typescript
+ * findOne(@Param() params: string[])
+ * ```
+ *
+ * For example, extracting a single param:
+ * ```typescript
+ * findOne(@Param('id') id: string)
+ * ```
+ * @param property name of single property to extract from the `req` object
+ * @param pipes one or more pipes - either instances or classes - to apply to
+ * the bound parameter.
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ * @see [Working with pipes](https://docs.nestjs.com/custom-decorators#working-with-pipes)
+ *
+ * @publicApi
+ */
+function Param(property, ...pipes) {
+    return createPipesRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.PARAM)(property, ...pipes);
+}
+/**
+ * Route handler parameter decorator. Extracts the `hosts`
+ * property from the `req` object and populates the decorated
+ * parameter with the value of `params`. May also apply pipes to the bound
+ * parameter.
+ *
+ * For example, extracting all params:
+ * ```typescript
+ * findOne(@HostParam() params: string[])
+ * ```
+ *
+ * For example, extracting a single param:
+ * ```typescript
+ * findOne(@HostParam('id') id: string)
+ * ```
+ * @param property name of single property to extract from the `req` object
+ *
+ * @see [Request object](https://docs.nestjs.com/controllers#request-object)
+ *
+ * @publicApi
+ */
+function HostParam(property) {
+    return createRouteParamDecorator(route_paramtypes_enum_1.RouteParamtypes.HOST)(property);
+}
+exports.Req = exports.Request;
+exports.Res = exports.Response;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29tbW9uXFxkZWNvcmF0b3JzXFxodHRwXFxyb3V0ZS1wYXJhbXMuZGVjb3JhdG9yLmpzIiwibWFwcGluZ3MiOiJBQUFBLFlBQVksQ0FBQztBQUNiLE1BQU0sQ0FBQyxjQUFjLENBQUMsT0FBTyxFQUFFLFlBQVksRUFBRSxFQUFFLEtBQUssRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO0FBQzlELE9BQU8sQ0FBQyxHQUFHLEdBQUcsT0FBTyxDQUFDLEdBQUcsR0FBRyxPQUFPLENBQUMsT0FBTyxHQUFHLE9BQU8sQ0FBQyxPQUFPLEdBQUcsT0FBTyxDQUFDLEVBQUUsR0FBRyxPQUFPLENBQUMsSUFBSSxHQUFHLE9BQU8sQ0FBQyxRQUFRLEdBQUcsT0FBTyxDQUFDLE9BQU8sR0FBRyxLQUFLLENBQUMsQ0FBQztBQUN4SSxPQUFPLENBQUMsY0FBYyxHQUFHLGNBQWMsQ0FBQztBQUN4QyxPQUFPLENBQUMsWUFBWSxHQUFHLFlBQVksQ0FBQztBQUNwQyxPQUFPLENBQUMsYUFBYSxHQUFHLGFBQWEsQ0FBQztBQUN0QyxPQUFPLENBQUMsS0FBSyxHQUFHLEtBQUssQ0FBQztBQUN0QixPQUFPLENBQUMsSUFBSSxHQUFHLElBQUksQ0FBQztBQUNwQixPQUFPLENBQUMsT0FBTyxHQUFHLE9BQU8sQ0FBQztBQUMxQixPQUFPLENBQUMsS0FBSyxHQUFHLEtBQUssQ0FBQztBQUN0QixPQUFPLENBQUMsU0FBUyxHQUFHLFNBQVMsQ0FBQztBQUM5QixNQUFNLFdBQVcsR0FBRyxPQUFPLENBQUMsaUJBQWlCLENBQUMsQ0FBQztBQUMvQyxNQUFNLHVCQUF1QixHQUFHLE9BQU8sQ0FBQyxtQ0FBbUMsQ0FBQyxDQUFDO0FBQzdFLE1BQU0sY0FBYyxHQUFHLE9BQU8sQ0FBQywwQkFBMEIsQ0FBQyxDQUFDO0FBQzNELFNBQVMsY0FBYyxDQUFDLElBQUksRUFBRSxTQUFTLEVBQUUsS0FBSyxFQUFFLElBQUksRUFBRSxH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USxFQUFFLEdBQUcsS0FBSyxDQUFDLENBQUM7QUFDNUcsQ0FBQztBQUNEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7R0FrQkc7QUFDSCxTQUFTLE9BQU8sQ0FBQyxHQUFHLEtBQUs7SUFDckIsT0FBTyw4QkFBOEIsQ0FBQyx1QkFBdUIsQ0FBQyxlQUFlLENBQUMsUUFBUSxDQUFDLENBQUMsU0FBUyxFQUFFLEdBQUcsS0FBSyxDQUFDLENBQUM7QUFDakgsQ0FBQztBQUNEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXVCRztBQUNILFNBQVMsS0FBSyxDQUFDLFFBQVEsRUFBRSxHQUFHLEtBQUs7SUFDN0IsT0FBTyw4QkFBOEIsQ0FBQyx1QkFBdUIsQ0FBQyxlQUFlLENBQUMsS0FBSyxDQUFDLENBQUMsUUFBUSxFQUFFLEdBQUcsS0FBSyxDQUFDLENBQUM7QUFDN0csQ0FBQztBQUNEOzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQW9CRztBQUNILFNBQVMsU0FBUyxDQUFDLFFBQVE7SUFDdkIsT0FBTyx5QkFBeUIsQ0FBQyx1QkFBdUIsQ0FBQyxlQUFlLENBQUMsSUFBSSxDQUFDLENBQUMsUUFBUSxDQUFDLENBQUM7QUFDN0YsQ0FBQztBQUNELE9BQU8sQ0FBQyxHQUFHLEdBQUcsT0FBTyxDQUFDLE9BQU8sQ0FBQztBQUM5QixPQUFPLENBQUMsR0FBRyxHQUFHLE9BQU8sQ0FBQyxRQUFRLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29tbW9uXFxkZWNvcmF0b3JzXFxodHRwXFxyb3V0ZS1wYXJhbXMuZGVjb3JhdG9yLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuT2JqZWN0LmRlZmluZVByb3BlcnR5KGV4cG9ydHMsIFwiX19lc01vZHVsZVwiLCB7IHZhbHVlOiB0cnVlIH0pO1xuZXhwb3J0cy5SZXMgPSBleHBvcnRzLlJlcSA9IGV4cG9ydHMuSGVhZGVycyA9IGV4cG9ydHMuU2Vzc2lvbiA9IGV4cG9ydHMuSXAgPSBleHBvcnRzLk5leHQgPSBleHBvcnRzLlJlc3BvbnNlID0gZXhwb3J0cy5SZXF1ZXN0ID0gdm9pZCAwO1xuZXhwb3J0cy5hc3NpZ25NZXRhZGF0YSA9IGFzc2lnbk1ldGFkYXRhO1xuZXhwb3J0cy5VcGxvYWRlZEZpbGUgPSBVcGxvYWRlZEZpbGU7XG5leHBvcnRzLlVwbG9hZGVkRmlsZXMgPSBVcGxvYWRlZEZpbGVzO1xuZXhwb3J0cy5RdWVyeSA9IFF1ZXJ5O1xuZXhwb3J0cy5Cb2R5ID0gQm9keTtcbmV4cG9ydHMuUmF3Qm9keSA9IFJhd0JvZHk7XG5leHBvcnRzLlBhcmFtID0gUGFyYW07XG5leHBvcnRzLkhvc3RQYXJhbSA9IEhvc3RQYXJhbTtcbmNvbnN0IGNvbnN0YW50c18xID0gcmVxdWlyZShcIi4uLy4uL2NvbnN0YW50c1wiKTtcbmNvbnN0IHJvdXRlX3BhcmFtdHlwZXNfZW51bV8xID0gcmVxdWlyZShcIi4uLy4uL2VudW1zL3JvdXRlLXBhcmFtdHlwZXMuZW51bVwiKTtcbmNvbnN0IHNoYXJlZF91dGlsc18xID0gcmVxdWlyZShcIi4uLy4uL3V0aWxzL3NoYXJlZC51dGlsc1wiKTtcbmZ1bmN0aW9uIGFzc2lnbk1ldGFkYXRhKGFyZ3MsIHBhcmFtdHlwZSwgaW5kZXgsIGRhdGEsIC4uLnBpcGVzKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgICAgLi4uYXJncyxcbiAgICAgICAgW2Ake3BhcmFtdHlwZX06JHtpbmRleH1gXToge1xuICAgICAgICAgICAgaW5kZXgsXG4gICAgICAgICAgICBkYXRhLFxuICAgICAgICAgICAgcGlwZXMsXG4gICAgICAgIH0sXG4gICAgfTtcbn1cbmZ1bmN0aW9uIGNyZWF0ZVJvdXRlUGFyYW1EZWNvcmF0b3IocGFyYW10eXBlKSB7XG4gICAgcmV0dXJuIChkYXRhKSA9PiAodGFyZ2V0LCBrZXksIGluZGV4KSA9PiB7XG4gICAgICAgIGNvbnN0IGFyZ3MgPSBSZWZsZWN0LmdldE1ldGFkYXRhKGNvbnN0YW50c18xLlJPVVRFX0FSR1NfTUVUQURBVEEsIHRhcmdldC5jb25zdHJ1Y3Rvciwga2V5KSB8fFxuICAgICAgICAgICAge307XG4gICAgICAgIFJlZmxlY3QuZGVmaW5lTWV0YWRhdGEoY29uc3RhbnRzXzEuUk9VVEVfQVJHU19NRVRBREFUQSwgYXNzaWduTWV0YWRhdGEoYXJncywgcGFyYW10eXBlLCBpbmRleCwgZGF0YSksIHRhcmdldC5jb25zdHJ1Y3Rvciwga2V5KTtcbiAgICB9O1xufVxuY29uc3QgY3JlYXRlUGlwZXNSb3V0ZVBhcmFtRGVjb3JhdG9yID0gKHBhcmFtdHlwZSkgPT4gKGRhdGEsIC4uLnBpcGVzKSA9PiAodGFyZ2V0LCBrZXksIGluZGV4KSA9PiB7XG4gICAgY29uc3QgYXJncyA9IFJlZmxlY3QuZ2V0TWV0YWRhdGEoY29uc3RhbnRzXzEuUk9VVEVfQVJHU19NRVRBREFUQSwgdGFyZ2V0LmNvbnN0cnVjdG9yLCBrZXkpIHx8IHt9O1xuICAgIGNvbnN0IGhhc1BhcmFtRGF0YSA9ICgwLCBzaGFyZWRfdXRpbHNfMS5pc05pbCkoZGF0YSkgfHwgKDAsIHNoYXJlZF91dGlsc18xLmlzU3RyaW5nKShkYXRhKTtcbiAgICBjb25zdCBwYXJhbURhdGEgPSBoYXNQYXJhbURhdGEgPyBkYXRhIDogdW5kZWZpbmVkO1xuICAgIGNvbnN0IHBhcmFtUGlwZXMgPSBoYXNQYXJhbURhdGEgPyBwaXBlcyA6IFtkYXRhLCAuLi5waXBlc107XG4gICAgUmVmbGVjdC5kZWZpbmVNZXRhZGF0YShjb25zdGFudHNfMS5ST1VURV9BUkdTX01FVEFEQVRBLCBhc3NpZ25NZXRhZGF0YShhcmdzLCBwYXJhbXR5cGUsIGluZGV4LCBwYXJhbURhdGEsIC4uLnBhcmFtUGlwZXMpLCB0YXJnZXQuY29uc3RydWN0b3IsIGtleSk7XG59O1xuLyoqXG4gKiBSb3V0ZSBoYW5kbGVyIHBhcmFtZXRlciBkZWNvcmF0b3IuIEV4dHJhY3RzIHRoZSBgUmVxdWVzdGBcbiAqIG9iamVjdCBmcm9tIHRoZSB1bmRlcmx5aW5nIHBsYXRmb3JtIGFuZCBwb3B1bGF0ZXMgdGhlIGRlY29yYXRlZFxuICogcGFyYW1ldGVyIHdpdGggdGhlIHZhbHVlIG9mIGBSZXF1ZXN0YC5cbiAqXG4gKiBFeGFtcGxlOiBgbG9nb3V0KEBSZXF1ZXN0KCkgcmVxKWBcbiAqXG4gKiBAc2VlIFtSZXF1ZXN0IG9iamVjdF0oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vY29udHJvbGxlcnMjcmVxdWVzdC1vYmplY3QpXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5leHBvcnRzLlJlcXVlc3QgPSBjcmVhdGVSb3V0ZVBhcmFtRGVjb3JhdG9yKHJvdXRlX3BhcmFtdHlwZXNfZW51bV8xLlJvdXRlUGFyYW10eXBlcy5SRVFVRVNUKTtcbi8qKlxuICogUm91dGUgaGFuZGxlciBwYXJhbWV0ZXIgZGVjb3JhdG9yLiBFeHRyYWN0cyB0aGUgYFJlc3BvbnNlYFxuICogb2JqZWN0IGZyb20gdGhlIHVuZGVybHlpbmcgcGxhdGZvcm0gYW5kIHBvcHVsYXRlcyB0aGUgZGVjb3JhdGVkXG4gKiBwYXJhbWV0ZXIgd2l0aCB0aGUgdmFsdWUgb2YgYFJlc3BvbnNlYC5cbiAqXG4gKiBFeGFtcGxlOiBgbG9nb3V0KEBSZXNwb25zZSgpIHJlcylgXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5jb25zdCBSZXNwb25zZSA9IChvcHRpb25zKSA9PiAodGFyZ2V0LCBrZXksIGluZGV4KSA9PiB7XG4gICAgaWYgKG9wdGlvbnM/LnBhc3N0aHJvdWdoKSB7XG4gICAgICAgIFJlZmxlY3QuZGVmaW5lTWV0YWRhdGEoY29uc3RhbnRzXzEuUkVTUE9OU0VfUEFTU1RIUk9VR0hfTUVUQURBVEEsIG9wdGlvbnM/LnBhc3N0aHJvdWdoLCB0YXJnZXQuY29uc3RydWN0b3IsIGtleSk7XG4gICAgfVxuICAgIHJldHVybiBjcmVhdGVSb3V0ZVBhcmFtRGVjb3JhdG9yKHJvdXRlX3BhcmFtdHlwZXNfZW51bV8xLlJvdXRlUGFyYW10eXBlcy5SRVNQT05TRSkoKSh0YXJnZXQsIGtleSwgaW5kZXgpO1xufTtcbmV4cG9ydHMuUmVzcG9uc2UgPSBSZXNwb25zZTtcbi8qKlxuICogUm91dGUgaGFuZGxlciBwYXJhbWV0ZXIgZGVjb3JhdG9yLiBFeHRyYWN0cyByZWZlcmVuY2UgdG8gdGhlIGBOZXh0YCBmdW5jdGlvblxuICogZnJvbSB0aGUgdW5kZXJseWluZyBwbGF0Zm9ybSBhbmQgcG9wdWxhdGVzIHRoZSBkZWNvcmF0ZWRcbiAqIHBhcmFtZXRlciB3aXRoIHRoZSB2YWx1ZSBvZiBgTmV4dGAuXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5leHBvcnRzLk5leHQgPSBjcmVhdGVSb3V0ZVBhcmFtRGVjb3JhdG9yKHJvdXRlX3BhcmFtdHlwZXNfZW51bV8xLlJvdXRlUGFyYW10eXBlcy5ORVhUKTtcbi8qKlxuICogUm91dGUgaGFuZGxlciBwYXJhbWV0ZXIgZGVjb3JhdG9yLiBFeHRyYWN0cyB0aGUgYElwYCBwcm9wZXJ0eVxuICogZnJvbSB0aGUgYHJlcWAgb2JqZWN0IGFuZCBwb3B1bGF0ZXMgdGhlIGRlY29yYXRlZFxuICogcGFyYW1ldGVyIHdpdGggdGhlIHZhbHVlIG9mIGBpcGAuXG4gKlxuICogQHNlZSBbUmVxdWVzdCBvYmplY3RdKGh0dHBzOi8vZG9jcy5uZXN0anMuY29tL2NvbnRyb2xsZXJzI3JlcXVlc3Qtb2JqZWN0KVxuICpcbiAqIEBwdWJsaWNBcGlcbiAqL1xuZXhwb3J0cy5JcCA9IGNyZWF0ZVJvdXRlUGFyYW1EZWNvcmF0b3Iocm91dGVfcGFyYW10eXBlc19lbnVtXzEuUm91dGVQYXJhbXR5cGVzLklQKTtcbi8qKlxuICogUm91dGUgaGFuZGxlciBwYXJhbWV0ZXIgZGVjb3JhdG9yLiBFeHRyYWN0cyB0aGUgYFNlc3Npb25gIG9iamVjdFxuICogZnJvbSB0aGUgdW5kZXJseWluZyBwbGF0Zm9ybSBhbmQgcG9wdWxhdGVzIHRoZSBkZWNvcmF0ZWRcbiAqIHBhcmFtZXRlciB3aXRoIHRoZSB2YWx1ZSBvZiBgU2Vzc2lvbmAuXG4gKlxuICogQHNlZSBbUmVxdWVzdCBvYmplY3RdKGh0dHBzOi8vZG9jcy5uZXN0anMuY29tL2NvbnRyb2xsZXJzI3JlcXVlc3Qtb2JqZWN0KVxuICpcbiAqIEBwdWJsaWNBcGlcbiAqL1xuZXhwb3J0cy5TZXNzaW9uID0gY3JlYXRlUm91dGVQYXJhbURlY29yYXRvcihyb3V0ZV9wYXJhbXR5cGVzX2VudW1fMS5Sb3V0ZVBhcmFtdHlwZXMuU0VTU0lPTik7XG4vKipcbiAqIFJvdXRlIGhhbmRsZXIgcGFyYW1ldGVyIGRlY29yYXRvci4gRXh0cmFjdHMgdGhlIGBmaWxlYCBvYmplY3RcbiAqIGFuZCBwb3B1bGF0ZXMgdGhlIGRlY29yYXRlZCBwYXJhbWV0ZXIgd2l0aCB0aGUgdmFsdWUgb2YgYGZpbGVgLlxuICogVXNlZCBpbiBjb25qdW5jdGlvbiB3aXRoXG4gKiBbbXVsdGVyIG1pZGRsZXdhcmVdKGh0dHBzOi8vZ2l0aHViLmNvbS9leHByZXNzanMvbXVsdGVyKSBmb3IgRXhwcmVzcy1iYXNlZCBhcHBsaWNhdGlvbnMuXG4gKlxuICogRm9yIGV4YW1wbGU6XG4gKiBgYGB0eXBlc2NyaXB0XG4gKiB1cGxvYWRGaWxlKEBVcGxvYWRlZEZpbGUoKSBmaWxlKSB7XG4gKiAgIGNvbnNvbGUubG9nKGZpbGUpO1xuICogfVxuICogYGBgXG4gKiBAc2VlIFtSZXF1ZXN0IG9iamVjdF0oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vdGVjaG5pcXVlcy9maWxlLXVwbG9hZClcbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmZ1bmN0aW9uIFVwbG9hZGVkRmlsZShmaWxlS2V5LCAuLi5waXBlcykge1xuICAgIHJldHVybiBjcmVhdGVQaXBlc1JvdXRlUGFyYW1EZWNvcmF0b3Iocm91dGVfcGFyYW10eXBlc19lbnVtXzEuUm91dGVQYXJhbXR5cGVzLkZJTEUpKGZpbGVLZXksIC4uLnBpcGVzKTtcbn1cbi8qKlxuICogUm91dGUgaGFuZGxlciBwYXJhbWV0ZXIgZGVjb3JhdG9yLiBFeHRyYWN0cyB0aGUgYGZpbGVzYCBvYmplY3RcbiAqIGFuZCBwb3B1bGF0ZXMgdGhlIGRlY29yYXRlZCBwYXJhbWV0ZXIgd2l0aCB0aGUgdmFsdWUgb2YgYGZpbGVzYC5cbiAqIFVzZWQgaW4gY29uanVuY3Rpb24gd2l0aFxuICogW211bHRlciBtaWRkbGV3YXJlXShodHRwczovL2dpdGh1Yi5jb20vZXhwcmVzc2pzL211bHRlcikgZm9yIEV4cHJlc3MtYmFzZWQgYXBwbGljYXRpb25zLlxuICpcbiAqIEZvciBleGFtcGxlOlxuICogYGBgdHlwZXNjcmlwdFxuICogdXBsb2FkRmlsZShAVXBsb2FkZWRGaWxlcygpIGZpbGVzKSB7XG4gKiAgIGNvbnNvbGUubG9nKGZpbGVzKTtcbiAqIH1cbiAqIGBgYFxuICogQHNlZSBbUmVxdWVzdCBvYmplY3RdKGh0dHBzOi8vZG9jcy5uZXN0anMuY29tL3RlY2huaXF1ZXMvZmlsZS11cGxvYWQpXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5mdW5jdGlvbiBVcGxvYWRlZEZpbGVzKC4uLnBpcGVzKSB7XG4gICAgcmV0dXJuIGNyZWF0ZVBpcGVzUm91dGVQYXJhbURlY29yYXRvcihyb3V0ZV9wYXJhbXR5cGVzX2VudW1fMS5Sb3V0ZVBhcmFtdHlwZXMuRklMRVMpKHVuZGVmaW5lZCwgLi4ucGlwZXMpO1xufVxuLyoqXG4gKiBSb3V0ZSBoYW5kbGVyIHBhcmFtZXRlciBkZWNvcmF0b3IuIEV4dHJhY3RzIHRoZSBgaGVhZGVyc2BcbiAqIHByb3BlcnR5IGZyb20gdGhlIGByZXFgIG9iamVjdCBhbmQgcG9wdWxhdGVzIHRoZSBkZWNvcmF0ZWRcbiAqIHBhcmFtZXRlciB3aXRoIHRoZSB2YWx1ZSBvZiBgaGVhZGVyc2AuXG4gKlxuICogRm9yIGV4YW1wbGU6IGBhc3luYyB1cGRhdGUoQEhlYWRlcnMoJ0NhY2hlLUNvbnRyb2wnKSBjYWNoZUNvbnRyb2w6IHN0cmluZylgXG4gKlxuICogQHBhcmFtIHByb3BlcnR5IG5hbWUgb2Ygc2luZ2xlIGhlYWRlciBwcm9wZXJ0eSB0byBleHRyYWN0LlxuICpcbiAqIEBzZWUgW1JlcXVlc3Qgb2JqZWN0XShodHRwczovL2RvY3MubmVzdGpzLmNvbS9jb250cm9sbGVycyNyZXF1ZXN0LW9iamVjdClcbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmV4cG9ydHMuSGVhZGVycyA9IGNyZWF0ZVJvdXRlUGFyYW1EZWNvcmF0b3Iocm91dGVfcGFyYW10eXBlc19lbnVtXzEuUm91dGVQYXJhbXR5cGVzLkhFQURFUlMpO1xuLyoqXG4gKiBSb3V0ZSBoYW5kbGVyIHBhcmFtZXRlciBkZWNvcmF0b3IuIEV4dHJhY3RzIHRoZSBgcXVlcnlgXG4gKiBwcm9wZXJ0eSBmcm9tIHRoZSBgcmVxYCBvYmplY3QgYW5kIHBvcHVsYXRlcyB0aGUgZGVjb3JhdGVkXG4gKiBwYXJhbWV0ZXIgd2l0aCB0aGUgdmFsdWUgb2YgYHF1ZXJ5YC4gTWF5IGFsc28gYXBwbHkgcGlwZXMgdG8gdGhlIGJvdW5kXG4gKiBxdWVyeSBwYXJhbWV0ZXIuXG4gKlxuICogRm9yIGV4YW1wbGU6XG4gKiBgYGB0eXBlc2NyaXB0XG4gKiBhc3luYyBmaW5kKEBRdWVyeSgndXNlcicpIHVzZXI6IHN0cmluZylcbiAqIGBgYFxuICpcbiAqIEBwYXJhbSBwcm9wZXJ0eSBuYW1lIG9mIHNpbmdsZSBwcm9wZXJ0eSB0byBleHRyYWN0IGZyb20gdGhlIGBxdWVyeWAgb2JqZWN0XG4gKiBAcGFyYW0gcGlwZXMgb25lIG9yIG1vcmUgcGlwZXMgdG8gYXBwbHkgdG8gdGhlIGJvdW5kIHF1ZXJ5IHBhcmFtZXRlclxuICpcbiAqIEBzZWUgW1JlcXVlc3Qgb2JqZWN0XShodHRwczovL2RvY3MubmVzdGpzLmNvbS9jb250cm9sbGVycyNyZXF1ZXN0LW9iamVjdClcbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmZ1bmN0aW9uIFF1ZXJ5KHByb3BlcnR5LCAuLi5waXBlcykge1xuICAgIHJldHVybiBjcmVhdGVQaXBlc1JvdXRlUGFyYW1EZWNvcmF0b3Iocm91dGVfcGFyYW10eXBlc19lbnVtXzEuUm91dGVQYXJhbXR5cGVzLlFVRVJZKShwcm9wZXJ0eSwgLi4ucGlwZXMpO1xufVxuLyoqXG4gKiBSb3V0ZSBoYW5kbGVyIHBhcmFtZXRlciBkZWNvcmF0b3IuIEV4dHJhY3RzIHRoZSBlbnRpcmUgYGJvZHlgIG9iamVjdFxuICogcHJvcGVydHksIG9yIG9wdGlvbmFsbHkgYSBuYW1lZCBwcm9wZXJ0eSBvZiB0aGUgYGJvZHlgIG9iamVjdCwgZnJvbVxuICogdGhlIGByZXFgIG9iamVjdCBhbmQgcG9wdWxhdGVzIHRoZSBkZWNvcmF0ZWQgcGFyYW1ldGVyIHdpdGggdGhhdCB2YWx1ZS5cbiAqIEFsc28gYXBwbGllcyBwaXBlcyB0byB0aGUgYm91bmQgYm9keSBwYXJhbWV0ZXIuXG4gKlxuICogRm9yIGV4YW1wbGU6XG4gKiBgYGB0eXBlc2NyaXB0XG4gKiBhc3luYyBjcmVhdGUoQEJvZHkoJ3JvbGUnLCBuZXcgVmFsaWRhdGlvblBpcGUoKSkgcm9sZTogc3RyaW5nKVxuICogYGBgXG4gKlxuICogQHBhcmFtIHByb3BlcnR5IG5hbWUgb2Ygc2luZ2xlIHByb3BlcnR5IHRvIGV4dHJhY3QgZnJvbSB0aGUgYGJvZHlgIG9iamVjdFxuICogQHBhcmFtIHBpcGVzIG9uZSBvciBtb3JlIHBpcGVzIC0gZWl0aGVyIGluc3RhbmNlcyBvciBjbGFzc2VzIC0gdG8gYXBwbHkgdG9cbiAqIHRoZSBib3VuZCBib2R5IHBhcmFtZXRlci5cbiAqXG4gKiBAc2VlIFtSZXF1ZXN0IG9iamVjdF0oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vY29udHJvbGxlcnMjcmVxdWVzdC1vYmplY3QpXG4gKiBAc2VlIFtXb3JraW5nIHdpdGggcGlwZXNdKGh0dHBzOi8vZG9jcy5uZXN0anMuY29tL2N1c3RvbS1kZWNvcmF0b3JzI3dvcmtpbmctd2l0aC1waXBlcylcbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmZ1bmN0aW9uIEJvZHkocHJvcGVydHksIC4uLnBpcGVzKSB7XG4gICAgcmV0dXJuIGNyZWF0ZVBpcGVzUm91dGVQYXJhbURlY29yYXRvcihyb3V0ZV9wYXJhbXR5cGVzX2VudW1fMS5Sb3V0ZVBhcmFtdHlwZXMuQk9EWSkocHJvcGVydHksIC4uLnBpcGVzKTtcbn1cbi8qKlxuICogUm91dGUgaGFuZGxlciBwYXJhbWV0ZXIgZGVjb3JhdG9yLiBFeHRyYWN0cyB0aGUgYHJhd0JvZHlgIEJ1ZmZlclxuICogcHJvcGVydHkgZnJvbSB0aGUgYHJlcWAgb2JqZWN0IGFuZCBwb3B1bGF0ZXMgdGhlIGRlY29yYXRlZCBwYXJhbWV0ZXIgd2l0aCB0aGF0IHZhbHVlLlxuICogQWxzbyBhcHBsaWVzIHBpcGVzIHRvIHRoZSBib3VuZCByYXdCb2R5IHBhcmFtZXRlci5cbiAqXG4gKiBGb3IgZXhhbXBsZTpcbiAqIGBgYHR5cGVzY3JpcHRcbiAqIGFzeW5jIGNyZWF0ZShAUmF3Qm9keShuZXcgVmFsaWRhdGlvblBpcGUoKSkgcmF3Qm9keTogQnVmZmVyKVxuICogYGBgXG4gKlxuICogQHBhcmFtIHBpcGVzIG9uZSBvciBtb3JlIHBpcGVzIC0gZWl0aGVyIGluc3RhbmNlcyBvciBjbGFzc2VzIC0gdG8gYXBwbHkgdG9cbiAqIHRoZSBib3VuZCBib2R5IHBhcmFtZXRlci5cbiAqXG4gKiBAc2VlIFtSZXF1ZXN0IG9iamVjdF0oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vY29udHJvbGxlcnMjcmVxdWVzdC1vYmplY3QpXG4gKiBAc2VlIFtSYXcgYm9keV0oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vZmFxL3Jhdy1ib2R5KVxuICogQHNlZSBbV29ya2luZyB3aXRoIHBpcGVzXShodHRwczovL2RvY3MubmVzdGpzLmNvbS9jdXN0b20tZGVjb3JhdG9ycyN3b3JraW5nLXdpdGgtcGlwZXMpXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5mdW5jdGlvbiBSYXdCb2R5KC4uLnBpcGVzKSB7XG4gICAgcmV0dXJuIGNyZWF0ZVBpcGVzUm91dGVQYXJhbURlY29yYXRvcihyb3V0ZV9wYXJhbXR5cGVzX2VudW1fMS5Sb3V0ZVBhcmFtdHlwZXMuUkFXX0JPRFkpKHVuZGVmaW5lZCwgLi4ucGlwZXMpO1xufVxuLyoqXG4gKiBSb3V0ZSBoYW5kbGVyIHBhcmFtZXRlciBkZWNvcmF0b3IuIEV4dHJhY3RzIHRoZSBgcGFyYW1zYFxuICogcHJvcGVydHkgZnJvbSB0aGUgYHJlcWAgb2JqZWN0IGFuZCBwb3B1bGF0ZXMgdGhlIGRlY29yYXRlZFxuICogcGFyYW1ldGVyIHdpdGggdGhlIHZhbHVlIG9mIGBwYXJhbXNgLiBNYXkgYWxzbyBhcHBseSBwaXBlcyB0byB0aGUgYm91bmRcbiAqIHBhcmFtZXRlci5cbiAqXG4gKiBGb3IgZXhhbXBsZSwgZXh0cmFjdGluZyBhbGwgcGFyYW1zOlxuICogYGBgdHlwZXNjcmlwdFxuICogZmluZE9uZShAUGFyYW0oKSBwYXJhbXM6IHN0cmluZ1tdKVxuICogYGBgXG4gKlxuICogRm9yIGV4YW1wbGUsIGV4dHJhY3RpbmcgYSBzaW5nbGUgcGFyYW06XG4gKiBgYGB0eXBlc2NyaXB0XG4gKiBmaW5kT25lKEBQYXJhbSgnaWQnKSBpZDogc3RyaW5nKVxuICogYGBgXG4gKiBAcGFyYW0gcHJvcGVydHkgbmFtZSBvZiBzaW5nbGUgcHJvcGVydHkgdG8gZXh0cmFjdCBmcm9tIHRoZSBgcmVxYCBvYmplY3RcbiAqIEBwYXJhbSBwaXBlcyBvbmUgb3IgbW9yZSBwaXBlcyAtIGVpdGhlciBpbnN0YW5jZXMgb3IgY2xhc3NlcyAtIHRvIGFwcGx5IHRvXG4gKiB0aGUgYm91bmQgcGFyYW1ldGVyLlxuICpcbiAqIEBzZWUgW1JlcXVlc3Qgb2JqZWN0XShodHRwczovL2RvY3MubmVzdGpzLmNvbS9jb250cm9sbGVycyNyZXF1ZXN0LW9iamVjdClcbiAqIEBzZWUgW1dvcmtpbmcgd2l0aCBwaXBlc10oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vY3VzdG9tLWRlY29yYXRvcnMjd29ya2luZy13aXRoLXBpcGVzKVxuICpcbiAqIEBwdWJsaWNBcGlcbiAqL1xuZnVuY3Rpb24gUGFyYW0ocHJvcGVydHksIC4uLnBpcGVzKSB7XG4gICAgcmV0dXJuIGNyZWF0ZVBpcGVzUm91dGVQYXJhbURlY29yYXRvcihyb3V0ZV9wYXJhbXR5cGVzX2VudW1fMS5Sb3V0ZVBhcmFtdHlwZXMuUEFSQU0pKHByb3BlcnR5LCAuLi5waXBlcyk7XG59XG4vKipcbiAqIFJvdXRlIGhhbmRsZXIgcGFyYW1ldGVyIGRlY29yYXRvci4gRXh0cmFjdHMgdGhlIGBob3N0c2BcbiAqIHByb3BlcnR5IGZyb20gdGhlIGByZXFgIG9iamVjdCBhbmQgcG9wdWxhdGVzIHRoZSBkZWNvcmF0ZWRcbiAqIHBhcmFtZXRlciB3aXRoIHRoZSB2YWx1ZSBvZiBgcGFyYW1zYC4gTWF5IGFsc28gYXBwbHkgcGlwZXMgdG8gdGhlIGJvdW5kXG4gKiBwYXJhbWV0ZXIuXG4gKlxuICogRm9yIGV4YW1wbGUsIGV4dHJhY3RpbmcgYWxsIHBhcmFtczpcbiAqIGBgYHR5cGVzY3JpcHRcbiAqIGZpbmRPbmUoQEhvc3RQYXJhbSgpIHBhcmFtczogc3RyaW5nW10pXG4gKiBgYGBcbiAqXG4gKiBGb3IgZXhhbXBsZSwgZXh0cmFjdGluZyBhIHNpbmdsZSBwYXJhbTpcbiAqIGBgYHR5cGVzY3JpcHRcbiAqIGZpbmRPbmUoQEhvc3RQYXJhbSgnaWQnKSBpZDogc3RyaW5nKVxuICogYGBgXG4gKiBAcGFyYW0gcHJvcGVydHkgbmFtZSBvZiBzaW5nbGUgcHJvcGVydHkgdG8gZXh0cmFjdCBmcm9tIHRoZSBgcmVxYCBvYmplY3RcbiAqXG4gKiBAc2VlIFtSZXF1ZXN0IG9iamVjdF0oaHR0cHM6Ly9kb2NzLm5lc3Rqcy5jb20vY29udHJvbGxlcnMjcmVxdWVzdC1vYmplY3QpXG4gKlxuICogQHB1YmxpY0FwaVxuICovXG5mdW5jdGlvbiBIb3N0UGFyYW0ocHJvcGVydHkpIHtcbiAgICByZXR1cm4gY3JlYXRlUm91dGVQYXJhbURlY29yYXRvcihyb3V0ZV9wYXJhbXR5cGVzX2VudW1fMS5Sb3V0ZVBhcmFtdHlwZXMuSE9TVCkocHJvcGVydHkpO1xufVxuZXhwb3J0cy5SZXEgPSBleHBvcnRzLlJlcXVlc3Q7XG5leHBvcnRzLlJlcyA9IGV4cG9ydHMuUmVzcG9uc2U7XG4iXSwidmVyc2lvbiI6M30=

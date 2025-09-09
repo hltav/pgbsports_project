@@ -1,0 +1,34 @@
+a75de5d982d05d0a2a9aeabf5992866d
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SetMetadata = void 0;
+/**
+ * Decorator that assigns metadata to the class/function using the
+ * specified `key`.
+ *
+ * Requires two parameters:
+ * - `key` - a value defining the key under which the metadata is stored
+ * - `value` - metadata to be associated with `key`
+ *
+ * This metadata can be reflected using the `Reflector` class.
+ *
+ * Example: `@SetMetadata('roles', ['admin'])`
+ *
+ * @see [Reflection](https://docs.nestjs.com/fundamentals/execution-context#reflection-and-metadata)
+ *
+ * @publicApi
+ */
+const SetMetadata = (metadataKey, metadataValue) => {
+    const decoratorFactory = (target, key, descriptor) => {
+        if (descriptor) {
+            Reflect.defineMetadata(metadataKey, metadataValue, descriptor.value);
+            return descriptor;
+        }
+        Reflect.defineMetadata(metadataKey, metadataValue, target);
+        return target;
+    };
+    decoratorFactory.KEY = metadataKey;
+    return decoratorFactory;
+};
+exports.SetMetadata = SetMetadata;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29tbW9uXFxkZWNvcmF0b3JzXFxjb3JlXFxzZXQtbWV0YWRhdGEuZGVjb3JhdG9yLmpzIiwibWFwcGluZ3MiOiJBQUFBLFlBQVksQ0FBQztBQUNiLE1BQU0sQ0FBQyxjQUFjLENBQUMsT0FBTyxFQUFFLFlBQVksRUFBRSxFQUFFLEtBQUssRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO0FBQzlELE9BQU8sQ0FBQyxXQUFXLEdBQUcsS0FBSyxDQUFDLENBQUM7QUFDN0I7Ozs7Ozs7Ozs7Ozs7OztHQWVHO0FBQ0gsTUFBTSxXQUFXLEdBQUcsQ0FBQyxXQUFXLEVBQUUsYUFBYSxFQUFFLEVBQUU7SUFDL0MsTUFBTSxnQkFBZ0IsR0FBRyxDQUFDLE1BQU0sRUFBRSxHQUFHLEVBQUUsVUFBVSxFQUFFLEVBQUU7UUFDakQsSUFBSSxVQUFVLEVBQUUsQ0FBQztZQUNiLE9BQU8sQ0FBQyxjQUFjLENBQUMsV0FBVyxFQUFFLGFBQWEsRUFBRSxVQUFVLENBQUMsS0FBSyxDQUFDLENBQUM7WUFDckUsT0FBTyxVQUFVLENBQUM7UUFDdEIsQ0FBQztRQUNELE9BQU8sQ0FBQyxjQUFjLENBQUMsV0FBVyxFQUFFLGFBQWEsRUFBRSxNQUFNLENBQUMsQ0FBQztRQUMzRCxPQUFPLE1BQU0sQ0FBQztJQUNsQixDQUFDLENBQUM7SUFDRixnQkFBZ0IsQ0FBQyxHQUFHLEdBQUcsV0FBVyxDQUFDO0lBQ25DLE9BQU8sZ0JBQWdCLENBQUM7QUFDNUIsQ0FBQyxDQUFDO0FBQ0YsT0FBTyxDQUFDLFdBQVcsR0FBRyxXQUFXLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcQG5lc3Rqc1xcY29tbW9uXFxkZWNvcmF0b3JzXFxjb3JlXFxzZXQtbWV0YWRhdGEuZGVjb3JhdG9yLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuT2JqZWN0LmRlZmluZVByb3BlcnR5KGV4cG9ydHMsIFwiX19lc01vZHVsZVwiLCB7IHZhbHVlOiB0cnVlIH0pO1xuZXhwb3J0cy5TZXRNZXRhZGF0YSA9IHZvaWQgMDtcbi8qKlxuICogRGVjb3JhdG9yIHRoYXQgYXNzaWducyBtZXRhZGF0YSB0byB0aGUgY2xhc3MvZnVuY3Rpb24gdXNpbmcgdGhlXG4gKiBzcGVjaWZpZWQgYGtleWAuXG4gKlxuICogUmVxdWlyZXMgdHdvIHBhcmFtZXRlcnM6XG4gKiAtIGBrZXlgIC0gYSB2YWx1ZSBkZWZpbmluZyB0aGUga2V5IHVuZGVyIHdoaWNoIHRoZSBtZXRhZGF0YSBpcyBzdG9yZWRcbiAqIC0gYHZhbHVlYCAtIG1ldGFkYXRhIHRvIGJlIGFzc29jaWF0ZWQgd2l0aCBga2V5YFxuICpcbiAqIFRoaXMgbWV0YWRhdGEgY2FuIGJlIHJlZmxlY3RlZCB1c2luZyB0aGUgYFJlZmxlY3RvcmAgY2xhc3MuXG4gKlxuICogRXhhbXBsZTogYEBTZXRNZXRhZGF0YSgncm9sZXMnLCBbJ2FkbWluJ10pYFxuICpcbiAqIEBzZWUgW1JlZmxlY3Rpb25dKGh0dHBzOi8vZG9jcy5uZXN0anMuY29tL2Z1bmRhbWVudGFscy9leGVjdXRpb24tY29udGV4dCNyZWZsZWN0aW9uLWFuZC1tZXRhZGF0YSlcbiAqXG4gKiBAcHVibGljQXBpXG4gKi9cbmNvbnN0IFNldE1ldGFkYXRhID0gKG1ldGFkYXRhS2V5LCBtZXRhZGF0YVZhbHVlKSA9PiB7XG4gICAgY29uc3QgZGVjb3JhdG9yRmFjdG9yeSA9ICh0YXJnZXQsIGtleSwgZGVzY3JpcHRvcikgPT4ge1xuICAgICAgICBpZiAoZGVzY3JpcHRvcikge1xuICAgICAgICAgICAgUmVmbGVjdC5kZWZpbmVNZXRhZGF0YShtZXRhZGF0YUtleSwgbWV0YWRhdGFWYWx1ZSwgZGVzY3JpcHRvci52YWx1ZSk7XG4gICAgICAgICAgICByZXR1cm4gZGVzY3JpcHRvcjtcbiAgICAgICAgfVxuICAgICAgICBSZWZsZWN0LmRlZmluZU1ldGFkYXRhKG1ldGFkYXRhS2V5LCBtZXRhZGF0YVZhbHVlLCB0YXJnZXQpO1xuICAgICAgICByZXR1cm4gdGFyZ2V0O1xuICAgIH07XG4gICAgZGVjb3JhdG9yRmFjdG9yeS5LRVkgPSBtZXRhZGF0YUtleTtcbiAgICByZXR1cm4gZGVjb3JhdG9yRmFjdG9yeTtcbn07XG5leHBvcnRzLlNldE1ldGFkYXRhID0gU2V0TWV0YWRhdGE7XG4iXSwidmVyc2lvbiI6M30=

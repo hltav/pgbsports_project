@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\@prisma\\client\\default.js","mappings":"AAAA,MAAM,CAAC,OAAO,GAAG;IACf,GAAG,OAAO,CAAC,wBAAwB,CAAC;CACrC,CAAA","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\@prisma\\client\\default.js"],"sourcesContent":["module.exports = {\n  ...require('.prisma/client/default'),\n}\n"],"version":3}

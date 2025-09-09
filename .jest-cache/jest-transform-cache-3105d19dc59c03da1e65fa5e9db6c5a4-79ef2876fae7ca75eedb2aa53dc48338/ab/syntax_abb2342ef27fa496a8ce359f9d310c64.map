@@ -1,0 +1,1 @@
+{"file":"D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\syntax.js","mappings":"AAAA,YAAY,CAAC;AAEb,iCAAiC;AACjC,MAAM,CAAC,OAAO,GAAG,WAAW,CAAC","names":[],"sources":["D:\\Meus_Projetos\\pgb_sports\\node_modules\\es-errors\\syntax.js"],"sourcesContent":["'use strict';\n\n/** @type {import('./syntax')} */\nmodule.exports = SyntaxError;\n"],"version":3}

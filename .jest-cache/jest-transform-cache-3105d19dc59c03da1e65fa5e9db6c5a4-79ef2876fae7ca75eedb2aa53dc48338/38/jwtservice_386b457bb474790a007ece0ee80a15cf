@@ -1,0 +1,34 @@
+e347f0817e02086fbe359772a80898d6
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.JwtHandlerService = void 0;
+const common_1 = require("@nestjs/common");
+const jwt_1 = require("@nestjs/jwt");
+const jwtClassic_1 = require("./../algorithms/classic/jwtClassic");
+let JwtHandlerService = class JwtHandlerService {
+    constructor(nestJwtService) {
+        this.nestJwtService = nestJwtService;
+        this.strategy = new jwtClassic_1.JwtClassic(this.nestJwtService);
+    }
+    sign(payload, options) {
+        return this.strategy.sign(payload, options);
+    }
+    verify(token) {
+        return this.strategy.verify(token);
+    }
+};
+exports.JwtHandlerService = JwtHandlerService;
+exports.JwtHandlerService = JwtHandlerService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [jwt_1.JwtService])
+], JwtHandlerService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcY3J5cHRvXFxzZXJ2aWNlc1xcand0LnNlcnZpY2UudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7O0FBQUEsMkNBQTRDO0FBQzVDLHFDQUEyRDtBQUMzRCxtRUFBZ0U7QUFJekQsSUFBTSxpQkFBaUIsR0FBdkIsTUFBTSxpQkFBaUI7SUFHNUIsWUFBNkIsY0FBOEI7UUFBOUIsbUJBQWMsR0FBZCxjQUFjLENBQWdCO1FBQ3pELElBQUksQ0FBQyxRQUFRLEdBQUcsSUFBSSx1QkFBVSxDQUFDLElBQUksQ0FBQyxjQUFjLENBQUMsQ0FBQztJQUN0RCxDQUFDO0lBRUQsSUFBSSxDQUFDLE9BQW1CLEVBQUUsT0FBeUM7UUFDakUsT0FBTyxJQUFJLENBQUMsUUFBUSxDQUFDLElBQUksQ0FBQyxPQUFPLEVBQUUsT0FBTyxDQUFDLENBQUM7SUFDOUMsQ0FBQztJQUVELE1BQU0sQ0FBQyxLQUFhO1FBQ2xCLE9BQU8sSUFBSSxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsS0FBSyxDQUFDLENBQUM7SUFDckMsQ0FBQztDQUNGLENBQUE7QUFkWSw4Q0FBaUI7NEJBQWpCLGlCQUFpQjtJQUQ3QixJQUFBLG1CQUFVLEdBQUU7cUNBSWtDLGdCQUFjO0dBSGhELGlCQUFpQixDQWM3QiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcc3JjXFxsaWJzXFxjcnlwdG9cXHNlcnZpY2VzXFxqd3Quc2VydmljZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuaW1wb3J0IHsgSnd0U2VydmljZSBhcyBOZXN0Snd0U2VydmljZSB9IGZyb20gJ0BuZXN0anMvand0JztcbmltcG9ydCB7IEp3dENsYXNzaWMgfSBmcm9tICcuLy4uL2FsZ29yaXRobXMvY2xhc3NpYy9qd3RDbGFzc2ljJztcbmltcG9ydCB7IEp3dFBheWxvYWQgfSBmcm9tICcuLi8uLi8uLi9tb2R1bGVzL2F1dGgvZHRvL2p3dC1wYXlsb2FkLmR0byc7XG5cbkBJbmplY3RhYmxlKClcbmV4cG9ydCBjbGFzcyBKd3RIYW5kbGVyU2VydmljZSB7XG4gIHByaXZhdGUgc3RyYXRlZ3k6IEp3dENsYXNzaWM7XG5cbiAgY29uc3RydWN0b3IocHJpdmF0ZSByZWFkb25seSBuZXN0Snd0U2VydmljZTogTmVzdEp3dFNlcnZpY2UpIHtcbiAgICB0aGlzLnN0cmF0ZWd5ID0gbmV3IEp3dENsYXNzaWModGhpcy5uZXN0Snd0U2VydmljZSk7XG4gIH1cblxuICBzaWduKHBheWxvYWQ6IEp3dFBheWxvYWQsIG9wdGlvbnM/OiB7IGV4cGlyZXNJbj86IHN0cmluZyB8IG51bWJlciB9KTogc3RyaW5nIHtcbiAgICByZXR1cm4gdGhpcy5zdHJhdGVneS5zaWduKHBheWxvYWQsIG9wdGlvbnMpO1xuICB9XG5cbiAgdmVyaWZ5KHRva2VuOiBzdHJpbmcpOiBKd3RQYXlsb2FkIHtcbiAgICByZXR1cm4gdGhpcy5zdHJhdGVneS52ZXJpZnkodG9rZW4pO1xuICB9XG59XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,75 @@
+dc5f77fc069fdfac9d81838dc479f3f0
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = isEAN;
+var _assertString = _interopRequireDefault(require("./util/assertString"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+/**
+ * The most commonly used EAN standard is
+ * the thirteen-digit EAN-13, while the
+ * less commonly used 8-digit EAN-8 barcode was
+ * introduced for use on small packages.
+ * Also EAN/UCC-14 is used for Grouping of individual
+ * trade items above unit level(Intermediate, Carton or Pallet).
+ * For more info about EAN-14 checkout: https://www.gtin.info/itf-14-barcodes/
+ * EAN consists of:
+ * GS1 prefix, manufacturer code, product code and check digit
+ * Reference: https://en.wikipedia.org/wiki/International_Article_Number
+ * Reference: https://www.gtin.info/
+ */
+/**
+ * Define EAN Lengths; 8 for EAN-8; 13 for EAN-13; 14 for EAN-14
+ * and Regular Expression for valid EANs (EAN-8, EAN-13, EAN-14),
+ * with exact numeric matching of 8 or 13 or 14 digits [0-9]
+ */
+var LENGTH_EAN_8 = 8;
+var LENGTH_EAN_14 = 14;
+var validEanRegex = /^(\d{8}|\d{13}|\d{14})$/;
+/**
+ * Get position weight given:
+ * EAN length and digit index/position
+ *
+ * @param {number} length
+ * @param {number} index
+ * @return {number}
+ */
+function getPositionWeightThroughLengthAndIndex(length, index) {
+    if (length === LENGTH_EAN_8 || length === LENGTH_EAN_14) {
+        return index % 2 === 0 ? 3 : 1;
+    }
+    return index % 2 === 0 ? 1 : 3;
+}
+/**
+ * Calculate EAN Check Digit
+ * Reference: https://en.wikipedia.org/wiki/International_Article_Number#Calculation_of_checksum_digit
+ *
+ * @param {string} ean
+ * @return {number}
+ */
+function calculateCheckDigit(ean) {
+    var checksum = ean.slice(0, -1).split('').map(function (char, index) {
+        return Number(char) * getPositionWeightThroughLengthAndIndex(ean.length, index);
+    }).reduce(function (acc, partialSum) {
+        return acc + partialSum;
+    }, 0);
+    var remainder = 10 - checksum % 10;
+    return remainder < 10 ? remainder : 0;
+}
+/**
+ * Check if string is valid EAN:
+ * Matches EAN-8/EAN-13/EAN-14 regex
+ * Has valid check digit.
+ *
+ * @param {string} str
+ * @return {boolean}
+ */
+function isEAN(str) {
+    (0, _assertString.default)(str);
+    var actualCheckDigit = Number(str.slice(-1));
+    return validEanRegex.test(str) && actualCheckDigit === calculateCheckDigit(str);
+}
+module.exports = exports.default;
+module.exports.default = exports.default;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcdmFsaWRhdG9yXFxsaWJcXGlzRUFOLmpzIiwibWFwcGluZ3MiOiJBQUFBLFlBQVksQ0FBQztBQUViLE1BQU0sQ0FBQyxjQUFjLENBQUMsT0FBTyxFQUFFLFlBQVksRUFBRTtJQUMzQyxLQUFLLEVBQUUsSUFBSTtDQUNaLENBQUMsQ0FBQztBQUNILE9BQU8sQ0FBQyxPQUFPLEdBQUcsS0FBSyxDQUFDO0FBQ3hCLElBQUksYUFBYSxHQUFHLHNCQUFzQixDQUFDLE9BQU8sQ0FBQyxxQkFBcUIsQ0FBQyxDQUFDLENBQUM7QUFDM0UsU0FBUyxzQkFBc0IsQ0FBQyxDQUFDLElBQUksT0FBTyxDQUFDLElBQUksQ0FBQyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxFQUFFLE9BQU8sRUFBRSxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUM7QUFDckY7Ozs7Ozs7Ozs7OztHQVlHO0FBRUg7Ozs7R0FJRztBQUNILElBQUksWUFBWSxHQUFHLENBQUMsQ0FBQztBQUNyQixJQUFJLGFBQWEsR0FBRyxFQUFFLENBQUM7QUFDdkIsSUFBSSxhQUFhLEdBQUcseUJBQXlCLENBQUM7QUFFOUM7Ozs7Ozs7R0FPRztBQUNILFNBQVMsc0NBQXNDLENBQUMsTUFBTSxFQUFFLEtBQUs7SUFDM0QsSUFBSSxNQUFNLEtBQUssWUFBWSxJQUFJLE1BQU0sS0FBSyxhQUFhLEVBQUUsQ0FBQztRQUN4RCxPQUFPLEtBQUssR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQztJQUNqQyxDQUFDO0lBQ0QsT0FBTyxLQUFLLEdBQUcsQ0FBQyxLQUFLLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7QUFDakMsQ0FBQztBQUVEOzs7Ozs7R0FNRztBQUNILFNBQVMsbUJBQW1CLENBQUMsR0FBRztJQUM5QixJQUFJLFFBQVEsR0FBRyxHQUFHLENBQUMsS0FBSyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxDQUFDLEtBQUssQ0FBQyxFQUFFLENBQUMsQ0FBQyxHQUFHLENBQUMsVUFBVSxJQUFJLEVBQUUsS0FBSztRQUNqRSxPQUFPLE1BQU0sQ0FBQyxJQUFJLENBQUMsR0FBRyxzQ0FBc0MsQ0FBQyxHQUFHLENBQUMsTUFBTSxFQUFFLEtBQUssQ0FBQyxDQUFDO0lBQ2xGLENBQUMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxVQUFVLEdBQUcsRUFBRSxVQUFVO1FBQ2pDLE9BQU8sR0FBRyxHQUFHLFVBQVUsQ0FBQztJQUMxQixDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUM7SUFDTixJQUFJLFNBQVMsR0FBRyxFQUFFLEdBQUcsUUFBUSxHQUFHLEVBQUUsQ0FBQztJQUNuQyxPQUFPLFNBQVMsR0FBRyxFQUFFLENBQUMsQ0FBQyxDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDO0FBQ3hDLENBQUM7QUFFRDs7Ozs7OztHQU9HO0FBQ0gsU0FBUyxLQUFLLENBQUMsR0FBRztJQUNoQixDQUFDLENBQUMsRUFBRSxhQUFhLENBQUMsT0FBTyxDQUFDLENBQUMsR0FBRyxDQUFDLENBQUM7SUFDaEMsSUFBSSxnQkFBZ0IsR0FBRyxNQUFNLENBQUMsR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDN0MsT0FBTyxhQUFhLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQyxJQUFJLGdCQUFnQixLQUFLLG1CQUFtQixDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQ2xGLENBQUM7QUFDRCxNQUFNLENBQUMsT0FBTyxHQUFHLE9BQU8sQ0FBQyxPQUFPLENBQUM7QUFDakMsTUFBTSxDQUFDLE9BQU8sQ0FBQyxPQUFPLEdBQUcsT0FBTyxDQUFDLE9BQU8sQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcbm9kZV9tb2R1bGVzXFx2YWxpZGF0b3JcXGxpYlxcaXNFQU4uanMiXSwic291cmNlc0NvbnRlbnQiOlsiXCJ1c2Ugc3RyaWN0XCI7XG5cbk9iamVjdC5kZWZpbmVQcm9wZXJ0eShleHBvcnRzLCBcIl9fZXNNb2R1bGVcIiwge1xuICB2YWx1ZTogdHJ1ZVxufSk7XG5leHBvcnRzLmRlZmF1bHQgPSBpc0VBTjtcbnZhciBfYXNzZXJ0U3RyaW5nID0gX2ludGVyb3BSZXF1aXJlRGVmYXVsdChyZXF1aXJlKFwiLi91dGlsL2Fzc2VydFN0cmluZ1wiKSk7XG5mdW5jdGlvbiBfaW50ZXJvcFJlcXVpcmVEZWZhdWx0KGUpIHsgcmV0dXJuIGUgJiYgZS5fX2VzTW9kdWxlID8gZSA6IHsgZGVmYXVsdDogZSB9OyB9XG4vKipcbiAqIFRoZSBtb3N0IGNvbW1vbmx5IHVzZWQgRUFOIHN0YW5kYXJkIGlzXG4gKiB0aGUgdGhpcnRlZW4tZGlnaXQgRUFOLTEzLCB3aGlsZSB0aGVcbiAqIGxlc3MgY29tbW9ubHkgdXNlZCA4LWRpZ2l0IEVBTi04IGJhcmNvZGUgd2FzXG4gKiBpbnRyb2R1Y2VkIGZvciB1c2Ugb24gc21hbGwgcGFja2FnZXMuXG4gKiBBbHNvIEVBTi9VQ0MtMTQgaXMgdXNlZCBmb3IgR3JvdXBpbmcgb2YgaW5kaXZpZHVhbFxuICogdHJhZGUgaXRlbXMgYWJvdmUgdW5pdCBsZXZlbChJbnRlcm1lZGlhdGUsIENhcnRvbiBvciBQYWxsZXQpLlxuICogRm9yIG1vcmUgaW5mbyBhYm91dCBFQU4tMTQgY2hlY2tvdXQ6IGh0dHBzOi8vd3d3Lmd0aW4uaW5mby9pdGYtMTQtYmFyY29kZXMvXG4gKiBFQU4gY29uc2lzdHMgb2Y6XG4gKiBHUzEgcHJlZml4LCBtYW51ZmFjdHVyZXIgY29kZSwgcHJvZHVjdCBjb2RlIGFuZCBjaGVjayBkaWdpdFxuICogUmVmZXJlbmNlOiBodHRwczovL2VuLndpa2lwZWRpYS5vcmcvd2lraS9JbnRlcm5hdGlvbmFsX0FydGljbGVfTnVtYmVyXG4gKiBSZWZlcmVuY2U6IGh0dHBzOi8vd3d3Lmd0aW4uaW5mby9cbiAqL1xuXG4vKipcbiAqIERlZmluZSBFQU4gTGVuZ3RoczsgOCBmb3IgRUFOLTg7IDEzIGZvciBFQU4tMTM7IDE0IGZvciBFQU4tMTRcbiAqIGFuZCBSZWd1bGFyIEV4cHJlc3Npb24gZm9yIHZhbGlkIEVBTnMgKEVBTi04LCBFQU4tMTMsIEVBTi0xNCksXG4gKiB3aXRoIGV4YWN0IG51bWVyaWMgbWF0Y2hpbmcgb2YgOCBvciAxMyBvciAxNCBkaWdpdHMgWzAtOV1cbiAqL1xudmFyIExFTkdUSF9FQU5fOCA9IDg7XG52YXIgTEVOR1RIX0VBTl8xNCA9IDE0O1xudmFyIHZhbGlkRWFuUmVnZXggPSAvXihcXGR7OH18XFxkezEzfXxcXGR7MTR9KSQvO1xuXG4vKipcbiAqIEdldCBwb3NpdGlvbiB3ZWlnaHQgZ2l2ZW46XG4gKiBFQU4gbGVuZ3RoIGFuZCBkaWdpdCBpbmRleC9wb3NpdGlvblxuICpcbiAqIEBwYXJhbSB7bnVtYmVyfSBsZW5ndGhcbiAqIEBwYXJhbSB7bnVtYmVyfSBpbmRleFxuICogQHJldHVybiB7bnVtYmVyfVxuICovXG5mdW5jdGlvbiBnZXRQb3NpdGlvbldlaWdodFRocm91Z2hMZW5ndGhBbmRJbmRleChsZW5ndGgsIGluZGV4KSB7XG4gIGlmIChsZW5ndGggPT09IExFTkdUSF9FQU5fOCB8fCBsZW5ndGggPT09IExFTkdUSF9FQU5fMTQpIHtcbiAgICByZXR1cm4gaW5kZXggJSAyID09PSAwID8gMyA6IDE7XG4gIH1cbiAgcmV0dXJuIGluZGV4ICUgMiA9PT0gMCA/IDEgOiAzO1xufVxuXG4vKipcbiAqIENhbGN1bGF0ZSBFQU4gQ2hlY2sgRGlnaXRcbiAqIFJlZmVyZW5jZTogaHR0cHM6Ly9lbi53aWtpcGVkaWEub3JnL3dpa2kvSW50ZXJuYXRpb25hbF9BcnRpY2xlX051bWJlciNDYWxjdWxhdGlvbl9vZl9jaGVja3N1bV9kaWdpdFxuICpcbiAqIEBwYXJhbSB7c3RyaW5nfSBlYW5cbiAqIEByZXR1cm4ge251bWJlcn1cbiAqL1xuZnVuY3Rpb24gY2FsY3VsYXRlQ2hlY2tEaWdpdChlYW4pIHtcbiAgdmFyIGNoZWNrc3VtID0gZWFuLnNsaWNlKDAsIC0xKS5zcGxpdCgnJykubWFwKGZ1bmN0aW9uIChjaGFyLCBpbmRleCkge1xuICAgIHJldHVybiBOdW1iZXIoY2hhcikgKiBnZXRQb3NpdGlvbldlaWdodFRocm91Z2hMZW5ndGhBbmRJbmRleChlYW4ubGVuZ3RoLCBpbmRleCk7XG4gIH0pLnJlZHVjZShmdW5jdGlvbiAoYWNjLCBwYXJ0aWFsU3VtKSB7XG4gICAgcmV0dXJuIGFjYyArIHBhcnRpYWxTdW07XG4gIH0sIDApO1xuICB2YXIgcmVtYWluZGVyID0gMTAgLSBjaGVja3N1bSAlIDEwO1xuICByZXR1cm4gcmVtYWluZGVyIDwgMTAgPyByZW1haW5kZXIgOiAwO1xufVxuXG4vKipcbiAqIENoZWNrIGlmIHN0cmluZyBpcyB2YWxpZCBFQU46XG4gKiBNYXRjaGVzIEVBTi04L0VBTi0xMy9FQU4tMTQgcmVnZXhcbiAqIEhhcyB2YWxpZCBjaGVjayBkaWdpdC5cbiAqXG4gKiBAcGFyYW0ge3N0cmluZ30gc3RyXG4gKiBAcmV0dXJuIHtib29sZWFufVxuICovXG5mdW5jdGlvbiBpc0VBTihzdHIpIHtcbiAgKDAsIF9hc3NlcnRTdHJpbmcuZGVmYXVsdCkoc3RyKTtcbiAgdmFyIGFjdHVhbENoZWNrRGlnaXQgPSBOdW1iZXIoc3RyLnNsaWNlKC0xKSk7XG4gIHJldHVybiB2YWxpZEVhblJlZ2V4LnRlc3Qoc3RyKSAmJiBhY3R1YWxDaGVja0RpZ2l0ID09PSBjYWxjdWxhdGVDaGVja0RpZ2l0KHN0cik7XG59XG5tb2R1bGUuZXhwb3J0cyA9IGV4cG9ydHMuZGVmYXVsdDtcbm1vZHVsZS5leHBvcnRzLmRlZmF1bHQgPSBleHBvcnRzLmRlZmF1bHQ7Il0sInZlcnNpb24iOjN9

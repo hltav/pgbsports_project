@@ -1,0 +1,26 @@
+c878eaddf617f1470dcf5c246aa21c21
+'use strict';
+var stringWidth = require('string-width');
+var stripAnsi = require('strip-ansi');
+module.exports = wideTruncate;
+function wideTruncate(str, target) {
+    if (stringWidth(str) === 0)
+        return str;
+    if (target <= 0)
+        return '';
+    if (stringWidth(str) <= target)
+        return str;
+    // We compute the number of bytes of ansi sequences here and add
+    // that to our initial truncation to ensure that we don't slice one
+    // that we want to keep in half.
+    var noAnsi = stripAnsi(str);
+    var ansiSize = str.length + noAnsi.length;
+    var truncated = str.slice(0, target + ansiSize);
+    // we have to shrink the result to account for our ansi sequence buffer
+    // (if an ansi sequence was truncated) and double width characters.
+    while (stringWidth(truncated) > target) {
+        truncated = truncated.slice(0, -1);
+    }
+    return truncated;
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcZ2F1Z2VcXHdpZGUtdHJ1bmNhdGUuanMiLCJtYXBwaW5ncyI6IkFBQUEsWUFBWSxDQUFBO0FBQ1osSUFBSSxXQUFXLEdBQUcsT0FBTyxDQUFDLGNBQWMsQ0FBQyxDQUFBO0FBQ3pDLElBQUksU0FBUyxHQUFHLE9BQU8sQ0FBQyxZQUFZLENBQUMsQ0FBQTtBQUVyQyxNQUFNLENBQUMsT0FBTyxHQUFHLFlBQVksQ0FBQTtBQUU3QixTQUFTLFlBQVksQ0FBRSxHQUFHLEVBQUUsTUFBTTtJQUNoQyxJQUFJLFdBQVcsQ0FBQyxHQUFHLENBQUMsS0FBSyxDQUFDO1FBQUUsT0FBTyxHQUFHLENBQUE7SUFDdEMsSUFBSSxNQUFNLElBQUksQ0FBQztRQUFFLE9BQU8sRUFBRSxDQUFBO0lBQzFCLElBQUksV0FBVyxDQUFDLEdBQUcsQ0FBQyxJQUFJLE1BQU07UUFBRSxPQUFPLEdBQUcsQ0FBQTtJQUUxQyxnRUFBZ0U7SUFDaEUsbUVBQW1FO0lBQ25FLGdDQUFnQztJQUNoQyxJQUFJLE1BQU0sR0FBRyxTQUFTLENBQUMsR0FBRyxDQUFDLENBQUE7SUFDM0IsSUFBSSxRQUFRLEdBQUcsR0FBRyxDQUFDLE1BQU0sR0FBRyxNQUFNLENBQUMsTUFBTSxDQUFBO0lBQ3pDLElBQUksU0FBUyxHQUFHLEdBQUcsQ0FBQyxLQUFLLENBQUMsQ0FBQyxFQUFFLE1BQU0sR0FBRyxRQUFRLENBQUMsQ0FBQTtJQUUvQyx1RUFBdUU7SUFDdkUsbUVBQW1FO0lBQ25FLE9BQU8sV0FBVyxDQUFDLFNBQVMsQ0FBQyxHQUFHLE1BQU0sRUFBRSxDQUFDO1FBQ3ZDLFNBQVMsR0FBRyxTQUFTLENBQUMsS0FBSyxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUMsQ0FBQyxDQUFBO0lBQ3BDLENBQUM7SUFDRCxPQUFPLFNBQVMsQ0FBQTtBQUNsQixDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxub2RlX21vZHVsZXNcXGdhdWdlXFx3aWRlLXRydW5jYXRlLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIid1c2Ugc3RyaWN0J1xudmFyIHN0cmluZ1dpZHRoID0gcmVxdWlyZSgnc3RyaW5nLXdpZHRoJylcbnZhciBzdHJpcEFuc2kgPSByZXF1aXJlKCdzdHJpcC1hbnNpJylcblxubW9kdWxlLmV4cG9ydHMgPSB3aWRlVHJ1bmNhdGVcblxuZnVuY3Rpb24gd2lkZVRydW5jYXRlIChzdHIsIHRhcmdldCkge1xuICBpZiAoc3RyaW5nV2lkdGgoc3RyKSA9PT0gMCkgcmV0dXJuIHN0clxuICBpZiAodGFyZ2V0IDw9IDApIHJldHVybiAnJ1xuICBpZiAoc3RyaW5nV2lkdGgoc3RyKSA8PSB0YXJnZXQpIHJldHVybiBzdHJcblxuICAvLyBXZSBjb21wdXRlIHRoZSBudW1iZXIgb2YgYnl0ZXMgb2YgYW5zaSBzZXF1ZW5jZXMgaGVyZSBhbmQgYWRkXG4gIC8vIHRoYXQgdG8gb3VyIGluaXRpYWwgdHJ1bmNhdGlvbiB0byBlbnN1cmUgdGhhdCB3ZSBkb24ndCBzbGljZSBvbmVcbiAgLy8gdGhhdCB3ZSB3YW50IHRvIGtlZXAgaW4gaGFsZi5cbiAgdmFyIG5vQW5zaSA9IHN0cmlwQW5zaShzdHIpXG4gIHZhciBhbnNpU2l6ZSA9IHN0ci5sZW5ndGggKyBub0Fuc2kubGVuZ3RoXG4gIHZhciB0cnVuY2F0ZWQgPSBzdHIuc2xpY2UoMCwgdGFyZ2V0ICsgYW5zaVNpemUpXG5cbiAgLy8gd2UgaGF2ZSB0byBzaHJpbmsgdGhlIHJlc3VsdCB0byBhY2NvdW50IGZvciBvdXIgYW5zaSBzZXF1ZW5jZSBidWZmZXJcbiAgLy8gKGlmIGFuIGFuc2kgc2VxdWVuY2Ugd2FzIHRydW5jYXRlZCkgYW5kIGRvdWJsZSB3aWR0aCBjaGFyYWN0ZXJzLlxuICB3aGlsZSAoc3RyaW5nV2lkdGgodHJ1bmNhdGVkKSA+IHRhcmdldCkge1xuICAgIHRydW5jYXRlZCA9IHRydW5jYXRlZC5zbGljZSgwLCAtMSlcbiAgfVxuICByZXR1cm4gdHJ1bmNhdGVkXG59XG4iXSwidmVyc2lvbiI6M30=

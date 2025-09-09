@@ -8,6 +8,8 @@ import {
   UpdateClientDataService,
   UpdateClientImageService,
 } from '../../services';
+import { ImageService } from './../../../../modules/image/image.service';
+import { LocalStorageService } from './../../../../modules/image/storage';
 
 describe('ClientDataService', () => {
   let service: ClientDataService;
@@ -22,6 +24,11 @@ describe('ClientDataService', () => {
         GetClientDataService,
         UpdateClientDataService,
         UpdateClientImageService,
+        ImageService,
+        {
+          provide: 'StorageService',
+          useClass: LocalStorageService,
+        },
       ],
     }).compile();
 

@@ -1,0 +1,85 @@
+03eb7659fa1ecac887b03b039601164b
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserUpdateService = void 0;
+const common_1 = require("@nestjs/common");
+const database_1 = require("./../../../libs/database");
+const bcrypt = __importStar(require("bcrypt"));
+let UserUpdateService = class UserUpdateService {
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
+    async update(id, updateUser) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: Number(id) },
+        });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found!');
+        }
+        const dataToUpdate = { ...updateUser };
+        if (updateUser.password) {
+            const saltRounds = 10;
+            dataToUpdate.password = await bcrypt.hash(updateUser.password, saltRounds);
+        }
+        const updatedUser = await this.prisma.user.update({
+            where: { id: Number(id) },
+            data: dataToUpdate,
+            select: {
+                id: true,
+                firstname: true,
+                lastname: true,
+                nickname: true,
+                email: true,
+            },
+        });
+        return updatedUser;
+    }
+};
+exports.UserUpdateService = UserUpdateService;
+exports.UserUpdateService = UserUpdateService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [database_1.PrismaService])
+], UserUpdateService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcdXNlcnNcXHNlcnZpY2VzXFx1cGRhdGUtdXNlcnMuc2VydmljZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSwyQ0FBK0Q7QUFFL0QsdURBQXlEO0FBQ3pELCtDQUFpQztBQUcxQixJQUFNLGlCQUFpQixHQUF2QixNQUFNLGlCQUFpQjtJQUM1QixZQUE2QixNQUFxQjtRQUFyQixXQUFNLEdBQU4sTUFBTSxDQUFlO0lBQUcsQ0FBQztJQUV0RCxLQUFLLENBQUMsTUFBTSxDQUNWLEVBQVUsRUFDVixVQUFrQztRQUVsQyxNQUFNLElBQUksR0FBRyxNQUFNLElBQUksQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLFVBQVUsQ0FBQztZQUM3QyxLQUFLLEVBQUUsRUFBRSxFQUFFLEVBQUUsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFO1NBQzFCLENBQUMsQ0FBQztRQUVILElBQUksQ0FBQyxJQUFJLEVBQUUsQ0FBQztZQUNWLE1BQU0sSUFBSSwwQkFBaUIsQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDO1FBQ2pELENBQUM7UUFFRCxNQUFNLFlBQVksR0FBMkIsRUFBRSxHQUFHLFVBQVUsRUFBRSxDQUFDO1FBRS9ELElBQUksVUFBVSxDQUFDLFFBQVEsRUFBRSxDQUFDO1lBQ3hCLE1BQU0sVUFBVSxHQUFHLEVBQUUsQ0FBQztZQUN0QixZQUFZLENBQUMsUUFBUSxHQUFHLE1BQU0sTUFBTSxDQUFDLElBQUksQ0FDdkMsVUFBVSxDQUFDLFFBQVEsRUFDbkIsVUFBVSxDQUNYLENBQUM7UUFDSixDQUFDO1FBRUQsTUFBTSxXQUFXLEdBQUcsTUFBTSxJQUFJLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUM7WUFDaEQsS0FBSyxFQUFFLEVBQUUsRUFBRSxFQUFFLE1BQU0sQ0FBQyxFQUFFLENBQUMsRUFBRTtZQUN6QixJQUFJLEVBQUUsWUFBWTtZQUNsQixNQUFNLEVBQUU7Z0JBQ04sRUFBRSxFQUFFLElBQUk7Z0JBQ1IsU0FBUyxFQUFFLElBQUk7Z0JBQ2YsUUFBUSxFQUFFLElBQUk7Z0JBQ2QsUUFBUSxFQUFFLElBQUk7Z0JBQ2QsS0FBSyxFQUFFLElBQUk7YUFDWjtTQUNGLENBQUMsQ0FBQztRQUVILE9BQU8sV0FBVyxDQUFDO0lBQ3JCLENBQUM7Q0FDRixDQUFBO0FBdkNZLDhDQUFpQjs0QkFBakIsaUJBQWlCO0lBRDdCLElBQUEsbUJBQVUsR0FBRTtxQ0FFMEIsd0JBQWE7R0FEdkMsaUJBQWlCLENBdUM3QiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcc3JjXFxtb2R1bGVzXFx1c2Vyc1xcc2VydmljZXNcXHVwZGF0ZS11c2Vycy5zZXJ2aWNlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IEluamVjdGFibGUsIE5vdEZvdW5kRXhjZXB0aW9uIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuaW1wb3J0IHsgR2V0VXNlckRUTywgVXBkYXRlVXNlckRUTyB9IGZyb20gJy4vLi4vLi4vLi4vbGlicyc7XG5pbXBvcnQgeyBQcmlzbWFTZXJ2aWNlIH0gZnJvbSAnLi8uLi8uLi8uLi9saWJzL2RhdGFiYXNlJztcbmltcG9ydCAqIGFzIGJjcnlwdCBmcm9tICdiY3J5cHQnO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgVXNlclVwZGF0ZVNlcnZpY2Uge1xuICBjb25zdHJ1Y3Rvcihwcml2YXRlIHJlYWRvbmx5IHByaXNtYTogUHJpc21hU2VydmljZSkge31cblxuICBhc3luYyB1cGRhdGUoXG4gICAgaWQ6IG51bWJlcixcbiAgICB1cGRhdGVVc2VyOiBQYXJ0aWFsPFVwZGF0ZVVzZXJEVE8+LFxuICApOiBQcm9taXNlPEdldFVzZXJEVE8+IHtcbiAgICBjb25zdCB1c2VyID0gYXdhaXQgdGhpcy5wcmlzbWEudXNlci5maW5kVW5pcXVlKHtcbiAgICAgIHdoZXJlOiB7IGlkOiBOdW1iZXIoaWQpIH0sXG4gICAgfSk7XG5cbiAgICBpZiAoIXVzZXIpIHtcbiAgICAgIHRocm93IG5ldyBOb3RGb3VuZEV4Y2VwdGlvbignVXNlciBub3QgZm91bmQhJyk7XG4gICAgfVxuXG4gICAgY29uc3QgZGF0YVRvVXBkYXRlOiBQYXJ0aWFsPFVwZGF0ZVVzZXJEVE8+ID0geyAuLi51cGRhdGVVc2VyIH07XG5cbiAgICBpZiAodXBkYXRlVXNlci5wYXNzd29yZCkge1xuICAgICAgY29uc3Qgc2FsdFJvdW5kcyA9IDEwO1xuICAgICAgZGF0YVRvVXBkYXRlLnBhc3N3b3JkID0gYXdhaXQgYmNyeXB0Lmhhc2goXG4gICAgICAgIHVwZGF0ZVVzZXIucGFzc3dvcmQsXG4gICAgICAgIHNhbHRSb3VuZHMsXG4gICAgICApO1xuICAgIH1cblxuICAgIGNvbnN0IHVwZGF0ZWRVc2VyID0gYXdhaXQgdGhpcy5wcmlzbWEudXNlci51cGRhdGUoe1xuICAgICAgd2hlcmU6IHsgaWQ6IE51bWJlcihpZCkgfSxcbiAgICAgIGRhdGE6IGRhdGFUb1VwZGF0ZSxcbiAgICAgIHNlbGVjdDoge1xuICAgICAgICBpZDogdHJ1ZSxcbiAgICAgICAgZmlyc3RuYW1lOiB0cnVlLFxuICAgICAgICBsYXN0bmFtZTogdHJ1ZSxcbiAgICAgICAgbmlja25hbWU6IHRydWUsXG4gICAgICAgIGVtYWlsOiB0cnVlLFxuICAgICAgfSxcbiAgICB9KTtcblxuICAgIHJldHVybiB1cGRhdGVkVXNlcjtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,50 @@
+44f68de268a5e1415090e7aad2d8fb35
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ClientDataModule = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_1 = require("../../libs/database/prisma");
+const client_data_service_1 = require("./client-data.service");
+const client_data_controller_1 = require("./controllers/client-data.controller");
+const services_1 = require("./services");
+const image_service_1 = require("./../../modules/image/image.service");
+const local_storage_service_1 = require("./../../modules/image/storage/local-storage.service");
+let ClientDataModule = class ClientDataModule {
+};
+exports.ClientDataModule = ClientDataModule;
+exports.ClientDataModule = ClientDataModule = __decorate([
+    (0, common_1.Module)({
+        imports: [prisma_1.PrismaModule],
+        providers: [
+            client_data_service_1.ClientDataService,
+            prisma_1.PrismaService,
+            services_1.CreateClientDataService,
+            services_1.GetClientDataService,
+            services_1.GetMyClientDataService,
+            services_1.UpdateClientDataService,
+            services_1.UpdateClientImageService,
+            image_service_1.ImageService,
+            {
+                provide: 'StorageService',
+                useClass: local_storage_service_1.LocalStorageService,
+            },
+        ],
+        controllers: [client_data_controller_1.ClientDataController],
+        exports: [
+            client_data_service_1.ClientDataService,
+            services_1.CreateClientDataService,
+            services_1.GetClientDataService,
+            services_1.GetMyClientDataService,
+            services_1.UpdateClientDataService,
+            services_1.UpdateClientImageService,
+            image_service_1.ImageService,
+        ],
+    })
+], ClientDataModule);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcY2xpZW50LWRhdGFcXGNsaWVudC1kYXRhLm1vZHVsZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFBQSwyQ0FBd0M7QUFDeEMsdURBQXlFO0FBQ3pFLCtEQUEwRDtBQUMxRCxpRkFBNEU7QUFDNUUseUNBTW9CO0FBQ3BCLHVFQUFtRTtBQUNuRSwrRkFBMEY7QUE2Qm5GLElBQU0sZ0JBQWdCLEdBQXRCLE1BQU0sZ0JBQWdCO0NBQUcsQ0FBQTtBQUFuQiw0Q0FBZ0I7MkJBQWhCLGdCQUFnQjtJQTNCNUIsSUFBQSxlQUFNLEVBQUM7UUFDTixPQUFPLEVBQUUsQ0FBQyxxQkFBWSxDQUFDO1FBQ3ZCLFNBQVMsRUFBRTtZQUNULHVDQUFpQjtZQUNqQixzQkFBYTtZQUNiLGtDQUF1QjtZQUN2QiwrQkFBb0I7WUFDcEIsaUNBQXNCO1lBQ3RCLGtDQUF1QjtZQUN2QixtQ0FBd0I7WUFDeEIsNEJBQVk7WUFDWjtnQkFDRSxPQUFPLEVBQUUsZ0JBQWdCO2dCQUN6QixRQUFRLEVBQUUsMkNBQW1CO2FBQzlCO1NBQ0Y7UUFDRCxXQUFXLEVBQUUsQ0FBQyw2Q0FBb0IsQ0FBQztRQUNuQyxPQUFPLEVBQUU7WUFDUCx1Q0FBaUI7WUFDakIsa0NBQXVCO1lBQ3ZCLCtCQUFvQjtZQUNwQixpQ0FBc0I7WUFDdEIsa0NBQXVCO1lBQ3ZCLG1DQUF3QjtZQUN4Qiw0QkFBWTtTQUNiO0tBQ0YsQ0FBQztHQUNXLGdCQUFnQixDQUFHIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxNZXVzX1Byb2pldG9zXFxwZ2Jfc3BvcnRzXFxzcmNcXG1vZHVsZXNcXGNsaWVudC1kYXRhXFxjbGllbnQtZGF0YS5tb2R1bGUudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgTW9kdWxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xuaW1wb3J0IHsgUHJpc21hTW9kdWxlLCBQcmlzbWFTZXJ2aWNlIH0gZnJvbSAnLi4vLi4vbGlicy9kYXRhYmFzZS9wcmlzbWEnO1xuaW1wb3J0IHsgQ2xpZW50RGF0YVNlcnZpY2UgfSBmcm9tICcuL2NsaWVudC1kYXRhLnNlcnZpY2UnO1xuaW1wb3J0IHsgQ2xpZW50RGF0YUNvbnRyb2xsZXIgfSBmcm9tICcuL2NvbnRyb2xsZXJzL2NsaWVudC1kYXRhLmNvbnRyb2xsZXInO1xuaW1wb3J0IHtcbiAgR2V0TXlDbGllbnREYXRhU2VydmljZSxcbiAgVXBkYXRlQ2xpZW50SW1hZ2VTZXJ2aWNlLFxuICBVcGRhdGVDbGllbnREYXRhU2VydmljZSxcbiAgR2V0Q2xpZW50RGF0YVNlcnZpY2UsXG4gIENyZWF0ZUNsaWVudERhdGFTZXJ2aWNlLFxufSBmcm9tICcuL3NlcnZpY2VzJztcbmltcG9ydCB7IEltYWdlU2VydmljZSB9IGZyb20gJy4vLi4vLi4vbW9kdWxlcy9pbWFnZS9pbWFnZS5zZXJ2aWNlJztcbmltcG9ydCB7IExvY2FsU3RvcmFnZVNlcnZpY2UgfSBmcm9tICcuLy4uLy4uL21vZHVsZXMvaW1hZ2Uvc3RvcmFnZS9sb2NhbC1zdG9yYWdlLnNlcnZpY2UnO1xuXG5ATW9kdWxlKHtcbiAgaW1wb3J0czogW1ByaXNtYU1vZHVsZV0sXG4gIHByb3ZpZGVyczogW1xuICAgIENsaWVudERhdGFTZXJ2aWNlLFxuICAgIFByaXNtYVNlcnZpY2UsXG4gICAgQ3JlYXRlQ2xpZW50RGF0YVNlcnZpY2UsXG4gICAgR2V0Q2xpZW50RGF0YVNlcnZpY2UsXG4gICAgR2V0TXlDbGllbnREYXRhU2VydmljZSxcbiAgICBVcGRhdGVDbGllbnREYXRhU2VydmljZSxcbiAgICBVcGRhdGVDbGllbnRJbWFnZVNlcnZpY2UsXG4gICAgSW1hZ2VTZXJ2aWNlLFxuICAgIHtcbiAgICAgIHByb3ZpZGU6ICdTdG9yYWdlU2VydmljZScsXG4gICAgICB1c2VDbGFzczogTG9jYWxTdG9yYWdlU2VydmljZSxcbiAgICB9LFxuICBdLFxuICBjb250cm9sbGVyczogW0NsaWVudERhdGFDb250cm9sbGVyXSxcbiAgZXhwb3J0czogW1xuICAgIENsaWVudERhdGFTZXJ2aWNlLFxuICAgIENyZWF0ZUNsaWVudERhdGFTZXJ2aWNlLFxuICAgIEdldENsaWVudERhdGFTZXJ2aWNlLFxuICAgIEdldE15Q2xpZW50RGF0YVNlcnZpY2UsXG4gICAgVXBkYXRlQ2xpZW50RGF0YVNlcnZpY2UsXG4gICAgVXBkYXRlQ2xpZW50SW1hZ2VTZXJ2aWNlLFxuICAgIEltYWdlU2VydmljZSxcbiAgXSxcbn0pXG5leHBvcnQgY2xhc3MgQ2xpZW50RGF0YU1vZHVsZSB7fVxuIl0sInZlcnNpb24iOjN9

@@ -1,0 +1,22 @@
+2ff916cfd01fbce71f0416362c2b01fc
+var abort = require('./abort.js'), async = require('./async.js');
+// API
+module.exports = terminator;
+/**
+ * Terminates jobs in the attached state context
+ *
+ * @this  AsyncKitState#
+ * @param {function} callback - final callback to invoke after termination
+ */
+function terminator(callback) {
+    if (!Object.keys(this.jobs).length) {
+        return;
+    }
+    // fast forward iteration index
+    this.index = this.size;
+    // abort jobs
+    abort(this);
+    // send back results we have so far
+    async(callback)(null, this.results);
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXG5vZGVfbW9kdWxlc1xcYXN5bmNraXRcXGxpYlxcdGVybWluYXRvci5qcyIsIm1hcHBpbmdzIjoiQUFBQSxJQUFJLEtBQUssR0FBRyxPQUFPLENBQUMsWUFBWSxDQUFDLEVBQzdCLEtBQUssR0FBRyxPQUFPLENBQUMsWUFBWSxDQUFDLENBQzlCO0FBRUgsTUFBTTtBQUNOLE1BQU0sQ0FBQyxPQUFPLEdBQUcsVUFBVSxDQUFDO0FBRTVCOzs7OztHQUtHO0FBQ0gsU0FBUyxVQUFVLENBQUMsUUFBUTtJQUUxQixJQUFJLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUMsTUFBTSxFQUNsQyxDQUFDO1FBQ0MsT0FBTztJQUNULENBQUM7SUFFRCwrQkFBK0I7SUFDL0IsSUFBSSxDQUFDLEtBQUssR0FBRyxJQUFJLENBQUMsSUFBSSxDQUFDO0lBRXZCLGFBQWE7SUFDYixLQUFLLENBQUMsSUFBSSxDQUFDLENBQUM7SUFFWixtQ0FBbUM7SUFDbkMsS0FBSyxDQUFDLFFBQVEsQ0FBQyxDQUFDLElBQUksRUFBRSxJQUFJLENBQUMsT0FBTyxDQUFDLENBQUM7QUFDdEMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcbm9kZV9tb2R1bGVzXFxhc3luY2tpdFxcbGliXFx0ZXJtaW5hdG9yLmpzIl0sInNvdXJjZXNDb250ZW50IjpbInZhciBhYm9ydCA9IHJlcXVpcmUoJy4vYWJvcnQuanMnKVxuICAsIGFzeW5jID0gcmVxdWlyZSgnLi9hc3luYy5qcycpXG4gIDtcblxuLy8gQVBJXG5tb2R1bGUuZXhwb3J0cyA9IHRlcm1pbmF0b3I7XG5cbi8qKlxuICogVGVybWluYXRlcyBqb2JzIGluIHRoZSBhdHRhY2hlZCBzdGF0ZSBjb250ZXh0XG4gKlxuICogQHRoaXMgIEFzeW5jS2l0U3RhdGUjXG4gKiBAcGFyYW0ge2Z1bmN0aW9ufSBjYWxsYmFjayAtIGZpbmFsIGNhbGxiYWNrIHRvIGludm9rZSBhZnRlciB0ZXJtaW5hdGlvblxuICovXG5mdW5jdGlvbiB0ZXJtaW5hdG9yKGNhbGxiYWNrKVxue1xuICBpZiAoIU9iamVjdC5rZXlzKHRoaXMuam9icykubGVuZ3RoKVxuICB7XG4gICAgcmV0dXJuO1xuICB9XG5cbiAgLy8gZmFzdCBmb3J3YXJkIGl0ZXJhdGlvbiBpbmRleFxuICB0aGlzLmluZGV4ID0gdGhpcy5zaXplO1xuXG4gIC8vIGFib3J0IGpvYnNcbiAgYWJvcnQodGhpcyk7XG5cbiAgLy8gc2VuZCBiYWNrIHJlc3VsdHMgd2UgaGF2ZSBzbyBmYXJcbiAgYXN5bmMoY2FsbGJhY2spKG51bGwsIHRoaXMucmVzdWx0cyk7XG59XG4iXSwidmVyc2lvbiI6M30=

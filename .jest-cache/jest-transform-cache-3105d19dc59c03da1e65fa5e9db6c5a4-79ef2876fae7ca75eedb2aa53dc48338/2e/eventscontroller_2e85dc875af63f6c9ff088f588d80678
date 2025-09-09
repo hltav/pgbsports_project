@@ -1,0 +1,87 @@
+3040aac8e002f4a08393199711fcf9ba
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventsController = void 0;
+const common_1 = require("@nestjs/common");
+const events_service_1 = require("./events.service");
+const common_2 = require("./../../libs/common");
+let EventsController = class EventsController {
+    constructor(eventService) {
+        this.eventService = eventService;
+    }
+    async createEvent(data) {
+        return this.eventService.createEvent(data);
+    }
+    async findAllEvents() {
+        return this.eventService.findAllEvents();
+    }
+    async findEventById(id) {
+        const event = await this.eventService.findEventById(+id);
+        if (!event) {
+            throw new common_1.NotFoundException('Event not found!');
+        }
+        return event;
+    }
+    async updateEvent(id, data) {
+        return this.eventService.updateEvent(+id, data);
+    }
+    async deleteEvent(id) {
+        return this.eventService.deleteEvent(+id);
+    }
+};
+exports.EventsController = EventsController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, common_1.UsePipes)(new common_1.ValidationPipe({ transform: true })),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "createEvent", null);
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "findAllEvents", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "findEventById", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "updateEvent", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], EventsController.prototype, "deleteEvent", null);
+exports.EventsController = EventsController = __decorate([
+    (0, common_1.Controller)('events'),
+    (0, common_1.UseGuards)(common_2.JwtAuthGuard, common_2.RolesGuard),
+    (0, common_2.Roles)('USER', 'TEST_USER'),
+    __metadata("design:paramtypes", [events_service_1.EventsService])
+], EventsController);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbW9kdWxlc1xcZXZlbnRzXFxldmVudHMuY29udHJvbGxlci50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7QUFBQSwyQ0FZd0I7QUFDeEIscURBQWlEO0FBQ2pELGdEQUFzRTtBQVUvRCxJQUFNLGdCQUFnQixHQUF0QixNQUFNLGdCQUFnQjtJQUMzQixZQUE2QixZQUEyQjtRQUEzQixpQkFBWSxHQUFaLFlBQVksQ0FBZTtJQUFHLENBQUM7SUFJdEQsQUFBTixLQUFLLENBQUMsV0FBVyxDQUFTLElBQW9CO1FBQzVDLE9BQU8sSUFBSSxDQUFDLFlBQVksQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLENBQUM7SUFDN0MsQ0FBQztJQUdLLEFBQU4sS0FBSyxDQUFDLGFBQWE7UUFDakIsT0FBTyxJQUFJLENBQUMsWUFBWSxDQUFDLGFBQWEsRUFBRSxDQUFDO0lBQzNDLENBQUM7SUFHSyxBQUFOLEtBQUssQ0FBQyxhQUFhLENBQWMsRUFBVTtRQUN6QyxNQUFNLEtBQUssR0FBRyxNQUFNLElBQUksQ0FBQyxZQUFZLENBQUMsYUFBYSxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUM7UUFFekQsSUFBSSxDQUFDLEtBQUssRUFBRSxDQUFDO1lBQ1gsTUFBTSxJQUFJLDBCQUFpQixDQUFDLGtCQUFrQixDQUFDLENBQUM7UUFDbEQsQ0FBQztRQUVELE9BQU8sS0FBSyxDQUFDO0lBQ2YsQ0FBQztJQUdLLEFBQU4sS0FBSyxDQUFDLFdBQVcsQ0FDRixFQUFVLEVBQ2YsSUFBb0I7UUFFNUIsT0FBTyxJQUFJLENBQUMsWUFBWSxDQUFDLFdBQVcsQ0FBQyxDQUFDLEVBQUUsRUFBRSxJQUFJLENBQUMsQ0FBQztJQUNsRCxDQUFDO0lBR0ssQUFBTixLQUFLLENBQUMsV0FBVyxDQUFjLEVBQVU7UUFDdkMsT0FBTyxJQUFJLENBQUMsWUFBWSxDQUFDLFdBQVcsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDO0lBQzVDLENBQUM7Q0FDRixDQUFBO0FBckNZLDRDQUFnQjtBQUtyQjtJQUZMLElBQUEsYUFBSSxHQUFFO0lBQ04sSUFBQSxpQkFBUSxFQUFDLElBQUksdUJBQWMsQ0FBQyxFQUFFLFNBQVMsRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO0lBQy9CLFdBQUEsSUFBQSxhQUFJLEdBQUUsQ0FBQTs7OzttREFFeEI7QUFHSztJQURMLElBQUEsWUFBRyxHQUFFOzs7O3FEQUdMO0FBR0s7SUFETCxJQUFBLFlBQUcsRUFBQyxLQUFLLENBQUM7SUFDVSxXQUFBLElBQUEsY0FBSyxFQUFDLElBQUksQ0FBQyxDQUFBOzs7O3FEQVEvQjtBQUdLO0lBREwsSUFBQSxZQUFHLEVBQUMsS0FBSyxDQUFDO0lBRVIsV0FBQSxJQUFBLGNBQUssRUFBQyxJQUFJLENBQUMsQ0FBQTtJQUNYLFdBQUEsSUFBQSxhQUFJLEdBQUUsQ0FBQTs7OzttREFHUjtBQUdLO0lBREwsSUFBQSxlQUFNLEVBQUMsS0FBSyxDQUFDO0lBQ0ssV0FBQSxJQUFBLGNBQUssRUFBQyxJQUFJLENBQUMsQ0FBQTs7OzttREFFN0I7MkJBcENVLGdCQUFnQjtJQUg1QixJQUFBLG1CQUFVLEVBQUMsUUFBUSxDQUFDO0lBQ3BCLElBQUEsa0JBQVMsRUFBQyxxQkFBWSxFQUFFLG1CQUFVLENBQUM7SUFDbkMsSUFBQSxjQUFLLEVBQUMsTUFBTSxFQUFFLFdBQVcsQ0FBQztxQ0FFa0IsOEJBQWE7R0FEN0MsZ0JBQWdCLENBcUM1QiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcTWV1c19Qcm9qZXRvc1xccGdiX3Nwb3J0c1xcc3JjXFxtb2R1bGVzXFxldmVudHNcXGV2ZW50cy5jb250cm9sbGVyLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7XG4gIENvbnRyb2xsZXIsXG4gIEdldCxcbiAgUG9zdCxcbiAgQm9keSxcbiAgUGFyYW0sXG4gIFB1dCxcbiAgRGVsZXRlLFxuICBVc2VQaXBlcyxcbiAgVmFsaWRhdGlvblBpcGUsXG4gIE5vdEZvdW5kRXhjZXB0aW9uLFxuICBVc2VHdWFyZHMsXG59IGZyb20gJ0BuZXN0anMvY29tbW9uJztcbmltcG9ydCB7IEV2ZW50c1NlcnZpY2UgfSBmcm9tICcuL2V2ZW50cy5zZXJ2aWNlJztcbmltcG9ydCB7IEp3dEF1dGhHdWFyZCwgUm9sZXMsIFJvbGVzR3VhcmQgfSBmcm9tICcuLy4uLy4uL2xpYnMvY29tbW9uJztcbmltcG9ydCB7XG4gIENyZWF0ZUV2ZW50RFRPLFxuICBHZXRFdmVudERUTyxcbiAgVXBkYXRlRXZlbnREVE8sXG59IGZyb20gJy4vLi4vLi4vbGlicy9jb21tb24vZHRvJztcblxuQENvbnRyb2xsZXIoJ2V2ZW50cycpXG5AVXNlR3VhcmRzKEp3dEF1dGhHdWFyZCwgUm9sZXNHdWFyZClcbkBSb2xlcygnVVNFUicsICdURVNUX1VTRVInKVxuZXhwb3J0IGNsYXNzIEV2ZW50c0NvbnRyb2xsZXIge1xuICBjb25zdHJ1Y3Rvcihwcml2YXRlIHJlYWRvbmx5IGV2ZW50U2VydmljZTogRXZlbnRzU2VydmljZSkge31cblxuICBAUG9zdCgpXG4gIEBVc2VQaXBlcyhuZXcgVmFsaWRhdGlvblBpcGUoeyB0cmFuc2Zvcm06IHRydWUgfSkpXG4gIGFzeW5jIGNyZWF0ZUV2ZW50KEBCb2R5KCkgZGF0YTogQ3JlYXRlRXZlbnREVE8pOiBQcm9taXNlPEdldEV2ZW50RFRPPiB7XG4gICAgcmV0dXJuIHRoaXMuZXZlbnRTZXJ2aWNlLmNyZWF0ZUV2ZW50KGRhdGEpO1xuICB9XG5cbiAgQEdldCgpXG4gIGFzeW5jIGZpbmRBbGxFdmVudHMoKTogUHJvbWlzZTxHZXRFdmVudERUT1tdPiB7XG4gICAgcmV0dXJuIHRoaXMuZXZlbnRTZXJ2aWNlLmZpbmRBbGxFdmVudHMoKTtcbiAgfVxuXG4gIEBHZXQoJzppZCcpXG4gIGFzeW5jIGZpbmRFdmVudEJ5SWQoQFBhcmFtKCdpZCcpIGlkOiBzdHJpbmcpOiBQcm9taXNlPEdldEV2ZW50RFRPPiB7XG4gICAgY29uc3QgZXZlbnQgPSBhd2FpdCB0aGlzLmV2ZW50U2VydmljZS5maW5kRXZlbnRCeUlkKCtpZCk7XG5cbiAgICBpZiAoIWV2ZW50KSB7XG4gICAgICB0aHJvdyBuZXcgTm90Rm91bmRFeGNlcHRpb24oJ0V2ZW50IG5vdCBmb3VuZCEnKTtcbiAgICB9XG5cbiAgICByZXR1cm4gZXZlbnQ7XG4gIH1cblxuICBAUHV0KCc6aWQnKVxuICBhc3luYyB1cGRhdGVFdmVudChcbiAgICBAUGFyYW0oJ2lkJykgaWQ6IHN0cmluZyxcbiAgICBAQm9keSgpIGRhdGE6IFVwZGF0ZUV2ZW50RFRPLFxuICApOiBQcm9taXNlPEdldEV2ZW50RFRPPiB7XG4gICAgcmV0dXJuIHRoaXMuZXZlbnRTZXJ2aWNlLnVwZGF0ZUV2ZW50KCtpZCwgZGF0YSk7XG4gIH1cblxuICBARGVsZXRlKCc6aWQnKVxuICBhc3luYyBkZWxldGVFdmVudChAUGFyYW0oJ2lkJykgaWQ6IHN0cmluZyk6IFByb21pc2U8R2V0RXZlbnREVE8+IHtcbiAgICByZXR1cm4gdGhpcy5ldmVudFNlcnZpY2UuZGVsZXRlRXZlbnQoK2lkKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9

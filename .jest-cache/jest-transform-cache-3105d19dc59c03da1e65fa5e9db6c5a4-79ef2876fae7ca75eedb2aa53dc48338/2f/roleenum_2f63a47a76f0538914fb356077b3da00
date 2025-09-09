@@ -1,0 +1,11 @@
+77777b51f898c1f9a5145c4ea8da4324
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Role = void 0;
+var Role;
+(function (Role) {
+    Role["ADMIN"] = "ADMIN";
+    Role["USER"] = "USER";
+    Role["TEST_USER"] = "TEST_USER";
+})(Role || (exports.Role = Role = {}));
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcY29tbW9uXFxlbnVtXFxyb2xlLmVudW0udHMiLCJtYXBwaW5ncyI6Ijs7O0FBQUEsSUFBWSxJQUlYO0FBSkQsV0FBWSxJQUFJO0lBQ2QsdUJBQWUsQ0FBQTtJQUNmLHFCQUFhLENBQUE7SUFDYiwrQkFBdUIsQ0FBQTtBQUN6QixDQUFDLEVBSlcsSUFBSSxvQkFBSixJQUFJLFFBSWYiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiRDpcXE1ldXNfUHJvamV0b3NcXHBnYl9zcG9ydHNcXHNyY1xcbGlic1xcY29tbW9uXFxlbnVtXFxyb2xlLmVudW0udHMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGVudW0gUm9sZSB7XG4gIEFETUlOID0gJ0FETUlOJyxcbiAgVVNFUiA9ICdVU0VSJyxcbiAgVEVTVF9VU0VSID0gJ1RFU1RfVVNFUicsXG59XG4iXSwidmVyc2lvbiI6M30=
