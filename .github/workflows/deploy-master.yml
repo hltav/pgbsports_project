@@ -69,7 +69,7 @@ jobs:
             find dist -mindepth 1 -maxdepth 1 ! -name 'libs' -exec rm -rf {} + || true
 
             echo "📦 Instalando dependências..."
-            npm install --prefer-offline --no-audit
+            npm install --omit=dev --prefer-offline --no-audit
 
             echo "⚙️ Gerando Prisma Client..."
             npx prisma generate
