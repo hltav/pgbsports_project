@@ -25,31 +25,22 @@ export class SignInService {
       throw new UnauthorizedException('Email and password are required');
     }
 
-    console.log('=== DEBUG LOGIN CORRIGIDO ===');
-    console.log('Email recebido:', email);
-
     const searchableEmailHash = this.encryptionService.generateSearchableHash(
       email.toLowerCase(),
     );
-    console.log('Hash gerado para verificação:', searchableEmailHash);
 
     const userInDb = await this.usersService.findOneByEmail(email);
-    console.log(
-      'Usuário encontrado:',
-      userInDb ? `SIM (ID: ${userInDb.id})` : 'NÃO',
-    );
 
-    if (userInDb) {
-      console.log('Hash no banco:', userInDb.searchableEmailHash);
-      console.log(
-        'Hashes batem?',
-        searchableEmailHash === userInDb.searchableEmailHash,
-      );
+    if (!userInDb) {
+      throw new UnauthorizedException('User not found');
     }
 
-    if (!userInDb || !userInDb.password) {
-      console.log('❌ ERRO: Usuário não encontrado ou sem password');
-      throw new UnauthorizedException('Incorrect Credentials');
+    if (searchableEmailHash !== userInDb.searchableEmailHash) {
+      throw new UnauthorizedException('Incorrect credentials');
+    }
+
+    if (!userInDb.password) {
+      throw new UnauthorizedException('User has no password set');
     }
 
     const decryptedUser = {
@@ -67,11 +58,8 @@ export class SignInService {
     );
 
     if (!isPasswordValid) {
-      console.log('❌ ERRO: Senha inválida');
       throw new UnauthorizedException('Incorrect Credentials');
     }
-
-    console.log('✅ Login válido! Gerando tokens...');
 
     const payload: JwtPayload = {
       sub: decryptedUser.id,
