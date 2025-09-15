@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { SafeInfer } from './../../../../types/zod';
+import { SafeInfer } from '../../../../types/zod';
 
 export const ForgotPasswordSchema = z.object({
   email: z.string().email(),

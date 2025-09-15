@@ -1,12 +1,13 @@
 import { z } from 'zod';
 import { CreateAddressDto } from './create-address.dto';
 import { SafeInfer } from './../../../types/zod';
+import { sensitiveClientData } from './../../../libs/common/zod/sensitive';
 
 export const CreateClientDataSchema = z.object({
-  gender: z.string().min(1, 'Gender is required'),
-  cpf: z.string().min(1, 'CPF is required'),
-  image: z.string().min(1, 'Image is required'),
-  phone: z.string().min(1, 'Phone is required.'),
+  gender: sensitiveClientData('O campo "Gender" é obrigatório.'),
+  cpf: sensitiveClientData('O campo "CPF" é obrigatório.'),
+  image: sensitiveClientData('O campo "Image" é obrigatório.'),
+  phone: sensitiveClientData('O campo "Phone" é obrigatório.'),
   userId: z.number(),
   address: CreateAddressDto.optional(),
 });

@@ -4,7 +4,7 @@ import { SafeInfer } from './../../../types/zod';
 export const AddressSchema = z.object({
   id: z.number(),
   direction: z.string().nullable(),
-  houseNumber: z.number().nullable(),
+  houseNumber: z.string().nullable(),
   neighborhood: z.string().nullable(),
   city: z.string().nullable(),
   state: z.string().nullable(),

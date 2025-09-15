@@ -15,10 +15,14 @@ import {
   ForgotPasswordService,
   RefreshTokenService,
   RegisterUserService,
+  ResetPasswordService,
   SignInService,
   SignOutService,
 } from './services';
 import { SignInVerifyService } from './services/signInVerify.service';
+import { EncryptionService } from './../../libs/EncryptedData/services/encryptedData.service';
+import { EncryptedDataModule } from './../../libs/EncryptedData/services/encryptedData.module';
+import { EmailVerificationService } from './../../libs/services/mailer/emailVerification.service';
 
 @Module({
   imports: [
@@ -27,6 +31,7 @@ import { SignInVerifyService } from './services/signInVerify.service';
     PassportModule,
     UsersModule,
     PrismaModule,
+    EncryptedDataModule,
     MailModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -50,6 +55,9 @@ import { SignInVerifyService } from './services/signInVerify.service';
     JwtStrategy,
     PrismaService,
     ConfirmEmailService,
+    EncryptionService,
+    ResetPasswordService,
+    EmailVerificationService,
   ],
   exports: [
     AuthService,
@@ -59,6 +67,8 @@ import { SignInVerifyService } from './services/signInVerify.service';
     SignOutService,
     ForgotPasswordService,
     RefreshTokenService,
+    EncryptionService,
+    ResetPasswordService,
   ],
 })
 export class AuthModule {}

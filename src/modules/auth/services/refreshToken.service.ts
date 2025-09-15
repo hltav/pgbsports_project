@@ -22,7 +22,6 @@ export class RefreshTokenService {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
-      // Valida o usuário com Zod
       const parsed = JwtPayloadSchema.safeParse({
         sub: user.id,
         email: user.email,

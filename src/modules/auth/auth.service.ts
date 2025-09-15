@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDTO, ForgotPasswordDTO } from './../../libs';
-import { ForgotPasswordService } from './services/forgot-password.service';
-import { RefreshTokenService } from './services/refresh-token.service';
-import { RegisterUserService } from './services/register-user.service';
-import { SignInService } from './services/sign-in.service';
-import { SignOutService } from './services/sign-out.service';
+import {
+  CreateUserDTO,
+  ForgotPasswordDTO,
+  ResetPasswordDTO,
+} from './../../libs';
+import { ForgotPasswordService } from './services/forgotPassword.service';
+import { RefreshTokenService } from './services/refreshToken.service';
+import { RegisterUserService } from './services/registerUser.service';
+import { SignInService } from './services/signIn.service';
+import { SignOutService } from './services/signOut.service';
 import { SignInVerifyService } from './services/signInVerify.service';
+import { ConfirmEmailService, ResetPasswordService } from './services';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +21,8 @@ export class AuthService {
     private signOutService: SignOutService,
     private forgotPasswordService: ForgotPasswordService,
     private refreshTokenService: RefreshTokenService,
+    private resetPasswordService: ResetPasswordService,
+    private confirmEmail: ConfirmEmailService,
   ) {}
 
   register(dto: CreateUserDTO) {
@@ -40,5 +47,13 @@ export class AuthService {
 
   refreshToken(token: string) {
     return this.refreshTokenService.execute(token);
+  }
+
+  resetPassword(resetDto: ResetPasswordDTO) {
+    return this.resetPasswordService.execute(resetDto);
+  }
+
+  confirmeEmail(token: string) {
+    return this.confirmEmail.execute(token);
   }
 }

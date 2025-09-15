@@ -20,9 +20,16 @@ import {
   UsersFinderService,
   UsersUpdaterService,
 } from './proxies/serviceProxies';
+import { EncryptedDataModule } from './../../libs/EncryptedData/services/encryptedData.module';
 
 @Module({
-  imports: [PrismaModule, MyCacheModule, ImageModule, ClientDataModule],
+  imports: [
+    PrismaModule,
+    MyCacheModule,
+    ImageModule,
+    ClientDataModule,
+    EncryptedDataModule,
+  ],
   providers: [
     UsersService,
     UsersServiceProxy,

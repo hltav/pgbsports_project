@@ -1,6 +1,8 @@
 export { User } from './user.schema';
-export { CreateUserDTO } from './create-user.dto';
-export { UpdateUserDTO } from './update-user.dto';
-export { GetUserDTO } from './get-user.dto';
-export { UserWithClientData } from './user-with-client-data.schema';
-export { ForgotPasswordDTO } from './forgot-password.dto';
+export { CreateUserDTO } from './createUser.dto';
+export { UpdateUserDTO } from './updateUser.dto';
+export { GetUserDTO } from './getUser.dto';
+export { UserWithClientData } from './userWithClientData.schema';
+export { ForgotPasswordDTO } from './forgotPassword.dto';
+export { ResetPasswordDTO } from './resetPassword.dto';
+export { EmailVerification } from './emailVerified.dto';

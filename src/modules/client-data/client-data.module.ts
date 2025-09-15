@@ -11,9 +11,11 @@ import {
 } from './services';
 import { ImageService } from './../../modules/image/image.service';
 import { LocalStorageService } from './../../modules/image/storage/local-storage.service';
+import { EncryptedDataModule } from './../../libs/EncryptedData/services/encryptedData.module';
+import { EncryptionService } from './../../libs/EncryptedData/services/encryptedData.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, EncryptedDataModule],
   providers: [
     ClientDataService,
     PrismaService,
@@ -27,6 +29,7 @@ import { LocalStorageService } from './../../modules/image/storage/local-storage
       provide: 'StorageService',
       useClass: LocalStorageService,
     },
+    EncryptionService,
   ],
   controllers: [ClientDataController],
   exports: [

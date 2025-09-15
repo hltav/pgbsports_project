@@ -11,9 +11,10 @@ import {
   UpdateClientImageService,
 } from '../client-data/services';
 import { PrismaModule } from './../../libs/database/prisma/prisma.module';
+import { EncryptedDataModule } from './../../libs/EncryptedData/services/encryptedData.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, EncryptedDataModule],
   controllers: [ClientImageController],
   providers: [
     ImageService,
@@ -22,7 +23,7 @@ import { PrismaModule } from './../../libs/database/prisma/prisma.module';
       useClass: LocalStorageService,
     },
     ClientDataService,
-    CreateClientDataService, // <--- Crie este serviço e adicione-o aqui
+    CreateClientDataService,
     GetMyClientDataService,
     GetClientDataService,
     UpdateClientDataService,

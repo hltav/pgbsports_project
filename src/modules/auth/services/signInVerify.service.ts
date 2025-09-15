@@ -3,12 +3,14 @@ import { CryptoService } from '../../../libs/crypto/services/crypto.service';
 import { UsersService } from '../../users/users.service';
 import { GetUserDTO } from '../../../libs/common/dto/user';
 import { JwtPayload } from '../dto/jwt-payload.dto';
+import { EncryptionService } from '../../../libs/EncryptedData/services/encryptedData.service';
 
 @Injectable()
 export class SignInVerifyService {
   constructor(
     private readonly usersService: UsersService,
     private readonly crypto: CryptoService,
+    private readonly encryptionService: EncryptionService,
   ) {}
 
   async execute(token: string): Promise<GetUserDTO> {
@@ -31,29 +33,63 @@ export class SignInVerifyService {
       throw new UnauthorizedException('User not found');
     }
 
-    const userWithoutPassword: GetUserDTO = {
-      id: user.id ?? 0,
-      firstname: user.firstname ?? '',
-      lastname: user.lastname ?? '',
-      nickname: user.nickname ?? '',
-      email: user.email ?? '',
-      role: user.role,
+    const decryptedUser = {
+      ...user,
+      email: this.encryptionService.decrypt(user.email || ''),
+      firstname: this.encryptionService.decrypt(user.firstname || ''),
+      lastname: this.encryptionService.decrypt(user.lastname || ''),
+      nickname: this.encryptionService.decrypt(user.nickname || ''),
       clientData: user.clientData
         ? {
-            image: user.clientData.image,
-            cpf: user.clientData.cpf,
-            gender: user.clientData.gender,
-            phone: user.clientData.phone,
+            ...user.clientData,
+            cpf: user.clientData.cpf
+              ? this.encryptionService.decrypt(user.clientData.cpf)
+              : undefined,
+            phone: user.clientData.phone
+              ? this.encryptionService.decrypt(user.clientData.phone)
+              : undefined,
+            gender: user.clientData.gender
+              ? this.encryptionService.decrypt(user.clientData.gender)
+              : undefined,
+            image: user.clientData.image
+              ? this.encryptionService.decrypt(user.clientData.image)
+              : undefined,
             address: user.clientData.address
               ? {
-                  neighborhood: user.clientData.address.neighborhood,
-                  city: user.clientData.address.city,
-                  state: user.clientData.address.state,
-                  country: user.clientData.address.country,
+                  neighborhood: user.clientData.address.neighborhood
+                    ? this.encryptionService.decrypt(
+                        user.clientData.address.neighborhood,
+                      )
+                    : undefined,
+                  city: user.clientData.address.city
+                    ? this.encryptionService.decrypt(
+                        user.clientData.address.city,
+                      )
+                    : undefined,
+                  state: user.clientData.address.state
+                    ? this.encryptionService.decrypt(
+                        user.clientData.address.state,
+                      )
+                    : undefined,
+                  country: user.clientData.address.country
+                    ? this.encryptionService.decrypt(
+                        user.clientData.address.country,
+                      )
+                    : undefined,
                 }
-              : null,
+              : undefined,
           }
-        : null,
+        : undefined,
+    };
+
+    const userWithoutPassword: GetUserDTO = {
+      id: decryptedUser.id ?? 0,
+      firstname: decryptedUser.firstname ?? '',
+      lastname: decryptedUser.lastname ?? '',
+      nickname: decryptedUser.nickname ?? '',
+      email: decryptedUser.email ?? '',
+      role: decryptedUser.role,
+      clientData: decryptedUser.clientData,
     };
 
     return userWithoutPassword;

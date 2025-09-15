@@ -1,11 +1,11 @@
 import { Role } from '@prisma/client';
 import { z } from 'zod';
-import { SafeInfer } from './../../../../types/zod';
+import { SafeInfer } from '../../../../types/zod';
 
 export const AddressSchema = z.object({
   id: z.number().optional(),
   direction: z.string().nullable().optional(),
-  houseNumber: z.number().nullable().optional(),
+  houseNumber: z.string().nullable().optional(),
   neighborhood: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
   state: z.string().nullable().optional(),

@@ -1,31 +1,3 @@
-// import { ExecutionContext, Injectable } from '@nestjs/common';
-// import { AuthGuard } from '@nestjs/passport';
-// import { Request } from './../../../libs/common/interface/request.interface';
-
-// @Injectable()
-// export class JwtAuthGuard extends AuthGuard('jwt') {
-//   async canActivate(context: ExecutionContext): Promise<boolean> {
-//     try {
-//       const isAuthorized = await super.canActivate(context);
-//       if (!isAuthorized) {
-//         return false;
-//       }
-
-//       const request = context.switchToHttp().getRequest<Request>();
-//       const user = request.user;
-
-//       if (user) {
-//         user.role = user.role || 'USER';
-//       }
-
-//       return !!user;
-//     } catch (error) {
-//       console.error('JwtAuthGuard - Erro:', error);
-//       throw error;
-//     }
-//   }
-// }
-
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
@@ -44,7 +16,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     ]);
 
     if (isPublic) {
-      // rota pública, liberar acesso sem autenticação
       return true;
     }
 

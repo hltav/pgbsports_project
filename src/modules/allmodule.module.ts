@@ -9,6 +9,7 @@ import { StatisticsModule } from './statistics/statistics.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
 import { MyCacheModule } from './../libs/services/cache/cache.module';
+import { EncryptedDataModule } from './../libs/EncryptedData/services/encryptedData.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { MyCacheModule } from './../libs/services/cache/cache.module';
     StatisticsModule,
     SubscriptionsModule,
     ClientDataModule,
+    EncryptedDataModule,
   ],
   providers: [],
   exports: [
@@ -35,6 +37,7 @@ import { MyCacheModule } from './../libs/services/cache/cache.module';
     StatisticsModule,
     SubscriptionsModule,
     ClientDataModule,
+    EncryptedDataModule,
   ],
 })
 export class AllmoduleModule {}

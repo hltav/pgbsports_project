@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { Role } from '@prisma/client';
 import { AddressSchema } from '../../../../modules/client-data/dto/address.schema';
-import { SafeInfer } from './../../../../types/zod';
+import { SafeInfer } from '../../../../types/zod';
 
 export const ClientDataSchema = z.object({
   id: z.number().optional(),
@@ -21,6 +21,7 @@ export const UserWithClientDataSchema = z.object({
   email: z.string().email(),
   password: z.string(),
   role: z.nativeEnum(Role),
+  searchableEmailHash: z.string(),
   refreshToken: z.string().nullable().optional(),
   clientData: ClientDataSchema.nullable(),
 });

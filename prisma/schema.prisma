@@ -37,24 +37,30 @@ enum Result {
   void
 }
 
+enum VerificationType {
+  EMAIL_CONFIRMATION
+  RESET_PASSWORD
+}
+
 //Initial User Data
 model User {
-  id                Int                @id @default(autoincrement())
-  firstname         String
-  lastname          String
-  nickname          String             @unique
-  email             String             @unique
-  password          String
-  role              Role               @default(USER)
-  emailVerification EmailVerification?
-  clientData        ClientData?
-  emailVerifiedAt   DateTime?
-  refreshToken      String?
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  bankrolls         Bankroll[]
-  Event             Event[]
-  avatar            Image?
+  id                  Int                 @id @default(autoincrement())
+  firstname           String
+  lastname            String
+  nickname            String              @unique
+  email               String              @unique @db.VarChar(255)
+  searchableEmailHash String              @unique @db.VarChar(64)
+  password            String
+  role                Role                @default(USER)
+  emailVerifications  EmailVerification[]
+  clientData          ClientData?
+  emailVerifiedAt     DateTime?
+  refreshToken        String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  bankrolls           Bankroll[]
+  Event               Event[]
+  avatar              Image?
 }
 
 //Client Data
@@ -75,7 +81,7 @@ model ClientData {
 model Address {
   id           Int        @id @default(autoincrement())
   direction    String?
-  houseNumber  Int?
+  houseNumber  String?
   neighborhood String?
   city         String?
   state        String?
@@ -123,8 +129,10 @@ model Event {
 model EmailVerification {
   id        Int      @id @default(autoincrement())
   token     String   @unique
-  userId    Int      @unique
+  userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   @default("RESET_PASSWORD")
+  used      Boolean  @default(false)
   expiresAt DateTime
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())

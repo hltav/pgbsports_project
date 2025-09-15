@@ -14,6 +14,7 @@ import {
   User,
   CreateUserDTO,
   ForgotPasswordDTO,
+  ResetPasswordDTO,
 } from './../../libs/common/dto/user';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { ConfirmEmailService } from './services';
@@ -124,7 +125,16 @@ export class AuthController {
 
   @Post('forgot-password')
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDTO) {
-    return this.authService.forgotPassword(forgotPasswordDto);
+    await this.authService.forgotPassword(forgotPasswordDto);
+    return {
+      message: 'Se o e-mail existir, um link de redefinição será enviado.',
+    };
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDTO) {
+    console.log('Dados recebidos no controller:', resetPasswordDto);
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   @Post('refresh')

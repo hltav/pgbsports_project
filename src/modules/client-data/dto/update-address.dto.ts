@@ -3,7 +3,7 @@ import { SafeInfer } from './../../../types/zod';
 
 export const UpdateAddressDto = z.object({
   direction: z.string().nullable().optional(),
-  houseNumber: z.number().nullable().optional(),
+  houseNumber: z.string().nullable().optional(),
   neighborhood: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
   state: z.string().nullable().optional(),
