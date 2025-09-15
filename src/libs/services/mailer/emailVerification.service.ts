@@ -13,7 +13,6 @@ export class EmailVerificationService {
     hoursValid = 1,
   ) {
     const token = randomBytes(32).toString('hex');
-    console.log('Token gerado (hex):', token);
     const expiresAt = addHours(new Date(), hoursValid);
 
     return this.prisma.emailVerification.create({

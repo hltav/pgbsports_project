@@ -16,10 +16,8 @@ export class UserFindService {
   private safeDecrypt(value: string | null | undefined): string | undefined {
     if (!value) return undefined;
 
-    // Verifica se o valor está no formato de criptografia (hash:iv:encrypted_data)
     const parts = value.split(':');
     if (parts.length !== 3) {
-      // Se não está no formato esperado, retorna o valor como está
       console.warn(
         `Valor não está no formato de criptografia esperado: ${value}`,
       );
@@ -36,8 +34,6 @@ export class UserFindService {
   }
 
   private decryptUser(user: GetUserDTO): Partial<GetUserDTO> {
-    console.log('Antes de decrypt:', user);
-
     const decrypted = {
       ...user,
       firstname: this.safeDecrypt(user.firstname),
@@ -66,7 +62,6 @@ export class UserFindService {
         : undefined,
     };
 
-    console.log('Depois de decrypt:', decrypted);
     return decrypted;
   }
 

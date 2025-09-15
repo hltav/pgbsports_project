@@ -80,7 +80,7 @@ async function bootstrap() {
   // 🚀 Inicialização
   await app.listen({ port, host: '0.0.0.0' });
 
-  console.log(`✅ Server running on port ${port}`);
+  console.log(`🚀✅ Server running on port ${port}🎉🔥`);
 }
 bootstrap().catch((err) => {
   console.error('❌ Erro ao iniciar aplicação:', err);

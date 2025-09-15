@@ -26,11 +26,9 @@ export class SportsApiCachedService {
 
     const cachedData = await this.cacheManager.get<T>(cacheKey);
     if (cachedData) {
-      console.log(`[CACHE HIT] ${cacheKey}`);
       return cachedData;
     }
 
-    console.log(`[CACHE MISS] ${cacheKey}`);
     const liveData = await this.sportsApiService.get<T>(endpoint, params);
 
     const cacheTtl = this.calculateTtl(params, ttl);
