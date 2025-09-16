@@ -17,7 +17,6 @@ import {
   ResetPasswordDTO,
 } from './../../libs/common/dto/user';
 import { JwtPayload } from './dto/jwt-payload.dto';
-import { ConfirmEmailService } from './services';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 interface AuthenticatedRequest extends Request {
@@ -26,10 +25,7 @@ interface AuthenticatedRequest extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly confirmEmailService: ConfirmEmailService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   async register(@Body() registerUser: CreateUserDTO) {
@@ -119,8 +115,14 @@ export class AuthController {
 
   @Post('confirm-email')
   async confirmEmail(@Body('token') token: string) {
-    await this.confirmEmailService.execute(token);
+    await this.authService.confirmeEmail(token);
     return { success: true, message: 'E-mail confirmado com sucesso!' };
+  }
+
+  @Post('resend-confirmation')
+  async resendConfirmation(@Body('email') email: string) {
+    await this.authService.resendConfirmeEmail(email);
+    return { message: 'Novo link de confirmação enviado com sucesso.' };
   }
 
   @Post('forgot-password')

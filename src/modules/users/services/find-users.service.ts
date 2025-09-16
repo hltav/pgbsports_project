@@ -28,7 +28,7 @@ export class UserFindService {
       return this.encryptionService.decrypt(value);
     } catch (error) {
       console.error(`Erro ao descriptografar valor: ${value}`, error);
-      // Retorna o valor original se a descriptografia falhar
+
       return value;
     }
   }

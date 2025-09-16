@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { addHours } from 'date-fns';
-import { PrismaService } from './../../../libs/database/prisma';
+import { PrismaService } from '../../../database/prisma';
+import { EMAIL_VERIFICATION_TYPES } from '../../../common/enum/emailVerication.enum';
 
 @Injectable()
 export class EmailVerificationService {
@@ -9,7 +10,7 @@ export class EmailVerificationService {
 
   async createToken(
     userId: number,
-    type: 'RESET_PASSWORD' | 'EMAIL_CONFIRMATION',
+    type: EMAIL_VERIFICATION_TYPES,
     hoursValid = 1,
   ) {
     const token = randomBytes(32).toString('hex');
@@ -20,10 +21,7 @@ export class EmailVerificationService {
     });
   }
 
-  async validateToken(
-    token: string,
-    type: 'RESET_PASSWORD' | 'EMAIL_CONFIRMATION',
-  ) {
+  async validateToken(token: string, type: EMAIL_VERIFICATION_TYPES) {
     const record = await this.prisma.emailVerification.findFirst({
       where: { token, type, used: false, expiresAt: { gt: new Date() } },
     });

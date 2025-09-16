@@ -1,16 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { EmailService } from './../../../libs/services/mailer/mail.service';
 import { PrismaService } from './../../../libs/database/prisma/prisma.service';
+import { EncryptionService } from './../../../libs/EncryptedData/services/encryptedData.service';
 
 @Injectable()
 export class ConfirmEmailService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
+    private readonly encryptionService: EncryptionService,
   ) {}
 
   async execute(token: string): Promise<void> {
-    const verification = await this.prisma.emailVerification.findUnique({
+    const verification = await this.prisma.emailVerification.findFirst({
       where: { token },
       include: { user: true },
     });
@@ -28,9 +30,14 @@ export class ConfirmEmailService {
       where: { token },
     });
 
+    const plainEmail = this.encryptionService.decrypt(verification.user.email);
+    const plainName = this.encryptionService.decrypt(
+      verification.user.firstname,
+    );
+
     await this.emailService.sendWelcomeEmail({
-      email: verification.user.email,
-      name: verification.user.firstname,
+      email: plainEmail,
+      name: plainName,
     });
   }
 }

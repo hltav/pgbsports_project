@@ -22,7 +22,8 @@ import {
 import { SignInVerifyService } from './services/signInVerify.service';
 import { EncryptionService } from './../../libs/EncryptedData/services/encryptedData.service';
 import { EncryptedDataModule } from './../../libs/EncryptedData/services/encryptedData.module';
-import { EmailVerificationService } from './../../libs/services/mailer/emailVerification.service';
+import { EmailVerificationService } from '../../libs/services/mailer/services/emailVerification.service';
+import { ResendEmailConfirmationService } from './services/resendEmailConfirmation.service';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { EmailVerificationService } from './../../libs/services/mailer/emailVeri
     EncryptionService,
     ResetPasswordService,
     EmailVerificationService,
+    ResendEmailConfirmationService,
   ],
   exports: [
     AuthService,
@@ -69,6 +71,8 @@ import { EmailVerificationService } from './../../libs/services/mailer/emailVeri
     RefreshTokenService,
     EncryptionService,
     ResetPasswordService,
+    ResendEmailConfirmationService,
+    EmailVerificationService,
   ],
 })
 export class AuthModule {}

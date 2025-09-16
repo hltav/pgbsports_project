@@ -1,0 +1,32 @@
+<p>Olá {{name}},</p>
+
+<p>Você solicitou um novo link para confirmar seu e-mail. Clique no botão abaixo
+  para confirmar sua conta:</p>
+
+<p>
+  <a
+    href='{{confirmationLink}}'
+    target='_blank'
+    style='
+      background-color: #007bff;
+      color: #ffffff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
+      font-weight: bold;
+    '
+  >
+    Confirmar meu e-mail
+  </a>
+</p>
+
+<p>Este link expira em 72 horas.</p>
+
+<p>Se você não solicitou um novo link de confirmação, ignore este e-mail.</p>
+
+<p>Atenciosamente,<br />
+  Equipe RT Sports Manager</p>
+
+<p>PS: Caso o botão não funcione, copie e cole este link no seu navegador:</p>
+<p><a href='{{confirmationLink}}' target='_blank'>{{confirmationLink}}</a></p>

@@ -37,7 +37,7 @@ enum Result {
   void
 }
 
-enum VerificationType {
+enum EmailVerificationType {
   EMAIL_CONFIRMATION
   RESET_PASSWORD
 }
@@ -127,17 +127,18 @@ model Event {
 
 // Email Verification Model
 model EmailVerification {
-  id        Int      @id @default(autoincrement())
-  token     String   @unique
+  id        Int                   @id @default(autoincrement())
+  token     String                @unique
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   @default("RESET_PASSWORD")
-  used      Boolean  @default(false)
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      EmailVerificationType
+  used      Boolean               @default(false)
   expiresAt DateTime
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  verified  Boolean               @default(false)
+  createdAt DateTime              @default(now())
 }
 
+//Image Model
 model Image {
   id        Int      @id @default(autoincrement())
   url       String

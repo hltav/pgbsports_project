@@ -11,6 +11,7 @@ import { SignInService } from './services/signIn.service';
 import { SignOutService } from './services/signOut.service';
 import { SignInVerifyService } from './services/signInVerify.service';
 import { ConfirmEmailService, ResetPasswordService } from './services';
+import { ResendEmailConfirmationService } from './services/resendEmailConfirmation.service';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
     private refreshTokenService: RefreshTokenService,
     private resetPasswordService: ResetPasswordService,
     private confirmEmail: ConfirmEmailService,
+    private resendConfirmEmail: ResendEmailConfirmationService,
   ) {}
 
   register(dto: CreateUserDTO) {
@@ -55,5 +57,9 @@ export class AuthService {
 
   confirmeEmail(token: string) {
     return this.confirmEmail.execute(token);
+  }
+
+  resendConfirmeEmail(token: string) {
+    return this.resendConfirmEmail.execute(token);
   }
 }

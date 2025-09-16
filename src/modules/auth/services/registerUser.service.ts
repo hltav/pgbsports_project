@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 import { addMinutes } from 'date-fns';
 import { EmailService } from '../../../libs/services/mailer/mail.service';
 import { EncryptionService } from '../../../libs/EncryptedData/services/encryptedData.service';
+import { EMAIL_VERIFICATION_TYPES } from '../../../libs/common/enum/emailVerication.enum';
 
 @Injectable()
 export class RegisterUserService {
@@ -74,6 +75,7 @@ export class RegisterUserService {
         userId: newUser.id,
         token,
         expiresAt,
+        type: EMAIL_VERIFICATION_TYPES.EMAIL_CONFIRMATION,
       },
     });
 
