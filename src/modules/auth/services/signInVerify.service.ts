@@ -14,6 +14,7 @@ export class SignInVerifyService {
   ) {}
 
   async execute(token: string): Promise<GetUserDTO> {
+    console.log('TOKEN NO SERVICE:', token);
     if (!token) {
       throw new UnauthorizedException('Token is required');
     }

@@ -73,6 +73,7 @@ export class AuthController {
   @Get('me')
   async me(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
     const accessToken = req.cookies?.access_token;
+    console.log('TOKEN NO CONTROLLER:', accessToken);
 
     if (!accessToken) {
       throw new UnauthorizedException('Usuário não autenticado');
