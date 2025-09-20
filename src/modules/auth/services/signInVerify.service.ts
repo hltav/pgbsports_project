@@ -1,16 +1,16 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { CryptoService } from '../../../libs/crypto/services/crypto.service';
 import { UsersService } from '../../users/users.service';
 import { GetUserDTO } from '../../../libs/common/dto/user';
 import { JwtPayload } from '../dto/jwt-payload.dto';
 import { EncryptionService } from '../../../libs/EncryptedData/services/encryptedData.service';
+import { JwtHandlerService } from '../../../libs/crypto/services/jwt.service';
 
 @Injectable()
 export class SignInVerifyService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly crypto: CryptoService,
     private readonly encryptionService: EncryptionService,
+    private readonly jwtHandler: JwtHandlerService,
   ) {}
 
   async execute(token: string): Promise<GetUserDTO> {
@@ -20,7 +20,7 @@ export class SignInVerifyService {
 
     let payload: JwtPayload;
     try {
-      payload = this.crypto.verifyJwt(token);
+      payload = this.jwtHandler.verify(token);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';

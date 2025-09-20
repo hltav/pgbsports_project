@@ -46,18 +46,20 @@ export class AuthController {
 
     res.setCookie('access_token', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
       maxAge: 60 * 15, // 15 minutos
+      domain: '.rtsportsmanager.com',
     });
 
     res.setCookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias
+      domain: '.rtsportsmanager.com',
     });
 
     return res.send({
@@ -151,18 +153,20 @@ export class AuthController {
 
     res.setCookie('access_token', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 15,
+      domain: '.rtsportsmanager.com',
     });
 
     res.setCookie('refresh_token', newRefreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
+      domain: '.rtsportsmanager.com',
     });
 
     return res.send({ message: 'Token renovado com sucesso' });
