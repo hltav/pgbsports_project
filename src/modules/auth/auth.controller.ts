@@ -47,10 +47,9 @@ export class AuthController {
     res.setCookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 15, // 15 minutos
-      domain: '.rtsportsmanager.com',
     });
 
     res.setCookie('refresh_token', refreshToken, {
@@ -59,7 +58,6 @@ export class AuthController {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias
-      domain: '.rtsportsmanager.com',
     });
 
     return res.send({
