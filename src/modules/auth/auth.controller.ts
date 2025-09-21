@@ -25,7 +25,10 @@ interface AuthenticatedRequest extends Request {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  private cookieDomain: string;
+  constructor(private readonly authService: AuthService) {
+    this.cookieDomain = process.env.COOKIE_DOMAIN || 'localhost';
+  }
 
   @Post('register')
   async register(@Body() registerUser: CreateUserDTO) {
@@ -48,7 +51,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: '.rtsportsmanager.com',
+      domain: this.cookieDomain,
       path: '/',
       maxAge: 60 * 15, // 15 minutos
     });
@@ -57,7 +60,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: '.rtsportsmanager.com',
+      domain: this.cookieDomain,
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias,
     });
@@ -155,7 +158,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: '.rtsportsmanager.com',
+      domain: this.cookieDomain,
       path: '/',
       maxAge: 60 * 15,
     });
@@ -164,7 +167,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: '.rtsportsmanager.com',
+      domain: this.cookieDomain,
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
