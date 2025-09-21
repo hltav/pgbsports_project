@@ -50,7 +50,6 @@ export class AuthController {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 15, // 15 minutos
-      domain: '.rtsportsmanager.vercel.app',
     });
 
     res.setCookie('refresh_token', refreshToken, {
@@ -59,7 +58,6 @@ export class AuthController {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias,
-      domain: '.rtsportsmanager.vercel.app',
     });
 
     return res.send({
@@ -157,7 +155,6 @@ export class AuthController {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 15,
-      domain: '.rtsportsmanager.vercel.app',
     });
 
     res.setCookie('refresh_token', newRefreshToken, {
@@ -166,7 +163,6 @@ export class AuthController {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
-      domain: '.rtsportsmanager.vercel.app',
     });
 
     return res.send({ message: 'Token renovado com sucesso' });
