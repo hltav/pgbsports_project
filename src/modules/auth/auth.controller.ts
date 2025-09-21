@@ -47,7 +47,7 @@ export class AuthController {
     res.setCookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 15, // 15 minutos
     });
@@ -55,7 +55,7 @@ export class AuthController {
     res.setCookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias,
     });
@@ -73,7 +73,6 @@ export class AuthController {
   @Get('me')
   async me(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
     const accessToken = req.cookies?.access_token;
-    console.log('TOKEN NO CONTROLLER:', accessToken);
 
     if (!accessToken) {
       throw new UnauthorizedException('Usuário não autenticado');
@@ -153,7 +152,7 @@ export class AuthController {
     res.setCookie('access_token', accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 15,
     });
@@ -161,7 +160,7 @@ export class AuthController {
     res.setCookie('refresh_token', newRefreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
