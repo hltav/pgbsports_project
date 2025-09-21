@@ -48,6 +48,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
+      domain: '.rtsportsmanager.com',
       path: '/',
       maxAge: 60 * 15, // 15 minutos
     });
@@ -56,6 +57,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
+      domain: '.rtsportsmanager.com',
       path: '/',
       maxAge: 60 * 60 * 24 * 7, // 7 dias,
     });
@@ -153,6 +155,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
+      domain: '.rtsportsmanager.com',
       path: '/',
       maxAge: 60 * 15,
     });
@@ -161,6 +164,7 @@ export class AuthController {
       httpOnly: true,
       secure: true,
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
+      domain: '.rtsportsmanager.com',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
     });
