@@ -5,7 +5,7 @@ import * as crypto from 'crypto';
 export class EncryptionService {
   private readonly algorithm = 'aes-256-gcm';
   private readonly keyLength = 32;
-  private readonly ivLength = 16;
+  private readonly ivLength = 12;
 
   private readonly masterKey: string;
   private readonly searchKey: string;
@@ -22,9 +22,6 @@ export class EncryptionService {
     this.searchKey = process.env.SEARCH_KEY;
   }
 
-  /**
-   * Criptografa dados sensíveis
-   */
   encrypt(text: string): string {
     if (!text) return text;
 
@@ -37,13 +34,9 @@ export class EncryptionService {
 
     const authTag = cipher.getAuthTag();
 
-    // Formato: iv:authTag:encrypted
     return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
   }
 
-  /**
-   * Descriptografa dados sensíveis
-   */
   decrypt(encryptedText: string): string {
     if (!encryptedText || !encryptedText.includes(':')) return encryptedText;
 
@@ -56,6 +49,15 @@ export class EncryptionService {
 
       const decipher = crypto.createDecipheriv(this.algorithm, key, iv);
       decipher.setAuthTag(authTag);
+      console.log(
+        'ivHex:',
+        ivHex,
+        'authTagHex:',
+        authTagHex,
+        'encrypted:',
+        encrypted,
+      );
+      console.log('iv length:', iv.length);
 
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
@@ -67,10 +69,6 @@ export class EncryptionService {
     }
   }
 
-  /**
-   * Gera hash para busca (deterministic hash)
-   * Usado para campos que precisam ser searchable como email
-   */
   generateSearchableHash(text: string): string {
     if (!text) return text;
 

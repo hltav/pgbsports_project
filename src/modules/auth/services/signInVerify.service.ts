@@ -33,53 +33,21 @@ export class SignInVerifyService {
       throw new UnauthorizedException('User not found');
     }
 
+    if (user.email) {
+      this.encryptionService.encrypt(user.email);
+    }
+    if (user.firstname) {
+      this.encryptionService.encrypt(user.firstname);
+    }
+    console.log('=== FIM DEBUG ===\n');
+
     const decryptedUser = {
       ...user,
       email: this.encryptionService.decrypt(user.email || ''),
       firstname: this.encryptionService.decrypt(user.firstname || ''),
       lastname: this.encryptionService.decrypt(user.lastname || ''),
       nickname: this.encryptionService.decrypt(user.nickname || ''),
-      clientData: user.clientData
-        ? {
-            ...user.clientData,
-            cpf: user.clientData.cpf
-              ? this.encryptionService.decrypt(user.clientData.cpf)
-              : undefined,
-            phone: user.clientData.phone
-              ? this.encryptionService.decrypt(user.clientData.phone)
-              : undefined,
-            gender: user.clientData.gender
-              ? this.encryptionService.decrypt(user.clientData.gender)
-              : undefined,
-            image: user.clientData.image
-              ? this.encryptionService.decrypt(user.clientData.image)
-              : undefined,
-            address: user.clientData.address
-              ? {
-                  neighborhood: user.clientData.address.neighborhood
-                    ? this.encryptionService.decrypt(
-                        user.clientData.address.neighborhood,
-                      )
-                    : undefined,
-                  city: user.clientData.address.city
-                    ? this.encryptionService.decrypt(
-                        user.clientData.address.city,
-                      )
-                    : undefined,
-                  state: user.clientData.address.state
-                    ? this.encryptionService.decrypt(
-                        user.clientData.address.state,
-                      )
-                    : undefined,
-                  country: user.clientData.address.country
-                    ? this.encryptionService.decrypt(
-                        user.clientData.address.country,
-                      )
-                    : undefined,
-                }
-              : undefined,
-          }
-        : undefined,
+      clientData: user.clientData || null,
     };
 
     const userWithoutPassword: GetUserDTO = {
