@@ -49,15 +49,6 @@ export class EncryptionService {
 
       const decipher = crypto.createDecipheriv(this.algorithm, key, iv);
       decipher.setAuthTag(authTag);
-      console.log(
-        'ivHex:',
-        ivHex,
-        'authTagHex:',
-        authTagHex,
-        'encrypted:',
-        encrypted,
-      );
-      console.log('iv length:', iv.length);
 
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');

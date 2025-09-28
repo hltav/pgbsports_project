@@ -28,8 +28,6 @@ async function bootstrap() {
       const allowedOrigins = [
         'http://localhost:3001',
         'https://localhost:3001',
-        'https://rtsportsmanager.vercel.app',
-        'http://91.99.55.16',
         'https://app.rtsportsmanager.com',
         'https://admin.rtsportsmanager.com',
         'https://rtsportsmanager.com',

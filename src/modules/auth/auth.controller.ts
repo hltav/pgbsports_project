@@ -30,6 +30,31 @@ export class AuthController {
     this.cookieDomain = process.env.COOKIE_DOMAIN || 'localhost';
   }
 
+  private getCookieOptions(req?: FastifyRequest) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    const requestOrigin = req?.headers?.origin;
+    const isHttpsFrontend = requestOrigin?.startsWith('https://');
+
+    // Para desenvolvimento com frontend HTTPS + backend HTTPS
+    if (isHttpsFrontend || isProduction) {
+      return {
+        path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none' as const,
+        domain: isProduction ? this.cookieDomain : 'localhost',
+      };
+    } else {
+      // Desenvolvimento padrão (ambos HTTP)
+      return {
+        path: '/',
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax' as const,
+      };
+    }
+  }
+
   @Post('register')
   async register(@Body() registerUser: CreateUserDTO) {
     return this.authService.register(registerUser);
@@ -109,13 +134,32 @@ export class AuthController {
   @Post('logout')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'USER')
-  async logout(@Req() req: Request & { user?: JwtPayload }) {
+  async logout(
+    @Req() req: FastifyRequest & { user?: JwtPayload },
+    @Res() reply: FastifyReply,
+  ) {
     if (!req.user) {
       throw new UnauthorizedException('User not found in request');
     }
+
     const userId = Number(req.user.sub);
     await this.authService.signOut(userId);
-    return { message: 'Logged out successfully' };
+
+    const cookieOptions = this.getCookieOptions(req);
+
+    reply.clearCookie('access_token', {
+      ...cookieOptions,
+      expires: new Date(0),
+      maxAge: 0,
+    });
+
+    reply.clearCookie('refresh_token', {
+      ...cookieOptions,
+      expires: new Date(0),
+      maxAge: 0,
+    });
+
+    return reply.send({ message: 'Logged out successfully' });
   }
 
   @Post('confirm-email')
@@ -146,32 +190,33 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
     const refresh_token = req.cookies?.refresh_token;
+    const cookieOptions = this.getCookieOptions(req);
 
     if (!refresh_token) {
+      res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
+      res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
       throw new UnauthorizedException('Refresh token não encontrado');
     }
 
-    const { accessToken, refreshToken: newRefreshToken } =
-      await this.authService.refreshToken(refresh_token);
+    try {
+      const { accessToken, refreshToken: newRefreshToken } =
+        await this.authService.refreshToken(refresh_token);
 
-    res.setCookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: this.cookieDomain,
-      path: '/',
-      maxAge: 60 * 15,
-    });
+      res.setCookie('access_token', accessToken, {
+        ...cookieOptions,
+        maxAge: 15 * 60 * 1000, // 15 minutos
+      });
 
-    res.setCookie('refresh_token', newRefreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: this.cookieDomain,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-    });
+      res.setCookie('refresh_token', newRefreshToken, {
+        ...cookieOptions,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+      });
 
-    return res.send({ message: 'Token renovado com sucesso' });
+      return res.send({ message: 'Token renovado com sucesso' });
+    } catch {
+      res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
+      res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
+      throw new UnauthorizedException('Refresh token inválido');
+    }
   }
 }

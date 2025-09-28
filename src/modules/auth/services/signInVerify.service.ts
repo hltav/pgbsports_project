@@ -39,7 +39,6 @@ export class SignInVerifyService {
     if (user.firstname) {
       this.encryptionService.encrypt(user.firstname);
     }
-    console.log('=== FIM DEBUG ===\n');
 
     const decryptedUser = {
       ...user,
