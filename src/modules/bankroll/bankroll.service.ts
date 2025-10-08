@@ -5,7 +5,12 @@ import {
   FindBankrollService,
   UpdateBankrollService,
 } from './services';
-import { CreateBankrollDTO, GetBankrollDTO, UpdateBankrollDTO } from './z.dto';
+import {
+  CreateBankrollDTO,
+  GetBankrollDTO,
+  UpdateBankrollDTO,
+  PatchBankrollDTO,
+} from './z.dto';
 
 @Injectable()
 export class BankrollService {
@@ -41,6 +46,13 @@ export class BankrollService {
     data: UpdateBankrollDTO,
   ): Promise<GetBankrollDTO> {
     return this.updateService.updateBankroll(id, data);
+  }
+
+  async patchUpdateBankroll(
+    id: number,
+    data: PatchBankrollDTO,
+  ): Promise<GetBankrollDTO> {
+    return this.updateService.patchUpdateBankroll(id, data);
   }
 
   async deleteBankroll(id: number): Promise<GetBankrollDTO> {

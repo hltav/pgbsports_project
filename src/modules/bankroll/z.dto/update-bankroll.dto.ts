@@ -10,3 +10,12 @@ export const UpdateBankrollSchema = z.object({
 });
 
 export type UpdateBankrollDTO = SafeInfer<typeof UpdateBankrollSchema>;
+
+export const PatchBankrollSchema = z.object({
+  userId: z.number().optional(),
+  name: z.string().min(1).optional(),
+  balance: decimalSchema.optional(),
+  unidValue: decimalSchema.optional(),
+});
+
+export type PatchBankrollDTO = SafeInfer<typeof PatchBankrollSchema>;

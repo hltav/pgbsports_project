@@ -16,7 +16,14 @@ export class LocalStorageService implements StorageService {
     'uploads',
     'avatars',
   );
+  private readonly baseUrl = process.env.API_URL ?? 'http://localhost:3000';
   private readonly allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+  private readonly allowedMimeTypes = [
+    'image/jpg',
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+  ];
 
   private ensureDirExists = async (): Promise<void> => {
     if (!existsSync(this.uploadDir)) {
@@ -43,7 +50,7 @@ export class LocalStorageService implements StorageService {
       }
     }
 
-    return `https://apirtsmanager.duckdns.org/uploads/avatars/${latestFile}`;
+    return `${this.baseUrl}/uploads/avatars/${latestFile}`;
   }
 
   async uploadAvatar(
@@ -56,7 +63,11 @@ export class LocalStorageService implements StorageService {
 
     const ext = file.originalname.split('.').pop()?.toLowerCase();
     if (!ext || !this.allowedExtensions.includes(ext)) {
-      throw new Error('File type not allowed');
+      throw new Error('File type not allowed (extension)');
+    }
+
+    if (!this.allowedMimeTypes.includes(file.mimetype)) {
+      throw new Error('File type not allowed (mimetype)');
     }
 
     await this.ensureDirExists();
@@ -66,21 +77,32 @@ export class LocalStorageService implements StorageService {
 
     await writeFile(fullPath, file.buffer);
 
-    return `/uploads/avatars/${filename}`.replace(/\\/g, '/');
+    return `${process.env.API_URL}/uploads/avatars/${filename}`.replace(
+      /\\/g,
+      '/',
+    );
   }
 
   async deleteAvatar(filePath: string): Promise<void> {
-    try {
-      const filename = filePath.split('/uploads/avatars/')[1];
-      if (!filename) return;
+    const filename = filePath.split('/uploads/avatars/')[1];
+    if (!filename) return;
 
-      const fullPath = join(this.uploadDir, filename);
+    const fullPath = join(this.uploadDir, filename);
+
+    try {
       await unlink(fullPath);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(`Error deleting file: ${error.message}`);
-      } else {
-        console.error('Unknown error deleting file:', error);
+      } else if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        (error as { code?: string }).code !== 'ENOENT'
+      ) {
+        console.error(
+          `Error deleting file: ${(error as { code?: string }).code}`,
+        );
       }
     }
   }

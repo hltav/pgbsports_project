@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Get,
@@ -12,11 +11,13 @@ import {
   UseGuards,
   Req,
   ParseIntPipe,
+  Patch,
 } from '@nestjs/common';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 import { BankrollService } from './bankroll.service';
 import { GetBankrollDTO, CreateBankrollDTO, UpdateBankrollDTO } from './z.dto';
+import { PatchBankrollDTO } from './z.dto/update-bankroll.dto';
 
 @Controller('bankrolls')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -50,7 +51,8 @@ export class BankrollController {
     @Body() data: CreateBankrollDTO,
     @Req() req: AuthenticatedRequest,
   ): Promise<GetBankrollDTO> {
-    return this.bankrollService.createBankroll(data);
+    const userId = req.user.id;
+    return this.bankrollService.createBankroll({ ...data, userId });
   }
 
   @Put(':id')
@@ -59,6 +61,14 @@ export class BankrollController {
     @Body() data: UpdateBankrollDTO,
   ): Promise<GetBankrollDTO> {
     return this.bankrollService.updateBankroll(+id, data);
+  }
+
+  @Patch(':id')
+  async patchBankroll(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: PatchBankrollDTO,
+  ): Promise<GetBankrollDTO> {
+    return this.bankrollService.patchUpdateBankroll(id, data);
   }
 
   @Delete(':id')

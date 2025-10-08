@@ -42,7 +42,7 @@ async function bootstrap() {
       }
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
     preflightContinue: false,
   });
@@ -53,7 +53,8 @@ async function bootstrap() {
   // 📦 Upload de arquivos
   await app.register(multipart, {
     limits: {
-      fileSize: 3 * 1024 * 1024, // 3 MB
+      fileSize: 4 * 1024 * 1024, // 4 MB
+      files: 1,
     },
   });
 
