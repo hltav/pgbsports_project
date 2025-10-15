@@ -11,13 +11,13 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        // Validação das variáveis de ambiente
         const requiredEnvVars = [
           'MAIL_HOST',
           'MAIL_USER',
           'MAIL_PASS',
           'MAIL_FROM',
         ];
+
         requiredEnvVars.forEach((envVar) => {
           if (!configService.get(envVar)) {
             throw new Error(`Variável de ambiente ${envVar} não definida`);
@@ -27,15 +27,15 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
         return {
           transport: {
             host: configService.get<string>('MAIL_HOST'),
-            port: configService.get<number>('MAIL_PORT', 587),
-            secure: configService.get<boolean>('MAIL_SECURE', false),
+            port: configService.get<number>('MAIL_PORT', 465),
+            secure: configService.get<string>('MAIL_SECURE') === 'true',
             auth: {
               user: configService.get<string>('MAIL_USER'),
               pass: configService.get<string>('MAIL_PASS'),
             },
           },
           defaults: {
-            from: `"${configService.get<string>('MAIL_FROM_NAME', 'RT Sports')}" <${configService.get<string>('MAIL_FROM')}>`,
+            from: `"${configService.get<string>('MAIL_FROM_NAME', 'RT Sports Manager')}" <${configService.get<string>('MAIL_FROM')}>`,
           },
           template: {
             dir: process.cwd() + '/dist/libs/services/mailer/templates',

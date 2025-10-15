@@ -12,11 +12,31 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
 
 async function bootstrap() {
+  const isDev = process.env.NODE_ENV !== 'production';
+
+  let fastifyAdapter: FastifyAdapter;
+
+  if (
+    isDev &&
+    fs.existsSync('./localhost+2-key.pem') &&
+    fs.existsSync('./localhost+2.pem')
+  ) {
+    const httpsOptions = {
+      https: {
+        key: fs.readFileSync('./localhost+2-key.pem'),
+        cert: fs.readFileSync('./localhost+2.pem'),
+      },
+    };
+    fastifyAdapter = new FastifyAdapter(httpsOptions);
+  } else {
+    fastifyAdapter = new FastifyAdapter();
+  }
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    fastifyAdapter,
   );
 
   const configService = app.get(ConfigService);
@@ -59,9 +79,16 @@ async function bootstrap() {
   });
 
   // 📂 Arquivos estáticos
+  // await app.register(fastifyStatic, {
+  //   root: join(process.cwd(), 'public', 'uploads', 'avatars'),
+  //   prefix: '/uploads/avatars/',
+  // });
   await app.register(fastifyStatic, {
     root: join(process.cwd(), 'public', 'uploads', 'avatars'),
     prefix: '/uploads/avatars/',
+    setHeaders: (res) => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
   });
 
   // ✅ Pipes de validação globais

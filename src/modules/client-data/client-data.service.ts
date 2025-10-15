@@ -38,7 +38,7 @@ export class ClientDataService {
     return this.updateClientDataService.execute(id, updateData);
   }
 
-  async updateClientImage(id: number, imageUrl: string) {
+  async updateClientImage(id: number, imageUrl: string | null) {
     return this.updateClientImageService.execute(id, imageUrl);
   }
 }

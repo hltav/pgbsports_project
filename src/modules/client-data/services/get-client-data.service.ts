@@ -10,14 +10,18 @@ export class GetClientDataService {
     private encryptionService: EncryptionService,
   ) {}
 
-  async execute(id: number): Promise<ClientDataDTO> {
+  async execute(userId: number): Promise<ClientDataDTO> {
     const clientData = await this.prisma.clientData.findUnique({
-      where: { id },
+      where: { userId },
       include: { address: true },
     });
 
+    console.log('clientData', clientData);
+
     if (!clientData) {
-      throw new NotFoundException(`ClientData com ID ${id} não encontrado.`);
+      throw new NotFoundException(
+        `ClientData com ID ${userId} não encontrado.`,
+      );
     }
 
     const decryptedClientData = this.decryptClientData(clientData);

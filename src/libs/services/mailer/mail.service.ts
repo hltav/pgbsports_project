@@ -9,17 +9,50 @@ interface EmailRecipient {
 
 type MailRecipient = string | EmailRecipient | Array<string | EmailRecipient>;
 
+enum EmailType {
+  GENERAL = 'GENERAL',
+  SUPPORT = 'SUPPORT',
+  FINANCE = 'FINANCE',
+  ADMIN = 'ADMIN',
+  NO_REPLY = 'NO_REPLY',
+}
+
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private readonly frontendUrl: string;
+  private readonly emailAddresses: Map<EmailType, string>;
 
   constructor(
     private readonly mailerService: MailerService,
-    configService: ConfigService,
+    private readonly configService: ConfigService,
   ) {
     this.frontendUrl =
       configService.get('FRONTEND_URL') ?? 'https://localhost:3001';
+
+    // Mapeamento dos emails
+    this.emailAddresses = new Map([
+      [
+        EmailType.GENERAL,
+        configService.get('MAIL_FROM', 'contato@rtsportsmanager.com'),
+      ],
+      [
+        EmailType.SUPPORT,
+        configService.get('MAIL_SUPPORT', 'suporte@rtsportsmanager.com'),
+      ],
+      [
+        EmailType.FINANCE,
+        configService.get('MAIL_FINANCE', 'financeiro@rtsportsmanager.com'),
+      ],
+      [
+        EmailType.ADMIN,
+        configService.get('MAIL_ADMIN', 'admin@rtsportsmanager.com'),
+      ],
+      [
+        EmailType.NO_REPLY,
+        configService.get('MAIL_NO_REPLY', 'contato@rtsportsmanager.com'),
+      ],
+    ]);
   }
 
   private extractEmailAddresses(recipient: MailRecipient): string[] {
@@ -41,13 +74,28 @@ export class EmailService {
     return emails.join(', ');
   }
 
-  private async sendMail(options: ISendMailOptions): Promise<void> {
+  private getFromEmail(type: EmailType = EmailType.GENERAL): string {
+    const email = this.emailAddresses.get(type);
+    const name =
+      this.configService.get<string>('MAIL_FROM_NAME') ?? 'RT Sports Manager';
+    return `"${name}" <${email}>`;
+  }
+  private async sendMail(
+    options: ISendMailOptions,
+    emailType: EmailType = EmailType.GENERAL,
+  ): Promise<void> {
     const recipientInfo = this.formatRecipientForLog(
       options.to as MailRecipient,
     );
 
+    // Define o remetente baseado no tipo de email
+    const mailOptions: ISendMailOptions = {
+      ...options,
+      from: options.from ?? this.getFromEmail(emailType),
+    };
+
     try {
-      await this.mailerService.sendMail(options);
+      await this.mailerService.sendMail(mailOptions);
       this.logSuccess(recipientInfo);
     } catch (error) {
       this.handleError(error, recipientInfo);
@@ -69,7 +117,7 @@ export class EmailService {
       },
     };
 
-    await this.sendMail(options);
+    await this.sendMail(options, EmailType.NO_REPLY);
   }
 
   async sendEmailConfirmation(
@@ -89,7 +137,7 @@ export class EmailService {
       },
     };
 
-    await this.sendMail(options);
+    await this.sendMail(options, EmailType.NO_REPLY);
   }
 
   async sendWelcomeEmail(recipient: EmailRecipient): Promise<void> {
@@ -102,7 +150,7 @@ export class EmailService {
       },
     };
 
-    await this.sendMail(options);
+    await this.sendMail(options, EmailType.GENERAL);
   }
 
   async sendResendConfirmationEmail(
@@ -122,10 +170,43 @@ export class EmailService {
       },
     };
 
-    await this.sendMail(options);
+    await this.sendMail(options, EmailType.NO_REPLY);
   }
 
-  // Helper para formatar o destinatário corretamente para o Nodemailer
+  // Método para enviar emails de suporte
+  async sendSupportEmail(
+    recipient: EmailRecipient,
+    subject: string,
+    template: string,
+    context: Record<string, any>,
+  ): Promise<void> {
+    const options: ISendMailOptions = {
+      to: this.formatRecipient(recipient),
+      subject,
+      template,
+      context,
+    };
+
+    await this.sendMail(options, EmailType.SUPPORT);
+  }
+
+  // Método para enviar emails financeiros
+  async sendFinanceEmail(
+    recipient: EmailRecipient,
+    subject: string,
+    template: string,
+    context: Record<string, any>,
+  ): Promise<void> {
+    const options: ISendMailOptions = {
+      to: this.formatRecipient(recipient),
+      subject,
+      template,
+      context,
+    };
+
+    await this.sendMail(options, EmailType.FINANCE);
+  }
+
   private formatRecipient(recipient: EmailRecipient): string {
     return `"${recipient.name}" <${recipient.email}>`;
   }

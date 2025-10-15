@@ -1,71 +1,3 @@
-// import {
-//   Controller,
-//   Post,
-//   Param,
-//   Req,
-//   UseGuards,
-//   UnauthorizedException,
-//   BadRequestException,
-//   ParseIntPipe,
-//   NotFoundException,
-//   Get,
-// } from '@nestjs/common';
-// import { JwtAuthGuard } from './../../../libs/common/guards/jwt-auth.guard';
-// import { ImageService } from './../../../modules/image/image.service';
-// import { Request } from './../../../libs/common/interface/request.interface';
-// import { AvatarUploadedFile } from './../../../modules/image/interface/avatarUploadedFile.interface';
-// import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
-// import { Public } from './../../../libs/common/decorator/public.decorator';
-
-// @Controller('users-avatar')
-// export class UserAvatarController {
-//   constructor(private readonly imageService: ImageService) {}
-
-//   @Get(':id/avatar')
-//   @Public()
-//   async getAvatar(@Param('id') id: string) {
-//     const url = await this.imageService.getUserAvatarPath(id);
-//     if (!url) {
-//       throw new NotFoundException('Avatar not found');
-//     }
-//     return { url };
-//   }
-
-//   @Post(':id/avatar')
-//   @UseGuards(JwtAuthGuard)
-//   async uploadAvatar(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Req() req: Request,
-//   ) {
-//     if (req.user.id !== id) {
-//       throw new UnauthorizedException('Denied access to the user');
-//     }
-
-//     const parts = req.parts();
-//     for await (const part of parts) {
-//       if (part.type === 'file') {
-//         const buffer = await part.toBuffer();
-
-//         const file: AvatarUploadedFile = {
-//           originalname: part.filename,
-//           buffer,
-//           mimetype: part.mimetype,
-//         };
-
-//         avatarFileFilter(file);
-
-//         const imageUrl = await this.imageService.uploadUserAvatar(
-//           file,
-//           String(id),
-//         );
-//         return { imageUrl };
-//       }
-//     }
-
-//     throw new BadRequestException('No file was uploaded');
-//   }
-// }
-
 import {
   Controller,
   Get,
@@ -79,15 +11,15 @@ import {
   ParseIntPipe,
   NotFoundException,
 } from '@nestjs/common';
-import { JwtAuthGuard } from './../../../libs/common/guards/jwt-auth.guard';
-import { ImageService } from './../../../modules/image/image.service';
-import { ClientDataService } from './../../../modules/client-data/client-data.service';
-import { Request } from './../../../libs/common/interface/request.interface';
-import { AvatarUploadedFile } from './../../../modules/image/interface/avatarUploadedFile.interface';
-import { avatarFileFilter } from './../../../modules/image/utils/file-filter.util';
-import { Public } from './../../../libs/common/decorator/public.decorator';
-import { RolesGuard } from './../../../libs/common/guards/roles.guard';
-import { Roles } from './../../../libs/common/decorator/roles.decorator';
+import { JwtAuthGuard } from '../../../libs/common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../../libs/common/guards/roles.guard';
+import { Roles } from '../../../libs/common/decorator/roles.decorator';
+import { Public } from '../../../libs/common/decorator/public.decorator';
+import { ImageService } from '../../image/image.service';
+import { ClientDataService } from '../../client-data/client-data.service';
+import { Request } from '../../../libs/common/interface/request.interface';
+import { AvatarUploadedFile } from '../../image/interface/avatarUploadedFile.interface';
+import { avatarFileFilter } from '../../image/utils/file-filter.util';
 
 @Controller('users-avatar')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -100,39 +32,28 @@ export class UserAvatarController {
 
   @Get(':id/avatar')
   @Public()
-  async getAvatar(@Param('id') id: string) {
-    const url = await this.imageService.getUserAvatarPath(id);
+  async getAvatar(@Param('id', ParseIntPipe) id: number) {
+    const url = await this.imageService.getUserAvatarPath(String(id));
+    console.log('url', url);
     if (!url) {
-      throw new NotFoundException('Avatar not found');
+      throw new NotFoundException('Avatar não encontrado');
     }
-    return { url };
+    console.log('url', url);
+    return { imageUrl: url };
   }
 
   @Post(':id/avatar')
-  @UseGuards(JwtAuthGuard)
-  async uploadOrUpdateAvatar(
+  async uploadAvatar(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
   ) {
     if (req.user.id !== id) {
-      throw new UnauthorizedException('Denied access to the user');
-    }
-
-    const clientData = await this.clientDataService.getClientData(id);
-    if (!clientData) {
-      throw new NotFoundException('Client not found');
+      throw new UnauthorizedException('Acesso negado ao usuário');
     }
 
     const parts = req.parts();
-    let fileProcessed = false;
-
     for await (const part of parts) {
       if (part.type === 'file') {
-        if (fileProcessed) {
-          throw new BadRequestException('Somente um arquivo é permitido');
-        }
-        fileProcessed = true;
-
         const buffer = await part.toBuffer();
         const file: AvatarUploadedFile = {
           originalname: part.filename,
@@ -142,30 +63,26 @@ export class UserAvatarController {
 
         avatarFileFilter(file);
 
-        if (clientData.image) {
-          await this.imageService.deleteUserAvatar(clientData.image);
-        }
-
         const imageUrl = await this.imageService.uploadUserAvatar(
           file,
           String(id),
         );
 
-        return this.clientDataService.updateClientImage(id, imageUrl);
+        console.log('imageUrl', imageUrl);
+        return { url: imageUrl };
       }
     }
 
-    throw new BadRequestException('No file was uploaded');
+    throw new BadRequestException('Nenhum arquivo foi enviado');
   }
 
   @Delete(':id/avatar')
-  @UseGuards(JwtAuthGuard)
   async deleteAvatar(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
   ) {
     if (req.user.id !== id) {
-      throw new UnauthorizedException('Denied access to the user');
+      throw new UnauthorizedException('Acesso negado ao usuário');
     }
 
     const clientData = await this.clientDataService.getClientData(id);
@@ -174,6 +91,8 @@ export class UserAvatarController {
     }
 
     await this.imageService.deleteUserAvatar(clientData.image);
-    return this.clientDataService.updateClientImage(id, '');
+    await this.clientDataService.updateClientImage(id, null);
+
+    return { message: 'Avatar removido com sucesso' };
   }
 }

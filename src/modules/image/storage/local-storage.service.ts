@@ -16,7 +16,8 @@ export class LocalStorageService implements StorageService {
     'uploads',
     'avatars',
   );
-  private readonly baseUrl = process.env.API_URL ?? 'http://localhost:3000';
+  private readonly baseUrl =
+    process.env.BACKEND_URL ?? 'https://localhost:3000';
   private readonly allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
   private readonly allowedMimeTypes = [
     'image/jpg',
@@ -72,38 +73,39 @@ export class LocalStorageService implements StorageService {
 
     await this.ensureDirExists();
 
+    await this.deleteAvatar(userId).catch((err) => {
+      console.error('Erro ao deletar avatars antigos:', err);
+    });
+
     const filename = `${userId}-${randomUUID()}.${ext}`;
     const fullPath = join(this.uploadDir, filename);
 
     await writeFile(fullPath, file.buffer);
 
-    return `${process.env.API_URL}/uploads/avatars/${filename}`.replace(
+    const newImageUrl = `${this.baseUrl}/uploads/avatars/${filename}`.replace(
       /\\/g,
       '/',
     );
+
+    return newImageUrl;
   }
 
-  async deleteAvatar(filePath: string): Promise<void> {
-    const filename = filePath.split('/uploads/avatars/')[1];
-    if (!filename) return;
-
-    const fullPath = join(this.uploadDir, filename);
-
+  // Deleta todos os avatares associados a um userId
+  async deleteAvatar(userId: string): Promise<void> {
     try {
-      await unlink(fullPath);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(`Error deleting file: ${error.message}`);
-      } else if (
-        typeof error === 'object' &&
-        error !== null &&
-        'code' in error &&
-        (error as { code?: string }).code !== 'ENOENT'
-      ) {
-        console.error(
-          `Error deleting file: ${(error as { code?: string }).code}`,
-        );
+      const files = await fs.promises.readdir(this.uploadDir);
+      const userFiles = files.filter((file) => file.startsWith(`${userId}-`));
+
+      for (const file of userFiles) {
+        const fullPath = join(this.uploadDir, file);
+        try {
+          await unlink(fullPath);
+        } catch (error) {
+          console.error(`Erro ao deletar ${file}:`, error);
+        }
       }
+    } catch (error) {
+      console.error('Erro ao listar arquivos para deleção:', error);
     }
   }
 }

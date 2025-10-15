@@ -11,6 +11,7 @@ export class GetMyClientDataService {
       where: { userId },
       include: { address: true },
     });
+    console.log('clientData', clientData);
 
     if (!clientData) {
       throw new NotFoundException(

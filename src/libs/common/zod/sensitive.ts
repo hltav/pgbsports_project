@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { z } from 'zod';
 
-// Função para validar e preparar dados sensíveis
 export const sensitiveString = (message?: string) => {
   return z
     .string()
@@ -32,5 +31,6 @@ export const sensitiveClientData = (message?: string) => {
     .min(1, message)
     .transform((val) => {
       return val;
-    });
+    })
+    .optional();
 };
