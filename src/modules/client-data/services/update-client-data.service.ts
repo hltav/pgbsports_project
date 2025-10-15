@@ -2,13 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database';
 import { ClientDataDTO, UpdateClientDataDTO } from '../dto';
 import { UpdateClientDataSchema } from '../dto/update-client-data.dto';
-import { EncryptionService } from './../../../libs/EncryptedData/services/encryptedData.service'; // ← Importe
+import { EncryptionService } from './../../../libs/EncryptedData/services/encryptedData.service';
 
 @Injectable()
 export class UpdateClientDataService {
   constructor(
     private prisma: PrismaService,
-    private encryptionService: EncryptionService, // ← Adicione no constructor
+    private encryptionService: EncryptionService,
   ) {}
 
   async execute(
@@ -27,11 +27,10 @@ export class UpdateClientDataService {
 
     const { address, ...clientData } = validated;
 
-    // Criptografa os dados do cliente igual na função create
     const encryptedClientData = {
       gender: clientData.gender
         ? this.encryptionService.encrypt(clientData.gender)
-        : existing.gender, // Mantém o existente se não for fornecido
+        : existing.gender,
       cpf: clientData.cpf
         ? this.encryptionService.encrypt(clientData.cpf)
         : existing.cpf,
@@ -43,7 +42,6 @@ export class UpdateClientDataService {
         : existing.phone,
     };
 
-    // Criptografa os dados do endereço se fornecidos
     const encryptedAddress = address
       ? {
           direction: address.direction
@@ -67,7 +65,7 @@ export class UpdateClientDataService {
         }
       : undefined;
 
-    return this.prisma.clientData.update({
+    const updated = await this.prisma.clientData.update({
       where: { id },
       data: {
         ...encryptedClientData,
@@ -82,5 +80,42 @@ export class UpdateClientDataService {
       },
       include: { address: true },
     });
+
+    return {
+      ...updated,
+      gender: updated.gender
+        ? this.encryptionService.decrypt(updated.gender)
+        : null,
+      cpf: updated.cpf ? this.encryptionService.decrypt(updated.cpf) : null,
+      image: updated.image
+        ? this.encryptionService.decrypt(updated.image)
+        : null,
+      phone: updated.phone
+        ? this.encryptionService.decrypt(updated.phone)
+        : null,
+      address: updated.address
+        ? {
+            ...updated.address,
+            direction: updated.address.direction
+              ? this.encryptionService.decrypt(updated.address.direction)
+              : null,
+            houseNumber: updated.address.houseNumber
+              ? this.encryptionService.decrypt(updated.address.houseNumber)
+              : null,
+            neighborhood: updated.address.neighborhood
+              ? this.encryptionService.decrypt(updated.address.neighborhood)
+              : null,
+            city: updated.address.city
+              ? this.encryptionService.decrypt(updated.address.city)
+              : null,
+            state: updated.address.state
+              ? this.encryptionService.decrypt(updated.address.state)
+              : null,
+            country: updated.address.country
+              ? this.encryptionService.decrypt(updated.address.country)
+              : null,
+          }
+        : null,
+    } as ClientDataDTO;
   }
 }
