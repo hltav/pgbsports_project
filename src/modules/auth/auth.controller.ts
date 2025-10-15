@@ -18,6 +18,7 @@ import {
 } from './../../libs/common/dto/user';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { SilentJwtAuthGuard } from './guards/silentJwtAuthGuard.guard';
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -132,7 +133,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(SilentJwtAuthGuard, RolesGuard)
   @Roles('ADMIN', 'USER')
   async logout(
     @Req() req: FastifyRequest & { user?: JwtPayload },
