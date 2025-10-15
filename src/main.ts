@@ -82,9 +82,9 @@ async function bootstrap() {
   await app.register(fastifyStatic, {
     root: join(process.cwd(), 'public', 'uploads', 'avatars'),
     prefix: '/uploads/avatars/',
-    // setHeaders: (res) => {
-    //   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-    // },
+    setHeaders: (res) => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
   });
 
   // ✅ Pipes de validação globais
