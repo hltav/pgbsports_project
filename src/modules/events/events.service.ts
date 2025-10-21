@@ -12,6 +12,8 @@ export class EventsService {
       data: {
         bankId: data.bankId,
         eventType: data.eventType,
+        modality: data.modality,
+        league: data.league,
         category: data.category,
         event: data.event,
         market: data.market,

@@ -11,6 +11,7 @@ import { ApiSportsModule } from './shared/api-sports/api-sports.module';
 import { ImageModule } from './modules/image/image.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import redisStore from 'cache-manager-ioredis';
+import { TheSportsDbModule } from './shared/thesportsdb-api/theSportsDb.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import redisStore from 'cache-manager-ioredis';
     CompetitionsModule,
     ApiSportsModule,
     ImageModule,
+    TheSportsDbModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

@@ -6,7 +6,10 @@ import { SafeInfer } from '../../../types/zod';
 export const GetEventSchema = z.object({
   id: z.number(),
   bankId: z.number(),
-  eventType: z.nativeEnum(EventType),
+  eventType: z.nativeEnum(EventType).nullish(),
+  modality: z.string().min(1),
+  league: z.string().min(1),
+  category: z.string().min(1),
   event: z.string(),
   market: z.string(),
   amount: decimalSchema,

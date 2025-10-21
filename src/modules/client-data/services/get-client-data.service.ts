@@ -16,8 +16,6 @@ export class GetClientDataService {
       include: { address: true },
     });
 
-    console.log('clientData', clientData);
-
     if (!clientData) {
       throw new NotFoundException(
         `ClientData com ID ${userId} não encontrado.`,

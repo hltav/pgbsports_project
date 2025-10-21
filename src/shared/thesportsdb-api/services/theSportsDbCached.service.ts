@@ -1,19 +1,19 @@
-import { Injectable, Inject } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Injectable, Inject } from '@nestjs/common';
+import { TheSportsDbService } from './theSportsDb.service';
 import { Cache } from 'cache-manager';
-import { SportsApiService } from './sportsApi.service';
 import {
   HistoricalParams,
   LiveParams,
   SportsApiParams,
-  TeamsParams,
   StandingsParams,
-} from '../interface/serviceApiCached.interface';
+  TeamsParams,
+} from '../interface/theSportsDbCached.interface';
 
 @Injectable()
-export class SportsApiCachedService {
+export class TheSportsDbCachedService {
   constructor(
-    private readonly sportsApiService: SportsApiService,
+    private readonly sportsDbService: TheSportsDbService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -29,9 +29,9 @@ export class SportsApiCachedService {
       return cachedData;
     }
 
-    const liveData = await this.sportsApiService.get<T>(endpoint, params);
+    const liveData = await this.sportsDbService.get<T>(endpoint, params);
 
-    const cacheTtl = this.calculateTtl(params, ttl);
+    const cacheTtl = ttl ?? 60 * 60 * 1000; // default 1h
     await this.cacheManager.set(cacheKey, liveData, cacheTtl);
 
     return liveData;
@@ -39,29 +39,29 @@ export class SportsApiCachedService {
 
   private generateCacheKey(endpoint: string, params?: SportsApiParams): string {
     const paramsString = params ? JSON.stringify(params) : '';
-    return `sports-api:${endpoint}:${paramsString}`;
+    return `thesportsdb:${endpoint}:${paramsString}`;
   }
 
   private calculateTtl(params?: SportsApiParams, customTtl?: number): number {
     if (customTtl) return customTtl;
 
     if (this.isHistoricalData(params)) {
-      return 30 * 24 * 60 * 60 * 1000;
+      return 30 * 24 * 60 * 60 * 1000; // 30 days
     }
 
     if (this.isLiveData(params)) {
-      return 10 * 1000;
+      return 10 * 1000; // 10 seconds
     }
 
     if (this.isTeamsParams(params)) {
-      return 24 * 60 * 60 * 1000;
+      return 24 * 60 * 60 * 1000; // 24 hours
     }
 
     if (this.isStandingsParams(params)) {
-      return 30 * 60 * 1000;
+      return 30 * 60 * 1000; // 30 minutes
     }
 
-    return 60 * 60 * 1000;
+    return 60 * 60 * 1000; // Default: 1 hour
   }
 
   private isHistoricalData(

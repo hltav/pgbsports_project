@@ -34,11 +34,10 @@ export class UserAvatarController {
   @Public()
   async getAvatar(@Param('id', ParseIntPipe) id: number) {
     const url = await this.imageService.getUserAvatarPath(String(id));
-    console.log('url', url);
+
     if (!url) {
       throw new NotFoundException('Avatar não encontrado');
     }
-    console.log('url', url);
     return { imageUrl: url };
   }
 
@@ -67,8 +66,6 @@ export class UserAvatarController {
           file,
           String(id),
         );
-
-        console.log('imageUrl', imageUrl);
         return { url: imageUrl };
       }
     }

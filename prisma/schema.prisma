@@ -111,7 +111,9 @@ model Event {
   id        Int       @id @default(autoincrement())
   bankId    Int
   bank      Bankroll  @relation(fields: [bankId], references: [id], onDelete: Cascade)
-  eventType EventType
+  eventType EventType?
+  modality  String
+  league    String
   category  String
   event     String
   market    String

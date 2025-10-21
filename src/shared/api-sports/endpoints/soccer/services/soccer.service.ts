@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SportsApiCachedService } from '../../../api/sportsApiCached.service';
+import { SportsApiCachedService } from '../../../api/soccer/sportsApiCached.service';
 import { FixturesResponse } from '../schemas/fixtures/fixtures.schema';
 import { LeaguesResponse } from '../schemas/leagues/leagues.schema';
 import { TeamsResponse } from '../schemas/teams/teams-response.schema';
