@@ -106,25 +106,32 @@ model Bankroll {
   @@unique([userId, name])
 }
 
-//Event Data
 model Event {
-  id        Int       @id @default(autoincrement())
-  bankId    Int
-  bank      Bankroll  @relation(fields: [bankId], references: [id], onDelete: Cascade)
-  eventType EventType?
-  modality  String
-  league    String
-  category  String
-  event     String
-  market    String
-  amount    Decimal
-  result    Result    @default(pending)
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id             Int        @id @default(autoincrement())
+  bankId         Int
+  bank           Bankroll   @relation(fields: [bankId], references: [id], onDelete: Cascade)
+  eventType      EventType?
+  modality       String
+  league         String
+  odd            Decimal
+  event          String
+  market         String
+  marketCategory String     @default("")
+  marketSub      String?    @default("")
+  optionMarket   String     @default("")
+  amount         Decimal
+  result         Result     @default(pending)
+  apiEventId     String?
+  homeTeam       String?
+  awayTeam       String?
+  eventDate      DateTime?
+  userId         Int
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@index([userId, eventType])
+  @@index([result, apiEventId])
 }
 
 // Email Verification Model

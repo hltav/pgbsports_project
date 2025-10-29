@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const CategorySchema = z.object({
+export const OddSchema = z.object({
   id: z.string(),
   name: z.string(),
 });
@@ -9,7 +9,7 @@ export const CompetitionSchema = z.object({
   id: z.string(),
   name: z.string(),
   gender: z.string().optional(),
-  category: CategorySchema,
+  odd: OddSchema,
 });
 
 export const CompetitionsResponseSchema = z.object({
@@ -24,7 +24,7 @@ export const CompetitionInfoSchema = z.object({
   end_date: z.string(),
 });
 
-export type Category = z.infer<typeof CategorySchema>;
+export type Odd = z.infer<typeof OddSchema>;
 export type Competition = z.infer<typeof CompetitionSchema>;
 export type CompetitionsResponse = z.infer<typeof CompetitionsResponseSchema>;
 export type CompetitionInfo = z.infer<typeof CompetitionInfoSchema>;

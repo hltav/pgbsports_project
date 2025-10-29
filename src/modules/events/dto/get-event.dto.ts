@@ -9,11 +9,15 @@ export const GetEventSchema = z.object({
   eventType: z.nativeEnum(EventType).nullish(),
   modality: z.string().min(1),
   league: z.string().min(1),
-  category: z.string().min(1),
+  odd: decimalSchema,
   event: z.string(),
   market: z.string(),
+  marketCategory: z.string(),
+  marketSub: z.string().optional().nullish(),
+  optionMarket: z.string(),
   amount: decimalSchema,
   result: z.nativeEnum(Result),
   userId: z.number(),
 });
+
 export type GetEventDTO = SafeInfer<typeof GetEventSchema>;
