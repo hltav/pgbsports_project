@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import {
   LiveScoreEvent,
@@ -16,13 +17,31 @@ export class TheSportsDbLiveApiService {
   private readonly logger = new Logger(TheSportsDbLiveApiService.name);
   private readonly baseUrl =
     'https://www.thesportsdb.com/api/v2/json/livescore';
+  private readonly API_KEY: string;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {
+    const apiKey = process.env.THESPORTSDB_KEY;
+    if (!apiKey) {
+      throw new Error(
+        'THESPORTSDB_KEY is not defined in environment variables',
+      );
+    }
+    this.API_KEY = apiKey;
+  }
 
   async getLiveScores(sport: string): Promise<LiveScoreEvent[]> {
     try {
       const url = `${this.baseUrl}/${sport}`;
-      const response = await firstValueFrom(this.httpService.get(url));
+      const response = await firstValueFrom(
+        this.httpService.get(url, {
+          headers: {
+            'X-API-KEY': this.API_KEY,
+          },
+        }),
+      );
 
       const parsedResponse = LiveScoreApiResponseSchema.parse(response.data);
       return parsedResponse.events ?? [];

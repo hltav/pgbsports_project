@@ -21,13 +21,12 @@ enum Role {
 }
 
 // Type of event enum
-enum EventType {
-  SINGLE
-  MULTIPLE
-  LIVE
-}
+// enum EventType {
+//   SINGLE
+//   MULTIPLE
+//   LIVE
+// }
 
-// Result enum for event outcomes
 enum Result {
   pending
   win
@@ -42,7 +41,6 @@ enum EmailVerificationType {
   RESET_PASSWORD
 }
 
-//Initial User Data
 model User {
   id                  Int                 @id @default(autoincrement())
   firstname           String
@@ -107,30 +105,42 @@ model Bankroll {
 }
 
 model Event {
-  id             Int        @id @default(autoincrement())
-  bankId         Int
-  bank           Bankroll   @relation(fields: [bankId], references: [id], onDelete: Cascade)
-  eventType      EventType?
-  modality       String
-  league         String
-  odd            Decimal
-  event          String
-  market         String
-  marketCategory String     @default("")
-  marketSub      String?    @default("")
-  optionMarket   String     @default("")
-  amount         Decimal
-  result         Result     @default(pending)
-  apiEventId     String?
-  homeTeam       String?
-  awayTeam       String?
-  eventDate      DateTime?
-  userId         Int
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  id               Int       @id @default(autoincrement())
+  bankId           Int
+  bank             Bankroll  @relation(fields: [bankId], references: [id], onDelete: Cascade)
+  // eventType      EventType?
+  modality         String
+  league           String
+  odd              Decimal
+  event            String
+  market           String
+  marketCategory   String
+  marketSub        String?
+  optionMarket     String
+  amount           Decimal
+  result           Result    @default(pending)
+  apiEventId       String?
+  homeTeam         String?
+  awayTeam         String?
+  eventDate        DateTime?
+  userId           Int
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  strLeague        String?
+  strBadge         String?
+  strSeason        String?
+  intRound         Int?
+  intHomeScore     String?
+  intAwayScore     String?
+  strHomeTeamBadge String?
+  strAwayTeamBadge String?
+  strCountry       String?
+  strStatus        String?
+  strPostponed     String?
+  strThumb         String?
 
-  @@index([userId, eventType])
+  //@@index([userId, eventType])
   @@index([result, apiEventId])
 }
 

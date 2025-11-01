@@ -50,6 +50,32 @@ export class TheSportsDbController {
     }
   }
 
+  @Get('leagues/:id')
+  async getLeagueById(@Param('id') id: string) {
+    if (!id) {
+      throw new HttpException(
+        'ID da liga é obrigatório',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const league = await this.leaguesService.getLeagueById(id);
+
+      if (!league) {
+        throw new HttpException('Liga não encontrada', HttpStatus.NOT_FOUND);
+      }
+
+      return { data: league };
+    } catch (err: unknown) {
+      console.error('Erro ao buscar liga por ID:', err);
+      throw new HttpException(
+        'Erro ao buscar liga da API',
+        HttpStatus.BAD_GATEWAY,
+      );
+    }
+  }
+
   @Get('events/:leagueId')
   async getNextEvents(@Param('leagueId') leagueId: string) {
     if (!leagueId) {
@@ -72,6 +98,32 @@ export class TheSportsDbController {
       console.error('Erro ao buscar próximos eventos:', err);
       throw new HttpException(
         'Erro ao buscar próximos eventos da liga',
+        HttpStatus.BAD_GATEWAY,
+      );
+    }
+  }
+
+  @Get('event/:id')
+  async getEventById(@Param('id') id: string) {
+    if (!id) {
+      throw new HttpException(
+        'ID do evento é obrigatório',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const event = await this.eventsService.getEventById(id);
+
+      if (!event) {
+        throw new HttpException('Evento não encontrado', HttpStatus.NOT_FOUND);
+      }
+
+      return { data: event };
+    } catch (err: unknown) {
+      console.error('Erro ao buscar evento por ID:', err);
+      throw new HttpException(
+        'Erro ao buscar evento na API',
         HttpStatus.BAD_GATEWAY,
       );
     }

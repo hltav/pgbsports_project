@@ -3,23 +3,32 @@ import { Result } from '@prisma/client';
 import { PrismaService } from '../../../libs/database/prisma';
 import { TheSportsDbLiveApiService } from './theSportsDbLive.service';
 import {
-  LiveScoreEvent,
   parseLiveScores,
+  LiveScoreEvent,
 } from '../schemas/live/liveScore.schema';
 import { EventLiveScoreDTO } from '../schemas/live/eventLiveScore.schema';
-
-interface EventMarketAnalysis {
-  result: Result;
-  shouldUpdate: boolean;
-}
+import { mapModalityToSport } from '../utils/sport.mapper';
+import { mapApiStatus } from '../utils/status.mapper';
+import { EventStatus } from '../enums/eventStatus.enum';
+import { EventMarketAnalysis } from '../services/analysis/base.analysis';
+import {
+  analyzeResultadoFinal,
+  analyzeTotalGols,
+  analyzeAmbasMarcam,
+  analyzePlacarExato,
+  analyzeDuplaChance,
+} from './analysis';
+import { TheSportsDbEventsService } from './events-thesportsdb.service';
+import { LookupEvent } from '../schemas/allEvents/allEvents.schema';
 
 @Injectable()
 export class ResultUpdaterService {
   private readonly logger = new Logger(ResultUpdaterService.name);
 
   constructor(
-    private prisma: PrismaService,
-    private theSportsDbLiveApi: TheSportsDbLiveApiService,
+    private readonly prisma: PrismaService,
+    private readonly theSportsDbLiveApi: TheSportsDbLiveApiService,
+    private readonly eventsService: TheSportsDbEventsService,
   ) {}
 
   async updateAllPendingEvents(): Promise<void> {
@@ -38,34 +47,67 @@ export class ResultUpdaterService {
     const event = await this.prisma.event.findUnique({
       where: { id: eventId },
     });
-
     if (!event || event.result !== 'pending') return;
 
     try {
-      const sport = this.mapModalityToSport(event.modality);
+      const sport = mapModalityToSport(event.modality);
 
-      const liveScoresRaw = await this.theSportsDbLiveApi.getLiveScores(sport);
-      const liveScores: LiveScoreEvent[] = parseLiveScores(liveScoresRaw);
+      const liveEvent: LiveScoreEvent | LookupEvent | null =
+        await this.fetchEventData(sport, event.apiEventId ?? '');
 
-      const liveEvent = this.findMatchingEvent(liveScores, event);
       if (!liveEvent) {
-        this.logger.warn(`Live event not found for event ID ${eventId}`);
+        this.logger.warn(`No data found for event ID ${eventId}`);
         return;
       }
 
-      if (!this.theSportsDbLiveApi.isEventFinished(liveEvent)) {
-        this.logger.log(`Event ${eventId} is still in progress`);
+      const eventStatus = mapApiStatus(
+        'strStatus' in liveEvent ? liveEvent.strStatus : 'FT',
+      );
+
+      if (
+        eventStatus === EventStatus.POSTPONED ||
+        eventStatus === EventStatus.CANCELLED
+      ) {
+        await this.prisma.event.update({
+          where: { id: eventId },
+          data: { result: Result.returned },
+        });
+        this.logger.log(`Event ${eventId} marked as returned (${eventStatus})`);
         return;
       }
 
-      const analysis = this.analyzeEventResult(event, liveEvent);
+      if (eventStatus !== EventStatus.FINISHED) {
+        this.logger.log(`Event ${eventId} ainda não terminou (${eventStatus})`);
+        return;
+      }
+
+      const homeScore =
+        'intHomeScore' in liveEvent
+          ? parseInt(liveEvent.intHomeScore ?? '0', 10)
+          : (liveEvent.intHomeScore ?? 0);
+
+      const awayScore =
+        'intAwayScore' in liveEvent
+          ? parseInt(liveEvent.intAwayScore ?? '0', 10)
+          : (liveEvent.intAwayScore ?? 0);
+
+      if (homeScore == null || awayScore == null) {
+        this.logger.warn(`Event ${eventId} sem placar definido ainda`);
+        return;
+      }
+
+      const analysis = this.analyzeEventResult({
+        ...event,
+        intHomeScore: homeScore.toString(),
+        intAwayScore: awayScore.toString(),
+        strStatus: eventStatus,
+      } as EventLiveScoreDTO);
 
       if (analysis.shouldUpdate) {
         await this.prisma.event.update({
           where: { id: eventId },
           data: { result: analysis.result },
         });
-
         this.logger.log(`Event ${eventId} updated to ${analysis.result}`);
       }
     } catch (error) {
@@ -73,165 +115,47 @@ export class ResultUpdaterService {
     }
   }
 
-  private mapModalityToSport(modality: string): string {
-    const mapping: Record<string, string> = {
-      Futebol: 'soccer',
-      Basquete: 'basketball',
-      Tênis: 'tennis',
-      Vôlei: 'volleyball',
-    };
-    return mapping[modality] || modality.toLowerCase();
-  }
+  private async fetchEventData(
+    sport: string,
+    apiEventId: string,
+  ): Promise<LiveScoreEvent | LookupEvent | null> {
+    const liveScoresRaw = await this.theSportsDbLiveApi.getLiveScores(sport);
+    const liveScores: LiveScoreEvent[] = parseLiveScores(liveScoresRaw);
 
-  // private findMatchingEvent(
-  //   liveScores: LiveScoreEvent[],
-  //   event: EventLiveScoreDTO,
-  // ): LiveScoreEvent | null {
-  //   return (
-  //     liveScores.find((live) => {
-  //       if (!live.dateEvent || !event.createdAt) return false;
+    const event = liveScores.find((l) => l.idEvent === apiEventId);
+    if (event) return event;
 
-  //       const apiDate = new Date(live.dateEvent).toISOString().split('T')[0];
-  //       const eventDate = new Date(event.createdAt).toISOString().split('T')[0];
+    this.logger.warn(
+      `Live event not found for event ID ${apiEventId}, trying lookup...`,
+    );
 
-  //       const leagueMatch = live.strLeague === event.league;
-
-  //       const [homeTeam, awayTeam] = event.event.split('-');
-
-  //       const homeTeamMatch = homeTeam && live.strHomeTeam === homeTeam.trim();
-  //       const awayTeamMatch = awayTeam && live.strAwayTeam === awayTeam.trim();
-
-  //       return (
-  //         apiDate === eventDate && leagueMatch && homeTeamMatch && awayTeamMatch
-  //       );
-  //     }) || null
-  //   );
-  // }
-  private findMatchingEvent(
-    liveScores: LiveScoreEvent[],
-    event: EventLiveScoreDTO,
-  ): LiveScoreEvent | null {
-    return liveScores.find((live) => live.idEvent === event.apiEventId) || null;
+    const pastEvent = await this.eventsService.getEventById(apiEventId);
+    return pastEvent ?? null;
   }
 
   private analyzeEventResult(
-    event: EventLiveScoreDTO,
-    liveEvent: LiveScoreEvent,
+    eventData: EventLiveScoreDTO,
   ): EventMarketAnalysis {
-    const homeScore = parseInt(liveEvent.intHomeScore || '0', 10);
-    const awayScore = parseInt(liveEvent.intAwayScore || '0', 10);
+    const homeScore = parseInt(eventData.intHomeScore || '0', 10);
+    const awayScore = parseInt(eventData.intAwayScore || '0', 10);
+    const market = eventData.market;
+    const details = eventData.optionMarket;
 
-    const market = event.market;
-    const eventDetails = event.event;
+    this.logger.debug(
+      `Analyzing event: market="${market}", details="${details}", homeScore=${homeScore}, awayScore=${awayScore}`,
+    );
 
-    if (market.includes('Resultado Final')) {
-      return this.analyzeResultadoFinal(eventDetails, homeScore, awayScore);
-    }
-
-    if (market.includes('Total de Gols')) {
-      return this.analyzeTotalGols(eventDetails, homeScore, awayScore);
-    }
-
-    if (market.includes('Ambas')) {
-      return this.analyzeAmbasMarcam(eventDetails, homeScore, awayScore);
-    }
-
-    if (market.includes('Placar Exato')) {
-      return this.analyzePlacarExato(eventDetails, homeScore, awayScore);
-    }
-
-    if (market.includes('Dupla Chance')) {
-      return this.analyzeDuplaChance(eventDetails, homeScore, awayScore);
-    }
+    if (market.includes('Resultado Final'))
+      return analyzeResultadoFinal(details, homeScore, awayScore);
+    if (market.includes('Total de Gols'))
+      return analyzeTotalGols(details, homeScore, awayScore);
+    if (market.includes('Ambas'))
+      return analyzeAmbasMarcam(details, homeScore, awayScore);
+    if (market.includes('Placar Exato'))
+      return analyzePlacarExato(details, homeScore, awayScore);
+    if (market.includes('Dupla Chance'))
+      return analyzeDuplaChance(details, homeScore, awayScore);
 
     return { result: Result.void, shouldUpdate: true };
-  }
-
-  private analyzeResultadoFinal(
-    eventDetails: string,
-    homeScore: number,
-    awayScore: number,
-  ): EventMarketAnalysis {
-    let won = false;
-    if (eventDetails.includes('Casa') && homeScore > awayScore) won = true;
-    if (eventDetails.includes('Empate') && homeScore === awayScore) won = true;
-    if (eventDetails.includes('Fora') && awayScore > homeScore) won = true;
-
-    return { result: won ? Result.win : Result.lose, shouldUpdate: true };
-  }
-
-  private analyzeTotalGols(
-    eventDetails: string,
-    homeScore: number,
-    awayScore: number,
-  ): EventMarketAnalysis {
-    const totalGols = homeScore + awayScore;
-    const isMais = eventDetails.includes('Mais');
-    const threshold = parseFloat(eventDetails.match(/\d+\.?\d*/)?.[0] || '0');
-
-    let won = false;
-    if (isMais && totalGols > threshold) won = true;
-    if (!isMais && totalGols < threshold) won = true;
-
-    return { result: won ? Result.win : Result.lose, shouldUpdate: true };
-  }
-
-  private analyzeAmbasMarcam(
-    eventDetails: string,
-    homeScore: number,
-    awayScore: number,
-  ): EventMarketAnalysis {
-    const ambasMarcaram = homeScore > 0 && awayScore > 0;
-    const totalGols = homeScore + awayScore;
-
-    if (eventDetails.includes('Ambos marcam - Sim')) {
-      return {
-        result: ambasMarcaram ? Result.win : Result.lose,
-        shouldUpdate: true,
-      };
-    }
-    if (eventDetails.includes('Ambos marcam - Não')) {
-      return {
-        result: !ambasMarcaram ? Result.win : Result.lose,
-        shouldUpdate: true,
-      };
-    }
-    if (eventDetails.includes('Ambos marcam e + 2.5 gols')) {
-      const won = ambasMarcaram && totalGols > 2.5;
-      return { result: won ? Result.win : Result.lose, shouldUpdate: true };
-    }
-    if (eventDetails.includes('Ambos marcam ou + 2.5 gols')) {
-      const won = ambasMarcaram || totalGols > 2.5;
-      return { result: won ? Result.win : Result.lose, shouldUpdate: true };
-    }
-
-    return { result: Result.void, shouldUpdate: true };
-  }
-
-  private analyzePlacarExato(
-    eventDetails: string,
-    homeScore: number,
-    awayScore: number,
-  ): EventMarketAnalysis {
-    const [expectedHome, expectedAway] = eventDetails.split('-').map(Number);
-    const won = homeScore === expectedHome && awayScore === expectedAway;
-
-    return { result: won ? Result.win : Result.lose, shouldUpdate: true };
-  }
-
-  private analyzeDuplaChance(
-    eventDetails: string,
-    homeScore: number,
-    awayScore: number,
-  ): EventMarketAnalysis {
-    let won = false;
-
-    if (eventDetails.includes('Casa ou Empate')) won = homeScore >= awayScore;
-    else if (eventDetails.includes('Fora ou Empate'))
-      won = awayScore >= homeScore;
-    else if (eventDetails.includes('Casa ou Fora'))
-      won = homeScore !== awayScore;
-
-    return { result: won ? Result.win : Result.lose, shouldUpdate: true };
   }
 }

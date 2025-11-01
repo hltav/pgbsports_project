@@ -19,6 +19,9 @@ export const EventLiveScoreSchema = GetEventSchema.extend({
     .string()
     .datetime()
     .transform((val) => new Date(val)),
+  intHomeScore: z.string().default('0'),
+  intAwayScore: z.string().default('0'),
+  strStatus: z.string().default('Not Started'),
 });
 
 export type EventLiveScoreDTO = SafeInfer<typeof EventLiveScoreSchema>;

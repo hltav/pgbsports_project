@@ -6,12 +6,10 @@ import { CreateEventDTO, GetEventDTO, UpdateEventDTO } from './dto';
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
-  //Cria um novo evento
   async createEvent(data: CreateEventDTO): Promise<GetEventDTO> {
     const event = await this.prisma.event.create({
       data: {
         bankId: data.bankId,
-        eventType: data.eventType,
         modality: data.modality,
         league: data.league,
         odd: data.odd,
@@ -23,6 +21,19 @@ export class EventsService {
         amount: data.amount,
         result: data.result ?? undefined,
         userId: data.userId,
+        apiEventId: data.apiEventId,
+        homeTeam: data.homeTeam,
+        awayTeam: data.awayTeam,
+        eventDate: data.eventDate ? new Date(data.eventDate) : null,
+        strBadge: data.strBadge,
+        strSeason: data.strSeason,
+        intRound: data.intRound,
+        strHomeTeamBadge: data.strHomeTeamBadge,
+        strAwayTeamBadge: data.strAwayTeamBadge,
+        strCountry: data.strCountry,
+        strStatus: data.strStatus,
+        strPostponed: data.strPostponed,
+        strThumb: data.strThumb,
       },
     });
 
