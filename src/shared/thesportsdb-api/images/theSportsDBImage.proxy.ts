@@ -19,7 +19,13 @@ export class TSDBImageProxyController {
     try {
       const decodedUrl = Buffer.from(encodedUrl, 'base64').toString('utf-8');
 
-      if (!decodedUrl.startsWith('https://r2.thesportsdb.com/images/media/')) {
+      // if (!decodedUrl.startsWith('https://r2.thesportsdb.com/images/media/')) {
+      //   throw new HttpException('URL inválida', HttpStatus.BAD_REQUEST);
+      // }
+      if (
+        !decodedUrl.startsWith('https://r2.thesportsdb.com/images/media/') &&
+        !decodedUrl.startsWith('https://www.thesportsdb.com/images/media/')
+      ) {
         throw new HttpException('URL inválida', HttpStatus.BAD_REQUEST);
       }
 

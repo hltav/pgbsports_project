@@ -3,6 +3,7 @@ import { Result } from '@prisma/client';
 export interface EventMarketAnalysis {
   result: Result;
   shouldUpdate: boolean;
+  isFinalizableEarly?: boolean;
 }
 
 export function noUpdate(): EventMarketAnalysis {

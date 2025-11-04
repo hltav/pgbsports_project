@@ -29,7 +29,12 @@ export const CreateEventSchema = z.object({
   awayTeam: z.string().optional().nullable(),
   eventDate: z
     .union([z.string(), z.date()])
-    .transform((val) => (typeof val === 'string' ? new Date(val) : val))
+    .transform((val) => {
+      if (typeof val === 'string') {
+        return val.endsWith('Z') ? new Date(val) : new Date(val + 'Z');
+      }
+      return val;
+    })
     .optional()
     .nullable(),
   createdAt: z
@@ -49,6 +54,10 @@ export const CreateEventSchema = z.object({
   strStatus: z.string().optional().nullable(),
   strPostponed: z.string().optional().nullable(),
   strThumb: z.string().optional().nullable(),
+  strTimestamp: z.string().optional().nullable(),
+  strTime: z.string().optional().nullable(),
+  strTimeLocal: z.string().optional().nullable(),
+  timezone: z.string().optional().nullable(),
 });
 
 export type CreateEventDTO = SafeInfer<typeof CreateEventSchema>;

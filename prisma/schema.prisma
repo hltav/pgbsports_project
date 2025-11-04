@@ -104,6 +104,7 @@ model Bankroll {
   @@unique([userId, name])
 }
 
+//Event Model
 model Event {
   id               Int       @id @default(autoincrement())
   bankId           Int
@@ -119,7 +120,7 @@ model Event {
   optionMarket     String
   amount           Decimal
   result           Result    @default(pending)
-  apiEventId       String?
+  apiEventId       String?   
   homeTeam         String?
   awayTeam         String?
   eventDate        DateTime?
@@ -127,10 +128,20 @@ model Event {
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+  strTimestamp     String?
+  strTime          String?
+  strTimeLocal     String?
+  dateEvent        String?
+  dateEventLocal   String?
+  timezone         String?
   strLeague        String?
   strBadge         String?
   strSeason        String?
   intRound         Int?
+  homeScoreHT      Int?
+  awayScoreHT      Int?
+  homeScoreFT      Int?
+  awayScoreFT      Int?
   intHomeScore     String?
   intAwayScore     String?
   strHomeTeamBadge String?
@@ -142,6 +153,7 @@ model Event {
 
   //@@index([userId, eventType])
   @@index([result, apiEventId])
+  @@index([eventDate]) // Índice útil para buscar eventos por data
 }
 
 // Email Verification Model

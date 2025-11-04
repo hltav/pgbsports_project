@@ -21,6 +21,10 @@ export const EventLiveScoreSchema = GetEventSchema.extend({
     .transform((val) => new Date(val)),
   intHomeScore: z.string().default('0'),
   intAwayScore: z.string().default('0'),
+  homeScoreHT: z.number().nullish().default(0),
+  awayScoreHT: z.number().nullish().default(0),
+  homeScoreFT: z.number().nullish().default(0),
+  awayScoreFT: z.number().nullish().default(0),
   strStatus: z.string().default('Not Started'),
 });
 

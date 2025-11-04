@@ -1,12 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../libs/database/prisma';
 import { CreateEventDTO, GetEventDTO, UpdateEventDTO } from './dto';
+import {
+  convertToSaoPauloTime,
+  getTimezoneByCountry,
+} from './utils/timezone.utils';
 
 @Injectable()
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
   async createEvent(data: CreateEventDTO): Promise<GetEventDTO> {
+    // Processa a data do evento
+    let processedEventDate: Date | null = null;
+
+    if (data.strTimestamp) {
+      // Se tiver timestamp UTC, converte para São Paulo
+      processedEventDate = convertToSaoPauloTime(data.strTimestamp);
+    } else if (data.eventDate) {
+      processedEventDate = new Date(data.eventDate);
+    }
+
+    // Determina o timezone baseado no país
+    const timezone = data.strCountry
+      ? getTimezoneByCountry(data.strCountry)
+      : null;
+
     const event = await this.prisma.event.create({
       data: {
         bankId: data.bankId,
@@ -24,7 +43,11 @@ export class EventsService {
         apiEventId: data.apiEventId,
         homeTeam: data.homeTeam,
         awayTeam: data.awayTeam,
-        eventDate: data.eventDate ? new Date(data.eventDate) : null,
+        eventDate: processedEventDate,
+        strTimestamp: data.strTimestamp,
+        strTime: data.strTime,
+        strTimeLocal: data.strTimeLocal,
+        timezone: timezone,
         strBadge: data.strBadge,
         strSeason: data.strSeason,
         intRound: data.intRound,
