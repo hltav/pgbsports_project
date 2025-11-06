@@ -7,9 +7,6 @@ import { TheSportsDbSportsService } from './services/sports-thesportsdb.service'
 import { TheSportsDbCachedService } from './services/theSportsDbCached.service';
 import { TheSportsDbController } from './controllers/theSportsDb.controller';
 import { TheSportsDbService } from './services/theSportsDb.service';
-import { ResultsController } from './controllers/results.controller';
-import { ResultSchedulerService } from './services/resultScheduler.service';
-import { ResultUpdaterService } from './services/resultUpdater.service';
 import { PrismaModule } from './../../libs/database/prisma';
 import { TheSportsDbLiveApiService } from './services/theSportsDbLive.service';
 import { TSDBImageProxyController } from './images/theSportsDBImage.proxy';
@@ -17,19 +14,13 @@ import { FirstHalfSettlementService } from './services/analysis/firstHalf.analys
 
 @Module({
   imports: [HttpModule, CacheModule.register(), PrismaModule],
-  controllers: [
-    TheSportsDbController,
-    ResultsController,
-    TSDBImageProxyController,
-  ],
+  controllers: [TheSportsDbController, TSDBImageProxyController],
   providers: [
     TheSportsDbCachedService,
     TheSportsDbSportsService,
     TheSportsDbLeaguesService,
     TheSportsDbEventsService,
     TheSportsDbService,
-    ResultSchedulerService,
-    ResultUpdaterService,
     TheSportsDbLiveApiService,
     FirstHalfSettlementService,
   ],
@@ -39,8 +30,6 @@ import { FirstHalfSettlementService } from './services/analysis/firstHalf.analys
     TheSportsDbLeaguesService,
     TheSportsDbEventsService,
     TheSportsDbService,
-    ResultSchedulerService,
-    ResultUpdaterService,
     TheSportsDbLiveApiService,
     FirstHalfSettlementService,
   ],

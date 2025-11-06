@@ -93,7 +93,7 @@ export const FixturesResponseSchema = z.object({
   parameters: z.object({
     date: z.string(),
   }),
-  errors: z.array(z.string()), // Ajustar se souber estrutura exata
+  errors: z.array(z.string()),
   results: z.number(),
   paging: z.object({
     current: z.number(),

@@ -10,7 +10,6 @@ export class CryptoService {
     private readonly jwtService: JwtHandlerService,
   ) {}
 
-  // Password
   async hashPassword(password: string): Promise<string> {
     return this.passwordService.hash(password);
   }
@@ -19,7 +18,6 @@ export class CryptoService {
     return this.passwordService.compare(password, hash);
   }
 
-  // JWT
   signJwt(payload: JwtPayload, options?: { expiresIn?: string }) {
     return this.jwtService.sign(payload, options);
   }

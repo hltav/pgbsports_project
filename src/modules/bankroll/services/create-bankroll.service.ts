@@ -18,6 +18,8 @@ export class CreateBankrollService {
       throw new ConflictException('Bankroll with this name already exists!');
     }
 
+    const initialBalance = data.initialBalance ?? data.balance;
+
     const created = await this.prisma.bankroll.create({
       data: {
         name: data.name,
@@ -25,6 +27,13 @@ export class CreateBankrollService {
         balance: data.balance,
         unidValue: data.unidValue,
         bookmaker: data.bookmaker ?? 'Unknown',
+        initialBalance,
+        histories: {
+          create: {
+            balance: initialBalance,
+            unidValue: data.unidValue,
+          },
+        },
       },
       select: {
         id: true,
@@ -33,12 +42,13 @@ export class CreateBankrollService {
         balance: true,
         unidValue: true,
         bookmaker: true,
+        initialBalance: true,
       },
     });
 
     return {
       ...created,
-      statusSync: 'Synchronized', // ✅ Aqui você "injeta" esse campo
+      statusSync: 'Synchronized',
     };
   }
 }

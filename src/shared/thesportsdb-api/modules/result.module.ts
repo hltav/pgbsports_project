@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { PrismaService } from './../../../libs/database/prisma';
 import { TheSportsDbLiveApiService } from '../services/theSportsDbLive.service';
@@ -6,7 +6,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ResultsController } from '../controllers/results.controller';
 import { ResultUpdaterService } from '../services/resultUpdater.service';
 import { ResultSchedulerService } from '../services/resultScheduler.service';
+import { TheSportsDbModule } from '../theSportsDb.module';
 
+@Global()
 @Module({
   imports: [
     HttpModule.register({
@@ -14,6 +16,7 @@ import { ResultSchedulerService } from '../services/resultScheduler.service';
       maxRedirects: 5,
     }),
     ScheduleModule.forRoot(),
+    TheSportsDbModule,
   ],
   controllers: [ResultsController],
   providers: [
@@ -22,6 +25,6 @@ import { ResultSchedulerService } from '../services/resultScheduler.service';
     ResultUpdaterService,
     ResultSchedulerService,
   ],
-  exports: [ResultUpdaterService],
+  exports: [ResultUpdaterService, ResultSchedulerService],
 })
 export class ResultsModule {}

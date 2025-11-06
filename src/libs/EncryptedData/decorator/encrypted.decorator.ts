@@ -49,11 +49,9 @@ export class EncryptionInterceptor implements NestInterceptor {
       }
     });
 
-    // Descriptografar clientData se existir
     if (decrypted.clientData && typeof decrypted.clientData === 'object') {
       decrypted.clientData = this.decryptObject(decrypted.clientData);
 
-      // Descriptografar address dentro de clientData
       if (decrypted.clientData && typeof decrypted.clientData === 'object') {
         const clientDataObj = decrypted.clientData as Record<string, unknown>;
         if (
@@ -65,7 +63,6 @@ export class EncryptionInterceptor implements NestInterceptor {
       }
     }
 
-    // Descriptografar address diretamente no objeto principal também
     if (decrypted.address && typeof decrypted.address === 'object') {
       decrypted.address = this.decryptObject(decrypted.address);
     }

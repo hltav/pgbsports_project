@@ -1,124 +1,3 @@
-// import { Injectable, Logger } from '@nestjs/common';
-// import { PrismaService } from '../../../../libs/database/prisma';
-// import { Result } from '@prisma/client';
-
-// @Injectable()
-// export class FirstHalfSettlementService {
-//   private readonly logger = new Logger(FirstHalfSettlementService.name);
-
-//   constructor(private readonly prisma: PrismaService) {}
-
-//   /**
-//    * Liquida apostas de 1º tempo quando o evento chega ao intervalo.
-//    * Atualiza o placar HT no banco e define o resultado conforme a condição.
-//    */
-//   async settleFirstHalfBets(
-//     apiEventId: string,
-//     homeScoreHT: number,
-//     awayScoreHT: number,
-//   ): Promise<void> {
-//     // 🔹 Atualiza o placar HT no evento
-//     const updateResult = await this.prisma.event.updateMany({
-//       where: { apiEventId },
-//       data: { homeScoreHT, awayScoreHT },
-//     });
-//     this.logger.debug(`${updateResult.count} evento(s) atualizado(s)`);
-//     // 🔹 Busca apostas pendentes desse evento que sejam de 1º tempo
-//     const bets = await this.prisma.event.findMany({
-//       where: {
-//         apiEventId,
-//         result: Result.pending,
-//         OR: [
-//           { market: { contains: '1º Tempo', mode: 'insensitive' } },
-//           { market: { contains: '1H', mode: 'insensitive' } },
-//           { market: { contains: 'First Half', mode: 'insensitive' } },
-//         ],
-//       },
-//     });
-
-//     if (bets.length === 0) {
-//       this.logger.debug(`Nenhuma aposta de 1º tempo para ${apiEventId}`);
-//       return;
-//     }
-
-//     for (const bet of bets) {
-//       let result: Result = Result.void;
-//       const totalGolsHT = homeScoreHT + awayScoreHT;
-
-//       try {
-//         // 🧠 Mercado de vencedor do 1º tempo
-//         if (bet.market.includes('Vencedor 1º Tempo')) {
-//           if (
-//             homeScoreHT > awayScoreHT &&
-//             bet.optionMarket?.toLowerCase().includes('casa')
-//           )
-//             result = Result.win;
-//           else if (
-//             awayScoreHT > homeScoreHT &&
-//             bet.optionMarket?.toLowerCase().includes('fora')
-//           )
-//             result = Result.win;
-//           else if (
-//             homeScoreHT === awayScoreHT &&
-//             bet.optionMarket?.toLowerCase().includes('empate')
-//           )
-//             result = Result.win;
-//           else result = Result.lose;
-//         }
-
-//         // ⚽ Mercado de gols no 1º tempo (Over/Under)
-//         if (
-//           bet.market.includes('Gols 1º Tempo') ||
-//           bet.market.includes('Over/Under 1H')
-//         ) {
-//           const match = bet.optionMarket?.match(/(\d+(\.\d+)?)/);
-//           const linha = match ? parseFloat(match[1]) : null;
-
-//           if (linha != null) {
-//             if (
-//               bet.optionMarket?.toLowerCase().includes('mais') &&
-//               totalGolsHT > linha
-//             )
-//               result = Result.win;
-//             else if (
-//               bet.optionMarket?.toLowerCase().includes('menos') &&
-//               totalGolsHT < linha
-//             )
-//               result = Result.win;
-//             else result = Result.lose;
-//           }
-//         }
-
-//         if (bet.market.includes('Ambas marcam 1º Tempo')) {
-//           const ambasMarcam = homeScoreHT > 0 && awayScoreHT > 0;
-//           if (
-//             (ambasMarcam && bet.optionMarket?.toLowerCase().includes('sim')) ||
-//             (!ambasMarcam && bet.optionMarket?.toLowerCase().includes('não'))
-//           ) {
-//             result = Result.win;
-//           } else {
-//             result = Result.lose;
-//           }
-//         }
-
-//         // 🔹 Atualiza resultado da aposta
-//         await this.prisma.event.update({
-//           where: { id: bet.id },
-//           data: { result },
-//         });
-
-//         this.logger.log(
-//           `💰 Evento ${bet.event} (${bet.market} - ${bet.optionMarket}) liquidado como ${result}`,
-//         );
-//       } catch (error) {
-//         this.logger.error(
-//           `Erro ao liquidar aposta ${bet.id} (${bet.market}): ${error}`,
-//         );
-//       }
-//     }
-//   }
-// }
-
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../../libs/database/prisma';
 import { Result, Event } from '@prisma/client';
@@ -129,16 +8,11 @@ export class FirstHalfSettlementService {
 
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * Liquida apostas de 1º tempo quando o evento chega ao intervalo.
-   * Atualiza o placar HT no banco e define o resultado conforme a condição.
-   */
   async settleFirstHalfBets(
     apiEventId: string,
     homeScoreHT: number,
     awayScoreHT: number,
   ): Promise<void> {
-    // 🔹 Atualiza o placar HT no evento
     const updateResult = await this.prisma.event.updateMany({
       where: { apiEventId },
       data: { homeScoreHT, awayScoreHT },
@@ -148,7 +22,6 @@ export class FirstHalfSettlementService {
       `✅ ${updateResult.count} evento(s) atualizado(s) | Placar HT: ${homeScoreHT}x${awayScoreHT}`,
     );
 
-    // 🔹 Busca apostas pendentes desse evento que sejam de 1º tempo
     const bets = await this.prisma.event.findMany({
       where: {
         apiEventId,
@@ -176,7 +49,6 @@ export class FirstHalfSettlementService {
       try {
         const result = this.evaluateFirstHalfBet(bet, homeScoreHT, awayScoreHT);
 
-        // 🔹 Atualiza resultado da aposta
         await this.prisma.event.update({
           where: { id: bet.id },
           data: { result },
@@ -204,9 +76,6 @@ export class FirstHalfSettlementService {
     );
   }
 
-  /**
-   * Avalia o resultado de uma aposta de primeiro tempo
-   */
   private evaluateFirstHalfBet(
     bet: Event,
     homeScoreHT: number,
@@ -216,7 +85,6 @@ export class FirstHalfSettlementService {
     const option = (bet.optionMarket || '').toLowerCase();
     const totalGolsHT = homeScoreHT + awayScoreHT;
 
-    // 🏆 Vencedor do 1º Tempo (1X2)
     if (
       market.includes('vencedor') ||
       market.includes('resultado') ||
@@ -246,7 +114,6 @@ export class FirstHalfSettlementService {
       }
     }
 
-    // ⚽ Over/Under de Gols no 1º Tempo
     if (
       market.includes('gols') ||
       market.includes('over') ||
@@ -276,7 +143,6 @@ export class FirstHalfSettlementService {
       }
     }
 
-    // 🎯 Ambas Marcam no 1º Tempo
     if (
       market.includes('ambas') ||
       market.includes('btts') ||
@@ -297,7 +163,6 @@ export class FirstHalfSettlementService {
       }
     }
 
-    // ⚖️ Handicap Asiático 1º Tempo
     if (market.includes('handicap') || market.includes('ah')) {
       const handicap = this.extractHandicap(option);
 
@@ -309,11 +174,10 @@ export class FirstHalfSettlementService {
 
         if (adjustedScore > 0) return Result.win;
         if (adjustedScore < 0) return Result.lose;
-        return Result.returned; // Empate no handicap = devolução
+        return Result.returned;
       }
     }
 
-    // 🔢 Total de Gols Exatos no 1º Tempo
     if (market.includes('exato') || market.includes('exact')) {
       const goalsExpected = this.extractLine(option);
       if (goalsExpected !== null) {
@@ -321,16 +185,12 @@ export class FirstHalfSettlementService {
       }
     }
 
-    // ⚠️ Mercado não reconhecido
     this.logger.warn(
       `⚠️ Mercado de 1º tempo não reconhecido: "${bet.market}" - "${bet.optionMarket}"`,
     );
     return Result.void;
   }
 
-  /**
-   * Extrai a linha de gols de uma string (ex: "Mais de 1.5" → 1.5)
-   */
   private extractLine(text: string): number | null {
     const match = text.match(/(\d+[.,]?\d*)/);
     if (match) {
@@ -339,9 +199,6 @@ export class FirstHalfSettlementService {
     return null;
   }
 
-  /**
-   * Extrai o handicap de uma string (ex: "Casa -0.5" → -0.5)
-   */
   private extractHandicap(text: string): number | null {
     const match = text.match(/([+-]?\d+[.,]?\d*)/);
     if (match) {

@@ -1,102 +1,3 @@
-// import { Result } from '@prisma/client';
-// import { EventMarketAnalysis } from './base.analysis';
-
-// export function analyzeIntervaloFinal(
-//   eventDetails: string,
-//   homeScoreHT: number, // Placar casa no intervalo
-//   awayScoreHT: number, // Placar fora no intervalo
-//   homeScoreFT: number, // Placar casa final
-//   awayScoreFT: number, // Placar fora final
-//   isFinished: boolean, // Se a partida terminou
-// ): EventMarketAnalysis {
-//   const normalized = eventDetails.toLowerCase().trim();
-
-//   // Mapeamento das combinações possíveis
-//   const combinations = {
-//     'casa/casa': { ht: 'casa', ft: 'casa' },
-//     'casa/empate': { ht: 'casa', ft: 'empate' },
-//     'casa/fora': { ht: 'casa', ft: 'fora' },
-//     'empate/casa': { ht: 'empate', ft: 'casa' },
-//     'empate/empate': { ht: 'empate', ft: 'empate' },
-//     'empate/fora': { ht: 'empate', ft: 'fora' },
-//     'fora/casa': { ht: 'fora', ft: 'casa' },
-//     'fora/empate': { ht: 'fora', ft: 'empate' },
-//     'fora/fora': { ht: 'fora', ft: 'fora' },
-//   };
-
-//   // Suporta também formato em inglês
-//   const combinationsEN = {
-//     'home/home': { ht: 'casa', ft: 'casa' },
-//     'home/draw': { ht: 'casa', ft: 'empate' },
-//     'home/away': { ht: 'casa', ft: 'fora' },
-//     'draw/home': { ht: 'empate', ft: 'casa' },
-//     'draw/draw': { ht: 'empate', ft: 'empate' },
-//     'draw/away': { ht: 'empate', ft: 'fora' },
-//     'away/home': { ht: 'fora', ft: 'casa' },
-//     'away/draw': { ht: 'fora', ft: 'empate' },
-//     'away/away': { ht: 'fora', ft: 'fora' },
-//   };
-
-//   // Encontra a combinação apostada
-//   let expectedHT: string | null = null;
-//   let expectedFT: string | null = null;
-
-//   for (const [key, value] of Object.entries({
-//     ...combinations,
-//     ...combinationsEN,
-//   })) {
-//     if (normalized.includes(key)) {
-//       expectedHT = value.ht;
-//       expectedFT = value.ft;
-//       break;
-//     }
-//   }
-
-//   if (!expectedHT || !expectedFT) {
-//     return {
-//       result: Result.void,
-//       shouldUpdate: true,
-//       isFinalizableEarly: false,
-//     };
-//   }
-
-//   // Determina o resultado do intervalo
-//   const getResult = (home: number, away: number): string => {
-//     if (home > away) return 'casa';
-//     if (away > home) return 'fora';
-//     return 'empate';
-//   };
-
-//   const actualHT = getResult(homeScoreHT, awayScoreHT);
-//   const actualFT = getResult(homeScoreFT, awayScoreFT);
-
-//   // Se o intervalo já não bate, podemos finalizar antecipadamente como perda
-//   if (actualHT !== 'desconhecido' && actualHT !== expectedHT) {
-//     return {
-//       result: Result.lose,
-//       shouldUpdate: true,
-//       isFinalizableEarly: true, // Já perdeu no intervalo
-//     };
-//   }
-
-//   // Se a partida terminou, verifica o resultado completo
-//   if (isFinished) {
-//     const won = actualHT === expectedHT && actualFT === expectedFT;
-//     return {
-//       result: won ? Result.win : Result.lose,
-//       shouldUpdate: true,
-//       isFinalizableEarly: false,
-//     };
-//   }
-
-//   // Ainda em andamento, não pode decidir
-//   return {
-//     result: Result.pending,
-//     shouldUpdate: false,
-//     isFinalizableEarly: false,
-//   };
-// }
-
 import { Result } from '@prisma/client';
 import { EventMarketAnalysis, voidResult } from './base.analysis';
 
@@ -154,7 +55,7 @@ export function analyzeVencedorPrimeiroTempo(
     return {
       result: homeScoreHT > awayScoreHT ? Result.win : Result.lose,
       shouldUpdate: true,
-      isFinalizableEarly: false, // Só finaliza no final do 1º tempo
+      isFinalizableEarly: false,
     };
   }
 
@@ -166,7 +67,7 @@ export function analyzeVencedorPrimeiroTempo(
     return {
       result: homeScoreHT === awayScoreHT ? Result.win : Result.lose,
       shouldUpdate: true,
-      isFinalizableEarly: false, // Só finaliza no final do 1º tempo
+      isFinalizableEarly: false,
     };
   }
 
@@ -178,7 +79,7 @@ export function analyzeVencedorPrimeiroTempo(
     return {
       result: awayScoreHT > homeScoreHT ? Result.win : Result.lose,
       shouldUpdate: true,
-      isFinalizableEarly: false, // Só finaliza no final do 1º tempo
+      isFinalizableEarly: false,
     };
   }
 
@@ -224,7 +125,7 @@ export function analyzeIntervaloFinal(
   const parts = details.split('/');
 
   if (parts.length !== 2) {
-    return voidResult(); // ✅ Formato inválido
+    return voidResult();
   }
 
   const [htResult, ftResult] = parts.map((s) => s.trim().toLowerCase());
@@ -238,10 +139,9 @@ export function analyzeIntervaloFinal(
   } else if (htResult.includes('fora') || htResult === '2') {
     htMatch = homeScoreHT < awayScoreHT;
   } else {
-    return voidResult(); // ✅ Opção não reconhecida
+    return voidResult();
   }
 
-  // Se o resultado do intervalo já está errado, já é red
   if (!htMatch) {
     return {
       result: Result.lose,
@@ -250,7 +150,6 @@ export function analyzeIntervaloFinal(
     };
   }
 
-  // Resultado final (só confirma no final do jogo)
   let ftMatch = false;
   if (ftResult.includes('casa') || ftResult === '1') {
     ftMatch = homeScore > awayScore;
@@ -259,12 +158,12 @@ export function analyzeIntervaloFinal(
   } else if (ftResult.includes('fora') || ftResult === '2') {
     ftMatch = homeScore < awayScore;
   } else {
-    return voidResult(); // ✅ Opção não reconhecida
+    return voidResult();
   }
 
   return {
     result: ftMatch ? Result.win : Result.lose,
     shouldUpdate: true,
-    isFinalizableEarly: false, // Precisa do placar final
+    isFinalizableEarly: false,
   };
 }

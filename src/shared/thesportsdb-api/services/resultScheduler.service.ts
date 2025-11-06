@@ -6,9 +6,10 @@ import { ResultUpdaterService } from './resultUpdater.service';
 export class ResultSchedulerService {
   private readonly logger = new Logger(ResultSchedulerService.name);
 
-  constructor(private resultUpdater: ResultUpdaterService) {}
+  constructor(private resultUpdater: ResultUpdaterService) {
+    console.log('🟢 ResultSchedulerService instanciado');
+  }
 
-  // Executa a cada 5 minutos
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleResultUpdate(): Promise<void> {
     this.logger.log('Starting scheduled result update');
@@ -24,13 +25,6 @@ export class ResultSchedulerService {
     }
   }
 
-  // Executa a cada 30 minutos (alternativa mais leve)
-  // @Cron(CronExpression.EVERY_30_MINUTES)
-  // async handleResultUpdateLight(): Promise<void> {
-  //   await this.handleResultUpdate();
-  // }
-
-  // Executa manualmente via endpoint
   async triggerManualUpdate(): Promise<{ message: string; timestamp: Date }> {
     this.logger.log('Manual result update triggered');
     await this.resultUpdater.updateAllPendingEvents();

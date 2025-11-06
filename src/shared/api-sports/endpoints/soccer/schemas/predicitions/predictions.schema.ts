@@ -56,8 +56,8 @@ export const PredictionTeamSchema = z.object({
   id: z.number(),
   name: z.string(),
   logo: z.string(),
-  last_5: z.object({}).passthrough(), // Ajustar estrutura se souber
-  league: z.object({}).passthrough(), // Ajustar estrutura se souber
+  last_5: z.object({}).passthrough(),
+  league: z.object({}).passthrough(),
   biggest: z.object({}).passthrough(),
   clean_sheet: z.object({}).passthrough(),
   failed_to_score: z.object({}).passthrough(),
@@ -105,7 +105,7 @@ export type PredictionResponseItem = z.infer<
 
 export const PredictionApiResponseSchema = z.object({
   get: z.literal('predictions'),
-  parameters: z.object({}).passthrough(), // Ajustar estrutura se souber
+  parameters: z.object({}).passthrough(),
   errors: z.array(z.string()),
   results: z.number(),
   paging: z.object({

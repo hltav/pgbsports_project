@@ -26,6 +26,5 @@ export const LiveScoreEventSchema = z.object({
 
 export type LiveScoreEvent = z.infer<typeof LiveScoreEventSchema>;
 
-// Simples parse
 export const parseLiveScores = (raw: unknown[]): LiveScoreEvent[] =>
   raw.map((item) => LiveScoreEventSchema.parse(item));

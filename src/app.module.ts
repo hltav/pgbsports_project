@@ -12,6 +12,7 @@ import { ImageModule } from './modules/image/image.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import redisStore from 'cache-manager-ioredis';
 import { TheSportsDbModule } from './shared/thesportsdb-api/theSportsDb.module';
+import { ResultsModule } from './shared/thesportsdb-api/modules/result.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { TheSportsDbModule } from './shared/thesportsdb-api/theSportsDb.module';
     ApiSportsModule,
     ImageModule,
     TheSportsDbModule,
+    ResultsModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

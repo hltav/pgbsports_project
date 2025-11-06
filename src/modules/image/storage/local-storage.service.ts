@@ -90,7 +90,6 @@ export class LocalStorageService implements StorageService {
     return newImageUrl;
   }
 
-  // Deleta todos os avatares associados a um userId
   async deleteAvatar(userId: string): Promise<void> {
     try {
       const files = await fs.promises.readdir(this.uploadDir);

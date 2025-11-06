@@ -70,7 +70,6 @@ export const PlayerSchema = z.object({
   gender: z.string().optional(),
 });
 
-// Composição do CompetitorsSchema
 export const CompetitorsSchema = z.object({
   generated_at: z.string(),
   competitor: CompetitorSchema,
@@ -82,5 +81,4 @@ export const CompetitorsSchema = z.object({
   players: z.array(PlayerSchema),
 });
 
-// Tipo TypeScript gerado automaticamente pelo Zod para uso no DTO
 export type CompetitorsDTO = z.infer<typeof CompetitorsSchema>;

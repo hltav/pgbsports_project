@@ -8,5 +8,6 @@ export const CreateBankrollSchema = z.object({
   balance: decimalSchema,
   unidValue: decimalSchema,
   bookmaker: z.string().default('Unknown'),
+  initialBalance: decimalSchema.optional(),
 });
 export type CreateBankrollDTO = SafeInfer<typeof CreateBankrollSchema>;

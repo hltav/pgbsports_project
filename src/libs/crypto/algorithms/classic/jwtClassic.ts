@@ -1,20 +1,3 @@
-// import { JwtService } from '@nestjs/jwt';
-// import { IJwtCrypto } from './../../interfaces/crypto.interface';
-// import { JwtPayload } from '../../../../modules/auth/dto/jwt-payload.dto';
-// import { SignOptions } from 'jsonwebtoken';
-
-// export class JwtClassic implements IJwtCrypto<JwtPayload> {
-//   constructor(private readonly jwtService: JwtService) {}
-
-//   sign(payload: JwtPayload, options?: SignOptions): string {
-//     return this.jwtService.sign(payload, options);
-//   }
-
-//   verify(token: string): JwtPayload {
-//     return this.jwtService.verify<JwtPayload>(token);
-//   }
-// }
-
 import { JwtService } from '@nestjs/jwt';
 import { IJwtCrypto } from './../../interfaces/crypto.interface';
 import { JwtPayload } from '../../../../modules/auth/dto/jwt-payload.dto';
@@ -24,7 +7,6 @@ export class JwtClassic implements IJwtCrypto<JwtPayload> {
   constructor(private readonly jwtService: JwtService) {}
 
   sign(payload: JwtPayload, options?: { expiresIn?: string | number }): string {
-    // converte string tipo '1h' ou '30m' para segundos
     let expiresIn: number | undefined;
 
     if (options?.expiresIn !== undefined) {
@@ -45,7 +27,7 @@ export class JwtClassic implements IJwtCrypto<JwtPayload> {
   }
 
   private parseDurationToSeconds(duration: string | number): number {
-    if (typeof duration === 'number') return duration; // já em segundos
+    if (typeof duration === 'number') return duration;
 
     const match = duration.match(/^(\d+)([smhd])$/);
     if (!match) throw new Error(`Invalid duration format: ${duration}`);

@@ -30,7 +30,6 @@ export const EventSchema = z.object({
   strPostponed: z.string().nullable().optional(),
 });
 
-// Schema do retorno da API
 export const LookupEventResponseSchema = z.object({
   lookup: z.array(EventSchema).nullable(),
 });

@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import { PrismaModule, PrismaService } from './../../libs/database/prisma';
+import { BankrollModule } from '../bankroll/bankroll.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, BankrollModule],
   providers: [EventsService, PrismaService],
   controllers: [EventsController],
   exports: [EventsService],

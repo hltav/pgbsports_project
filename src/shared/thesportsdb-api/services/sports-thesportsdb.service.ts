@@ -10,7 +10,6 @@ export class TheSportsDbSportsService {
   constructor(private readonly cacheService: TheSportsDbCachedService) {}
 
   async getAllSports(): Promise<AllSportsResponse['all']> {
-    // TTL de 24h (esportes raramente mudam)
     const data = await this.cacheService.getWithCache<AllSportsResponse>(
       'all/sports',
       undefined,

@@ -26,8 +26,8 @@ export type Coverage = z.infer<typeof CoverageSchema>;
 // Seasons
 export const SeasonSchema = z.object({
   year: z.number(),
-  start: z.string(), // ISO date string
-  end: z.string(), // ISO date string
+  start: z.string(),
+  end: z.string(),
   current: z.boolean(),
   coverage: CoverageSchema,
 });
@@ -61,8 +61,8 @@ export type LeagueResponseItem = z.infer<typeof LeagueResponseItemSchema>;
 // Schema completo da resposta leagues
 export const LeaguesResponseSchema = z.object({
   get: z.literal('leagues'),
-  parameters: z.array(z.unknown()), // array vazio no seu exemplo, mas pode variar
-  errors: z.array(z.string()), // como antes, assumo array de strings
+  parameters: z.array(z.unknown()),
+  errors: z.array(z.string()),
   results: z.number(),
   paging: z.object({
     current: z.number(),

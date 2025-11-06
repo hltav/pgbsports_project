@@ -9,13 +9,12 @@ export class ResultsController {
     private resultUpdater: ResultUpdaterService,
   ) {}
 
-  // Trigger manual para atualizar todos os eventos pendentes
   @Post('update-all')
   async updateAllResults() {
+    console.log('Trigger chamado pelo frontend');
     return this.resultScheduler.triggerManualUpdate();
   }
 
-  // Atualizar um evento específico
   @Post('update/:id')
   async updateEventResult(@Param('id', ParseIntPipe) id: number) {
     await this.resultUpdater.updateEventResult(id);

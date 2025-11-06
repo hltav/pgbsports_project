@@ -27,6 +27,11 @@ enum Role {
 //   LIVE
 // }
 
+enum EditBalance {
+  addedBalance
+  withdrawals
+}
+
 enum Result {
   pending
   win
@@ -92,16 +97,36 @@ model Address {
 
 //Bankroll Data
 model Bankroll {
-  id        Int     @id @default(autoincrement())
-  name      String
-  balance   Decimal
-  unidValue Decimal
-  events    Event[]
-  userId    Int
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bookmaker String  @default("Unknown")
+  id             Int               @id @default(autoincrement())
+  name           String
+  balance        Decimal
+  unidValue      Decimal
+  initialBalance Decimal
+  bookmaker      String            @default("Unknown")
+  userId         Int
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events         Event[]
+  histories      BankrollHistory[]
 
   @@unique([userId, name])
+}
+
+model BankrollHistory {
+  id            Int          @id @default(autoincrement())
+  bankrollId    Int
+  bankroll      Bankroll     @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  date          DateTime     @default(now())
+  balance       Decimal
+  unidValue     Decimal
+  addedBalance  Decimal      @default(0)
+  withdrawals   Decimal      @default(0)
+  gains         Decimal      @default(0)
+  losses        Decimal      @default(0)
+  profitAndLoss Decimal      @default(0)
+  result        Decimal      @default(0)
+  editBalance   EditBalance?
+
+  @@index([bankrollId, date])
 }
 
 //Event Model
@@ -120,7 +145,7 @@ model Event {
   optionMarket     String
   amount           Decimal
   result           Result    @default(pending)
-  apiEventId       String?   
+  apiEventId       String?
   homeTeam         String?
   awayTeam         String?
   eventDate        DateTime?

@@ -16,6 +16,7 @@ export class DeleteBankrollService {
         balance: true,
         unidValue: true,
         bookmaker: true,
+        initialBalance: true,
       },
     });
 
