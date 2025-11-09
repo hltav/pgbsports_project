@@ -5,10 +5,28 @@
 //   convertToSaoPauloTime,
 //   getTimezoneByCountry,
 // } from './utils/timezone.utils';
+// import { UpdateBankrollService } from './../bankroll/services/update-bankroll.service';
+// import { Decimal } from '@prisma/client/runtime/library';
+
+// interface EventWithBankId {
+//   id: number;
+//   bankId: number;
+//   amount: Decimal;
+//   odd: Decimal;
+//   result: string | null;
+// }
+
+// interface BankrollData {
+//   id: number;
+//   unidValue: Decimal;
+// }
 
 // @Injectable()
 // export class EventsService {
-//   constructor(private prisma: PrismaService) {}
+//   constructor(
+//     private prisma: PrismaService,
+//     private updateBankrollService: UpdateBankrollService,
+//   ) {}
 
 //   async createEvent(data: CreateEventDTO): Promise<GetEventDTO> {
 //     let processedEventDate: Date | null = null;
@@ -28,13 +46,13 @@
 //         bankId: data.bankId,
 //         modality: data.modality,
 //         league: data.league,
-//         odd: data.odd,
+//         odd: new Decimal(data.odd).toString(),
 //         event: data.event,
 //         market: data.market,
 //         marketCategory: data.marketCategory,
 //         marketSub: data.marketSub,
 //         optionMarket: data.optionMarket,
-//         amount: data.amount,
+//         amount: new Decimal(data.amount).toString(),
 //         result: data.result ?? undefined,
 //         userId: data.userId,
 //         apiEventId: data.apiEventId,
@@ -56,6 +74,26 @@
 //         strThumb: data.strThumb,
 //       },
 //     });
+
+//     const bankroll = await this.prisma.bankroll.findUnique({
+//       where: { id: data.bankId },
+//       select: {
+//         id: true,
+//         unidValue: true,
+//       },
+//     });
+
+//     if (bankroll) {
+//       const unitsChange = new Decimal(data.amount).neg();
+//       const monetaryChange = unitsChange.mul(bankroll.unidValue);
+
+//       await this.updateBankrollService.updateBankrollByEvent({
+//         bankrollId: data.bankId,
+//         unitsChange: unitsChange.toNumber(),
+//         monetaryChange: monetaryChange,
+//         reason: 'BET_PLACED',
+//       });
+//     }
 
 //     return event;
 //   }
@@ -79,34 +117,127 @@
 //   async updateEvent(id: number, data: UpdateEventDTO): Promise<GetEventDTO> {
 //     const event = await this.prisma.event.findUnique({
 //       where: { id },
+//       select: {
+//         id: true,
+//         bankId: true,
+//         amount: true,
+//         odd: true,
+//         result: true,
+//       },
 //     });
 
-//     if (!event) {
-//       throw new NotFoundException('Event not found!');
-//     }
+//     if (!event) throw new NotFoundException('Event not found!');
+
+//     const oldResult = event.result;
+//     const newResult = data.result;
 
 //     const updatedEvent = await this.prisma.event.update({
 //       where: { id },
 //       data,
 //     });
 
+//     if (newResult && oldResult !== newResult) {
+//       const bankroll = await this.prisma.bankroll.findUnique({
+//         where: { id: event.bankId },
+//         select: { id: true, unidValue: true },
+//       });
+
+//       if (bankroll) {
+//         const normalizedEvent: EventWithBankId = {
+//           id: event.id,
+//           bankId: event.bankId,
+//           amount: new Decimal(event.amount),
+//           odd: new Decimal(event.odd),
+//           result: newResult,
+//         };
+
+//         await this.handleEventResult(normalizedEvent, bankroll);
+//       }
+//     }
+
 //     return updatedEvent;
+//   }
+
+//   private async handleEventResult(
+//     event: EventWithBankId,
+//     bankroll: BankrollData,
+//   ) {
+//     const resultLower = event.result?.toLowerCase();
+
+//     if (resultLower === 'win') {
+//       const netProfit = event.amount.mul(event.odd).sub(event.amount);
+//       const monetaryValue = netProfit.mul(bankroll.unidValue);
+
+//       await this.updateBankrollService.updateBankrollByEvent({
+//         bankrollId: event.bankId,
+//         unitsChange: netProfit.toNumber(),
+//         monetaryChange: monetaryValue,
+//         reason: 'BET_WON',
+//       });
+//     } else if (resultLower === 'lose') {
+//       await this.updateBankrollService.updateBankrollByEvent({
+//         bankrollId: event.bankId,
+//         unitsChange: 0,
+//         monetaryChange: new Decimal(0),
+//         reason: 'BET_LOST',
+//       });
+//     } else if (resultLower === 'returned') {
+//       const monetaryValue = event.amount.mul(bankroll.unidValue);
+
+//       await this.updateBankrollService.updateBankrollByEvent({
+//         bankrollId: event.bankId,
+//         unitsChange: event.amount.toNumber(),
+//         monetaryChange: monetaryValue,
+//         reason: 'BET_VOID',
+//       });
+//     }
 //   }
 
 //   async deleteEvent(id: number): Promise<GetEventDTO> {
 //     const event = await this.prisma.event.findUnique({
 //       where: { id },
+//       select: {
+//         id: true,
+//         bankId: true,
+//         amount: true,
+//         odd: true,
+//         result: true,
+//       },
 //     });
 
 //     if (!event) {
 //       throw new NotFoundException('Event not found!');
 //     }
 
-//     await this.prisma.event.delete({
+//     if (!event.result || event.result.toLowerCase() === 'pending') {
+//       const bankroll = await this.prisma.bankroll.findUnique({
+//         where: { id: event.bankId },
+//         select: {
+//           id: true,
+//           unidValue: true,
+//         },
+//       });
+
+//       if (bankroll) {
+//         const monetaryValue = new Decimal(event.amount).mul(bankroll.unidValue);
+
+//         await this.updateBankrollService.updateBankrollByEvent({
+//           bankrollId: event.bankId,
+//           unitsChange:
+//             event.amount instanceof Decimal
+//               ? event.amount.toNumber()
+//               : event.amount,
+//           monetaryChange: monetaryValue,
+//           reason: 'BET_VOID',
+//         });
+//       }
+//     }
+
+//     const deletedEvent = await this.prisma.event.delete({
 //       where: { id },
 //     });
 
-//     return event;
+//     return deletedEvent;
 //   }
 // }
 
@@ -123,8 +254,8 @@ import { Decimal } from '@prisma/client/runtime/library';
 interface EventWithBankId {
   id: number;
   bankId: number;
-  amount: number;
-  odd: number;
+  amount: Decimal;
+  odd: Decimal;
   result: string | null;
 }
 
@@ -158,13 +289,13 @@ export class EventsService {
         bankId: data.bankId,
         modality: data.modality,
         league: data.league,
-        odd: data.odd,
+        odd: new Decimal(data.odd).toString(),
         event: data.event,
         market: data.market,
         marketCategory: data.marketCategory,
         marketSub: data.marketSub,
         optionMarket: data.optionMarket,
-        amount: data.amount,
+        amount: new Decimal(data.amount).toString(),
         result: data.result ?? undefined,
         userId: data.userId,
         apiEventId: data.apiEventId,
@@ -174,7 +305,7 @@ export class EventsService {
         strTimestamp: data.strTimestamp,
         strTime: data.strTime,
         strTimeLocal: data.strTimeLocal,
-        timezone: timezone,
+        timezone,
         strBadge: data.strBadge,
         strSeason: data.strSeason,
         intRound: data.intRound,
@@ -187,22 +318,19 @@ export class EventsService {
       },
     });
 
-    // Debita as unidades da banca quando o evento é criado
     const bankroll = await this.prisma.bankroll.findUnique({
       where: { id: data.bankId },
-      select: {
-        id: true,
-        unidValue: true,
-      },
+      select: { id: true, unidValue: true },
     });
 
     if (bankroll) {
-      const monetaryValue = new Decimal(data.amount).mul(bankroll.unidValue);
+      const unitsChange = new Decimal(data.amount).neg();
+      const monetaryChange = unitsChange.mul(bankroll.unidValue);
 
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: data.bankId,
-        unitsChange: new Decimal(data.amount).neg().toNumber(),
-        monetaryChange: monetaryValue.neg(),
+        unitsChange: unitsChange.toNumber(),
+        monetaryChange,
         reason: 'BET_PLACED',
       });
     }
@@ -215,27 +343,16 @@ export class EventsService {
   }
 
   async findEventById(id: number): Promise<GetEventDTO> {
-    const event = await this.prisma.event.findUnique({
-      where: { id },
-    });
+    const event = await this.prisma.event.findUnique({ where: { id } });
 
-    if (!event) {
-      throw new NotFoundException('Event not found!');
-    }
-
+    if (!event) throw new NotFoundException('Event not found!');
     return event;
   }
 
   async updateEvent(id: number, data: UpdateEventDTO): Promise<GetEventDTO> {
     const event = await this.prisma.event.findUnique({
       where: { id },
-      select: {
-        id: true,
-        bankId: true,
-        amount: true,
-        odd: true,
-        result: true,
-      },
+      select: { id: true, bankId: true, amount: true, odd: true, result: true },
     });
 
     if (!event) throw new NotFoundException('Event not found!');
@@ -248,6 +365,7 @@ export class EventsService {
       data,
     });
 
+    // Se o resultado mudou, processa o impacto na banca
     if (newResult && oldResult !== newResult) {
       const bankroll = await this.prisma.bankroll.findUnique({
         where: { id: event.bankId },
@@ -255,19 +373,15 @@ export class EventsService {
       });
 
       if (bankroll) {
-        // ✅ Conversão explícita para number
         const normalizedEvent: EventWithBankId = {
           id: event.id,
           bankId: event.bankId,
-          amount:
-            event.amount instanceof Decimal
-              ? event.amount.toNumber()
-              : event.amount,
-          odd: event.odd instanceof Decimal ? event.odd.toNumber() : event.odd,
-          result: event.result,
+          amount: new Decimal(event.amount),
+          odd: new Decimal(event.odd),
+          result: newResult,
         };
 
-        await this.handleEventResult(normalizedEvent, newResult, bankroll);
+        await this.handleEventResult(normalizedEvent, bankroll);
       }
     }
 
@@ -276,40 +390,36 @@ export class EventsService {
 
   private async handleEventResult(
     event: EventWithBankId,
-    result: string,
     bankroll: BankrollData,
-  ): Promise<void> {
-    const resultLower = result.toLowerCase();
+  ) {
+    const resultLower = event.result?.toLowerCase();
 
     if (resultLower === 'win') {
-      // Calcula o ganho líquido: (odd * amount) - amount
-      const totalReturn = new Decimal(event.odd).mul(event.amount);
-      const netProfit = totalReturn.sub(event.amount);
-      const monetaryValue = netProfit.mul(bankroll.unidValue);
+      // Devolve unidades iniciais + lucro
+      const totalReturn = event.amount.mul(event.odd);
+      const monetaryValue = totalReturn.mul(bankroll.unidValue);
 
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: event.bankId,
-        unitsChange: netProfit.toNumber(),
+        unitsChange: totalReturn.toNumber(),
         monetaryChange: monetaryValue,
         reason: 'BET_WON',
       });
     } else if (resultLower === 'lose') {
-      // A perda já foi debitada na criação, só registra no histórico
-      const monetaryValue = new Decimal(event.amount).mul(bankroll.unidValue);
-
+      // Perdeu, não devolve nada além do débito inicial
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: event.bankId,
-        unitsChange: 0,
-        monetaryChange: monetaryValue,
+        unitsChange: event.amount.neg().toNumber(),
+        monetaryChange: new Decimal(0),
         reason: 'BET_LOST',
       });
     } else if (resultLower === 'returned') {
-      // Devolve as unidades
-      const monetaryValue = new Decimal(event.amount).mul(bankroll.unidValue);
+      // Aposta retornada, devolve apenas unidades iniciais
+      const monetaryValue = event.amount.mul(bankroll.unidValue);
 
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: event.bankId,
-        unitsChange: event.amount,
+        unitsChange: event.amount.toNumber(),
         monetaryChange: monetaryValue,
         reason: 'BET_VOID',
       });
@@ -319,47 +429,31 @@ export class EventsService {
   async deleteEvent(id: number): Promise<GetEventDTO> {
     const event = await this.prisma.event.findUnique({
       where: { id },
-      select: {
-        id: true,
-        bankId: true,
-        amount: true,
-        odd: true,
-        result: true,
-      },
+      select: { id: true, bankId: true, amount: true, odd: true, result: true },
     });
 
-    if (!event) {
-      throw new NotFoundException('Event not found!');
-    }
+    if (!event) throw new NotFoundException('Event not found!');
 
+    // Se a aposta ainda não teve resultado, devolve as unidades
     if (!event.result || event.result.toLowerCase() === 'pending') {
       const bankroll = await this.prisma.bankroll.findUnique({
         where: { id: event.bankId },
-        select: {
-          id: true,
-          unidValue: true,
-        },
+        select: { id: true, unidValue: true },
       });
 
       if (bankroll) {
-        const monetaryValue = new Decimal(event.amount).mul(bankroll.unidValue);
+        const amountDecimal = new Decimal(event.amount);
+        const monetaryValue = amountDecimal.mul(bankroll.unidValue);
 
         await this.updateBankrollService.updateBankrollByEvent({
           bankrollId: event.bankId,
-          unitsChange:
-            event.amount instanceof Decimal
-              ? event.amount.toNumber()
-              : event.amount,
+          unitsChange: amountDecimal.toNumber(),
           monetaryChange: monetaryValue,
           reason: 'BET_VOID',
         });
       }
     }
 
-    const deletedEvent = await this.prisma.event.delete({
-      where: { id },
-    });
-
-    return deletedEvent;
+    return this.prisma.event.delete({ where: { id } });
   }
 }

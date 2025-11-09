@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import { Injectable, NotFoundException } from '@nestjs/common';
 // import { PrismaService } from './../../../libs/database/prisma';
 // import { UpdateBankrollDTO, GetBankrollDTO, PatchBankrollDTO } from '../z.dto';
@@ -273,7 +274,7 @@ export class UpdateBankrollService {
   }
 
   async updateBankrollByEvent(data: BankrollUpdateData) {
-    const { bankrollId, monetaryChange, reason } = data;
+    const { bankrollId, unitsChange, monetaryChange, reason } = data;
 
     const bankroll = await this.prisma.bankroll.findUnique({
       where: { id: bankrollId },
@@ -285,21 +286,43 @@ export class UpdateBankrollService {
       },
     });
 
-    if (!bankroll) {
-      throw new NotFoundException('Bankroll not found');
+    if (!bankroll) throw new NotFoundException('Bankroll not found');
+
+    const oldBalance = new Decimal(bankroll.balance);
+    const oldUnidValue = new Decimal(bankroll.unidValue);
+
+    let newBalance: Decimal;
+
+    switch (reason) {
+      case 'BET_PLACED':
+        // Apenas debita o valor da aposta
+        newBalance = oldBalance.sub(monetaryChange.abs());
+        break;
+      case 'BET_WON':
+        // Adiciona o lucro líquido
+        newBalance = oldBalance.add(monetaryChange);
+        break;
+      case 'BET_LOST':
+        // Já foi debitado na criação da aposta, mantém
+        newBalance = oldBalance;
+        break;
+      case 'BET_VOID':
+        // Devolve unidades e valor
+        newBalance = oldBalance.add(monetaryChange);
+        break;
+      default:
+        newBalance = oldBalance;
     }
 
-    const newBalance = new Decimal(bankroll.balance).add(monetaryChange);
-
+    // Atualiza saldo da banca
     await this.prisma.bankroll.update({
       where: { id: bankrollId },
-      data: {
-        balance: newBalance,
-      },
+      data: { balance: newBalance },
     });
 
-    const lastHistory = bankroll.histories[0] as BankrollHistory | undefined;
-    const historyData = this.calculateHistoryData(
+    // Histórico
+    const lastHistory = bankroll.histories[0];
+    const historyData = this.calculateHistoryDataEvent(
       lastHistory,
       monetaryChange,
       reason,
@@ -309,7 +332,7 @@ export class UpdateBankrollService {
       data: {
         bankrollId,
         balance: newBalance.toString(),
-        unidValue: bankroll.unidValue.toString(),
+        unidValue: oldUnidValue.toString(),
         addedBalance: historyData.addedBalance.toString(),
         withdrawals: historyData.withdrawals.toString(),
         gains: historyData.gains.toString(),
@@ -319,54 +342,47 @@ export class UpdateBankrollService {
       },
     });
 
-    return {
-      newBalance,
-      monetaryChange,
-    };
+    return { newBalance, monetaryChange };
   }
 
-  private calculateHistoryData(
+  private calculateHistoryDataEvent(
     lastHistory: BankrollHistory | undefined,
     monetaryChange: Decimal,
     reason: string,
   ) {
-    const previousAddedBalance = lastHistory?.addedBalance ?? new Decimal(0);
-    const previousWithdrawals = lastHistory?.withdrawals ?? new Decimal(0);
-    const previousGains = lastHistory?.gains ?? new Decimal(0);
-    const previousLosses = lastHistory?.losses ?? new Decimal(0);
+    const prevAdded = lastHistory?.addedBalance ?? new Decimal(0);
+    const prevWithdrawals = lastHistory?.withdrawals ?? new Decimal(0);
+    const prevGains = lastHistory?.gains ?? new Decimal(0);
+    const prevLosses = lastHistory?.losses ?? new Decimal(0);
 
-    const addedBalance = new Decimal(previousAddedBalance);
-    const withdrawals = new Decimal(previousWithdrawals);
-    let gains = new Decimal(previousGains);
-    let losses = new Decimal(previousLosses);
+    const addedBalance = new Decimal(prevAdded);
+    let withdrawals = new Decimal(prevWithdrawals);
+    let gains = new Decimal(prevGains);
+    let losses = new Decimal(prevLosses);
 
     switch (reason) {
-      case 'BET_PLACED':
+      case 'BET_PLACED': // Registra o débito inicial como uma "retirada" para a aposta
+        withdrawals = withdrawals.add(monetaryChange.abs());
         break;
-
       case 'BET_WON':
-        gains = new Decimal(previousGains).add(monetaryChange);
+        gains = gains.add(monetaryChange); // Aqui você também deveria subtrair o valor da aposta de 'withdrawals', mas
+        // a maioria dos sistemas registra apenas o lucro líquido.
         break;
-
-      case 'BET_LOST':
-        losses = new Decimal(previousLosses).add(monetaryChange.abs());
+      case 'BET_LOST': // 1. Remove o débito inicial de 'withdrawals' (saques/aposta)
+        withdrawals = withdrawals.sub(monetaryChange.abs()); // monetaryChange.abs() é o valor da aposta
+        // 2. Adiciona o valor da perda em 'losses'
+        losses = losses.add(monetaryChange.abs());
         break;
-
-      case 'BET_VOID':
+      case 'BET_VOID': // CORREÇÃO: Neutraliza o débito inicial retirando o valor de 'withdrawals'
+        withdrawals = withdrawals.sub(monetaryChange); // monetaryChange é o valor POSITIVO da aposta
+        // addedBalance fica inalterado, pois é um estorno, não um novo depósito
         break;
     }
 
     const profitAndLoss = gains.sub(losses);
     const result = addedBalance.sub(withdrawals).add(profitAndLoss);
 
-    return {
-      addedBalance,
-      withdrawals,
-      gains,
-      losses,
-      profitAndLoss,
-      result,
-    };
+    return { addedBalance, withdrawals, gains, losses, profitAndLoss, result };
   }
 
   async updateBankroll(

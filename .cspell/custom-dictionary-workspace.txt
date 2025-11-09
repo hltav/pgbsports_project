@@ -10,6 +10,7 @@ adicionados
 afeta
 ajudar
 Aland
+além
 altera
 alternativa
 Ambas
@@ -26,6 +27,7 @@ apostou
 Aquáticos
 Artilheiro
 Asiático
+atingido
 Atletismo
 Australiano
 Avalia
@@ -44,6 +46,7 @@ cancelados
 Cartão
 Cartões
 cedo
+chamador
 chega
 Chuuk
 Ciclismo
@@ -66,14 +69,17 @@ Críquete
 Dardos
 Debita
 debitada
+débito
 decidida
 decidido
 decidir
 definidos
 depósito
 desse
+desta
 detalhados
 Determina
+deveria
 devolução
 diferença
 Dili
@@ -93,6 +99,7 @@ Escanteio
 Escanteios
 Especiais
 Esqui
+estorno
 Europeu
 Exato
 Exatos
@@ -106,6 +113,7 @@ Faso
 finais
 finaliza
 Finalização
+finalizável
 Formata
 Futuna
 Gaélicos
@@ -121,8 +129,10 @@ Grama
 Handebol
 Hóquei
 Identifica
+impacto
 Ímpar
 implementados
+inalterado
 inglês
 Internacionais
 Intervalo
@@ -151,6 +161,7 @@ Lutas
 luxon
 Mahe
 maior
+maioria
 Mandante
 Marca
 Marcador
@@ -164,6 +175,7 @@ Minutagem
 modalidades
 momento
 Momento
+monetário
 moneyline
 Moresby
 motorsport
@@ -172,6 +184,9 @@ mudaram
 mudou
 Multiesportivos
 Murdo
+negativo
+Neutraliza
+Normaliza
 Novos
 Opção
 Pago
@@ -182,6 +197,7 @@ partir
 Patinação
 pela
 Pênalti
+PENDENTE
 pendentes
 perdas
 perdeu
@@ -195,6 +211,7 @@ positivo
 possíveis
 Prazo
 precisar
+precoce
 Prepara
 Próximo
 puder
@@ -203,16 +220,24 @@ Rebaixamento
 reconhecida
 reconhecido
 registra
+retirada
+retirando
+retornada
 retornam
+Retornamos
 Rica
 Roteia
 Rúgbi
 saldo
 Santo
 saque
+saques
 sejam
+sinal
 Sinuca
+sistemas
 Sofrer
+subtrair
 Suporta
 Tênis
 termina

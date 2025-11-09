@@ -38,12 +38,27 @@ export function analyzeAmbasMarcam(
     };
 
   // Ambos marcam ou +2.5 gols
-  if (normalized.includes('ambos marcam ou +') && normalized.includes('2.5'))
+  // if (normalized.includes('ambos marcam ou +') && normalized.includes('2.5'))
+  //   return {
+  //     result: ambas || total > 2.5 ? Result.win : Result.lose,
+  //     shouldUpdate: true,
+  //     isFinalizableEarly: true,
+  //   };
+  if (normalized.includes('ambos marcam ou +') && normalized.includes('2.5')) {
+    if (ambas || total > 2.5) {
+      return {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      };
+    }
+
     return {
-      result: ambas || total > 2.5 ? Result.win : Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: true,
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
     };
+  }
 
   return { result: Result.void, shouldUpdate: true, isFinalizableEarly: false };
 }

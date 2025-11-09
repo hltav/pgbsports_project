@@ -7,6 +7,7 @@ import { ResultsController } from '../controllers/results.controller';
 import { ResultUpdaterService } from '../services/resultUpdater.service';
 import { ResultSchedulerService } from '../services/resultScheduler.service';
 import { TheSportsDbModule } from '../theSportsDb.module';
+import { EventsModule } from './../../../modules/events/events.module';
 
 @Global()
 @Module({
@@ -17,6 +18,7 @@ import { TheSportsDbModule } from '../theSportsDb.module';
     }),
     ScheduleModule.forRoot(),
     TheSportsDbModule,
+    EventsModule,
   ],
   controllers: [ResultsController],
   providers: [

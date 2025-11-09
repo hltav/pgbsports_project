@@ -26,6 +26,7 @@ import {
   analyzeIntervaloFinal,
   analyzeVencedorPrimeiroTempo,
 } from './analysis/finalInterval.analysis';
+import { EventsService } from './../../../modules';
 
 @Injectable()
 export class ResultUpdaterService {
@@ -35,6 +36,7 @@ export class ResultUpdaterService {
     private readonly prisma: PrismaService,
     private readonly theSportsDbLiveApi: TheSportsDbLiveApiService,
     private readonly eventsService: TheSportsDbEventsService,
+    private readonly eventsUpdateService: EventsService,
   ) {
     console.log('✅ ResultUpdaterService instanciado');
   }
@@ -76,9 +78,13 @@ export class ResultUpdaterService {
         eventStatus === EventStatus.POSTPONED ||
         eventStatus === EventStatus.CANCELLED
       ) {
-        await this.prisma.event.update({
-          where: { id: eventId },
-          data: { result: Result.returned },
+        // await this.prisma.event.update({
+        //   where: { id: eventId },
+        //   data: { result: Result.returned },
+        // });
+        await this.eventsUpdateService.updateEvent(eventId, {
+          userId: event.userId,
+          result: Result.returned,
         });
         this.logger.log(`Event ${eventId} marked as returned (${eventStatus})`);
         return;
@@ -117,16 +123,38 @@ export class ResultUpdaterService {
         EventStatus.HALF_TIME,
       ];
 
+      // if (
+      //   analysis.shouldUpdate &&
+      //   (eventStatus === EventStatus.FINISHED ||
+      //     (inProgressStatuses.includes(eventStatus) &&
+      //       analysis.isFinalizableEarly))
+      // ) {
+      //   await this.prisma.event.update({
+      //     where: { id: eventId },
+      //     data: { result: analysis.result },
+      //   });
+      //   this.logger.log(
+      //     `Event ${eventId} updated (${eventStatus}) → ${analysis.result}${
+      //       analysis.isFinalizableEarly ? ' (early)' : ''
+      //     }`,
+      //   );
+      // } else {
+      //   this.logger.log(
+      //     `Event ${eventId} ainda não pode ser atualizado (${eventStatus})`,
+      //   );
+      // }
       if (
         analysis.shouldUpdate &&
         (eventStatus === EventStatus.FINISHED ||
           (inProgressStatuses.includes(eventStatus) &&
             analysis.isFinalizableEarly))
       ) {
-        await this.prisma.event.update({
-          where: { id: eventId },
-          data: { result: analysis.result },
+        // ✅ Use o método que já tem a lógica de bankroll
+        await this.eventsUpdateService.updateEvent(eventId, {
+          userId: event.userId,
+          result: analysis.result,
         });
+
         this.logger.log(
           `Event ${eventId} updated (${eventStatus}) → ${analysis.result}${
             analysis.isFinalizableEarly ? ' (early)' : ''

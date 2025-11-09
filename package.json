@@ -12,6 +12,7 @@
   "scripts": {
     "build": "nest build",
     "tsc:build": "tsc --project tsconfig.json",
+    "sync-old-events": "ts-node src/modules/bankroll/scripts/synOldEvents.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nodemon --watch src --ext ts --exec ts-node -r tsconfig-paths/register src/main.ts",
