@@ -78,10 +78,6 @@ export class ResultUpdaterService {
         eventStatus === EventStatus.POSTPONED ||
         eventStatus === EventStatus.CANCELLED
       ) {
-        // await this.prisma.event.update({
-        //   where: { id: eventId },
-        //   data: { result: Result.returned },
-        // });
         await this.eventsUpdateService.updateEvent(eventId, {
           userId: event.userId,
           result: Result.returned,
@@ -123,26 +119,6 @@ export class ResultUpdaterService {
         EventStatus.HALF_TIME,
       ];
 
-      // if (
-      //   analysis.shouldUpdate &&
-      //   (eventStatus === EventStatus.FINISHED ||
-      //     (inProgressStatuses.includes(eventStatus) &&
-      //       analysis.isFinalizableEarly))
-      // ) {
-      //   await this.prisma.event.update({
-      //     where: { id: eventId },
-      //     data: { result: analysis.result },
-      //   });
-      //   this.logger.log(
-      //     `Event ${eventId} updated (${eventStatus}) → ${analysis.result}${
-      //       analysis.isFinalizableEarly ? ' (early)' : ''
-      //     }`,
-      //   );
-      // } else {
-      //   this.logger.log(
-      //     `Event ${eventId} ainda não pode ser atualizado (${eventStatus})`,
-      //   );
-      // }
       if (
         analysis.shouldUpdate &&
         (eventStatus === EventStatus.FINISHED ||
