@@ -324,14 +324,19 @@ export class EventsService {
     });
 
     if (bankroll) {
-      const unitsChange = new Decimal(data.amount).neg();
-      const monetaryChange = unitsChange.mul(bankroll.unidValue);
+      const stakeDecimal = new Decimal(data.amount);
+      const monetaryChange = stakeDecimal.neg().mul(bankroll.unidValue);
 
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: data.bankId,
-        unitsChange: unitsChange.toNumber(),
+        type: 'BET_PLACED',
         monetaryChange,
-        reason: 'BET_PLACED',
+        stake: stakeDecimal,
+        odds: new Decimal(data.odd),
+        potentialWin: stakeDecimal.mul(new Decimal(data.odd)),
+        eventId: undefined,
+        eventName: data.event,
+        description: data.market,
       });
     }
 
@@ -365,7 +370,6 @@ export class EventsService {
       data,
     });
 
-    // Se o resultado mudou, processa o impacto na banca
     if (newResult && oldResult !== newResult) {
       const bankroll = await this.prisma.bankroll.findUnique({
         where: { id: event.bankId },
@@ -395,33 +399,40 @@ export class EventsService {
     const resultLower = event.result?.toLowerCase();
 
     if (resultLower === 'win') {
-      // Devolve unidades iniciais + lucro
-      const totalReturn = event.amount.mul(event.odd);
-      const monetaryValue = totalReturn.mul(bankroll.unidValue);
+      const totalReturnDecimal = event.amount.mul(event.odd);
+      const monetaryValue = totalReturnDecimal.mul(bankroll.unidValue);
 
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: event.bankId,
-        unitsChange: totalReturn.toNumber(),
+        type: 'BET_WON',
         monetaryChange: monetaryValue,
-        reason: 'BET_WON',
+        stake: totalReturnDecimal,
+        actualReturn: monetaryValue,
+        eventId: event.id,
+        eventName: undefined,
+        description: 'Bet won',
       });
     } else if (resultLower === 'lose') {
-      // Perdeu, não devolve nada além do débito inicial
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: event.bankId,
-        unitsChange: event.amount.neg().toNumber(),
+        type: 'BET_LOST',
         monetaryChange: new Decimal(0),
-        reason: 'BET_LOST',
+        stake: event.amount.neg(),
+        eventId: event.id,
+        description: 'Bet lost',
       });
     } else if (resultLower === 'returned') {
-      // Aposta retornada, devolve apenas unidades iniciais
-      const monetaryValue = event.amount.mul(bankroll.unidValue);
+      const refund = event.amount;
+      const monetaryValue = refund.mul(bankroll.unidValue);
 
       await this.updateBankrollService.updateBankrollByEvent({
         bankrollId: event.bankId,
-        unitsChange: event.amount.toNumber(),
+        type: 'BET_VOID',
         monetaryChange: monetaryValue,
-        reason: 'BET_VOID',
+        stake: refund,
+        actualReturn: monetaryValue,
+        eventId: event.id,
+        description: 'Bet returned',
       });
     }
   }
@@ -434,7 +445,6 @@ export class EventsService {
 
     if (!event) throw new NotFoundException('Event not found!');
 
-    // Se a aposta ainda não teve resultado, devolve as unidades
     if (!event.result || event.result.toLowerCase() === 'pending') {
       const bankroll = await this.prisma.bankroll.findUnique({
         where: { id: event.bankId },
@@ -447,9 +457,12 @@ export class EventsService {
 
         await this.updateBankrollService.updateBankrollByEvent({
           bankrollId: event.bankId,
-          unitsChange: amountDecimal.toNumber(),
+          type: 'BET_VOID',
           monetaryChange: monetaryValue,
-          reason: 'BET_VOID',
+          stake: amountDecimal,
+          actualReturn: monetaryValue,
+          eventId: event.id,
+          description: 'Event deleted - returned stake',
         });
       }
     }

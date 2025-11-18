@@ -30,7 +30,6 @@ export class DeleteBankrollService {
 
     return {
       ...bankroll,
-      statusSync: 'Synchronized',
     };
   }
 }

@@ -16,14 +16,23 @@ import {
 import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 import { BankrollService } from './bankroll.service';
-import { GetBankrollDTO, CreateBankrollDTO, UpdateBankrollDTO } from './z.dto';
+import {
+  GetBankrollDTO,
+  CreateBankrollDTO,
+  UpdateBankrollDTO,
+  GetBankrollHistoryDTO,
+} from './z.dto';
 import { PatchBankrollDTO } from './z.dto/update-bankroll.dto';
+import { FindBankrollHistoryService } from './services/findBankrollHistory.service';
 
 @Controller('bankrolls')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('USER', 'TEST_USER')
 export class BankrollController {
-  constructor(private readonly bankrollService: BankrollService) {}
+  constructor(
+    private readonly bankrollService: BankrollService,
+    private readonly bankrollHistoryService: FindBankrollHistoryService,
+  ) {}
 
   @Get()
   async findMyBankrolls(
@@ -74,5 +83,20 @@ export class BankrollController {
   @Delete(':id')
   async deleteBankroll(@Param('id') id: number): Promise<GetBankrollDTO> {
     return this.bankrollService.deleteBankroll(+id);
+  }
+
+  @Get(':id/history')
+  async findBankrollHistory(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetBankrollHistoryDTO[]> {
+    return this.bankrollHistoryService.findByBankrollId(id);
+  }
+
+  // 🟦 Buscar o último registro de histórico da banca
+  @Get(':id/history/last')
+  async findLastBankrollHistory(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<GetBankrollHistoryDTO | null> {
+    return this.bankrollHistoryService.findLastByBankrollId(id);
   }
 }

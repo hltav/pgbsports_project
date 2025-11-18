@@ -28,10 +28,17 @@ export class CreateBankrollService {
         unidValue: data.unidValue,
         bookmaker: data.bookmaker ?? 'Unknown',
         initialBalance,
+        totalDeposited: data.totalDeposited ?? '0',
+        totalWithdrawn: data.totalWithdrawn ?? '0',
+        totalStaked: data.totalStaked ?? '0',
+        totalReturned: data.totalReturned ?? '0',
         histories: {
           create: {
-            balance: initialBalance,
+            type: 'BALANCE_ADJUSTMENT',
+            balanceBefore: initialBalance,
+            balanceAfter: initialBalance,
             unidValue: data.unidValue,
+            description: 'Banca criada',
           },
         },
       },
@@ -43,12 +50,13 @@ export class CreateBankrollService {
         unidValue: true,
         bookmaker: true,
         initialBalance: true,
+        totalDeposited: true,
+        totalWithdrawn: true,
+        totalStaked: true,
+        totalReturned: true,
       },
     });
 
-    return {
-      ...created,
-      statusSync: 'Synchronized',
-    };
+    return created;
   }
 }

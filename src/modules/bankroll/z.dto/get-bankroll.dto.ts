@@ -1,18 +1,7 @@
-import { decimalSchema } from './../../../libs/common/dto/decimalSchema.interface';
 import { z } from 'zod';
+import { decimalSchema } from './../../../libs/common/dto/decimalSchema.interface';
 import { SafeInfer } from './../../../types/zod';
 import { GetBankrollHistorySchema } from './createHistories.dto';
-
-// export const GetBankrollSchema = z.object({
-//   id: z.number(),
-//   userId: z.number(),
-//   name: z.string(),
-//   balance: decimalSchema,
-//   unidValue: decimalSchema,
-//   bookmaker: z.string(),
-//   initialBalance: decimalSchema,
-//   statusSync: z.union([z.literal('Synchronizing'), z.literal('Synchronized')]),
-// });
 
 export const GetBankrollSchema = z.object({
   id: z.number(),
@@ -20,9 +9,15 @@ export const GetBankrollSchema = z.object({
   name: z.string(),
   balance: decimalSchema,
   unidValue: decimalSchema,
-  bookmaker: z.string(),
+  bookmaker: z.string().nullable().default('Unknown'),
   initialBalance: decimalSchema,
-  statusSync: z.union([z.literal('Synchronizing'), z.literal('Synchronized')]),
-  lastHistory: GetBankrollHistorySchema.optional(), // Último registro de histórico
+  totalDeposited: decimalSchema.optional(),
+  totalWithdrawn: decimalSchema.optional(),
+  totalStaked: decimalSchema.optional(),
+  totalReturned: decimalSchema.optional(),
+  lastHistory: GetBankrollHistorySchema.nullable().optional(),
+  history: z.array(GetBankrollHistorySchema).optional(),
+  histories: z.array(GetBankrollHistorySchema).optional(),
 });
+
 export type GetBankrollDTO = SafeInfer<typeof GetBankrollSchema>;

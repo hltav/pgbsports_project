@@ -27,9 +27,15 @@ enum Role {
 //   LIVE
 // }
 
-enum EditBalance {
-  addedBalance
-  withdrawals
+enum HistoryType {
+  DEPOSIT // Depósito de fundos
+  WITHDRAWAL // Saque de fundos
+  BET_PLACED // Aposta realizada
+  BET_WON // Aposta ganha
+  BET_LOST // Aposta perdida
+  BET_VOID // Aposta anulada
+  UNID_VALUE_CHANGE // Mudança no valor da unidade
+  BALANCE_ADJUSTMENT // Ajuste manual (se necessário)
 }
 
 enum Result {
@@ -102,6 +108,10 @@ model Bankroll {
   balance        Decimal
   unidValue      Decimal
   initialBalance Decimal
+  totalDeposited Decimal           @default(0)
+  totalWithdrawn Decimal           @default(0)
+  totalStaked    Decimal           @default(0)
+  totalReturned  Decimal           @default(0)
   bookmaker      String            @default("Unknown")
   userId         Int
   user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -111,22 +121,30 @@ model Bankroll {
   @@unique([userId, name])
 }
 
+// Histórico COMPLETO - registra todas as operações
 model BankrollHistory {
-  id            Int          @id @default(autoincrement())
-  bankrollId    Int
-  bankroll      Bankroll     @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
-  date          DateTime     @default(now())
-  balance       Decimal
-  unidValue     Decimal
-  addedBalance  Decimal      @default(0)
-  withdrawals   Decimal      @default(0)
-  gains         Decimal      @default(0)
-  losses        Decimal      @default(0)
-  profitAndLoss Decimal      @default(0)
-  result        Decimal      @default(0)
-  editBalance   EditBalance?
+  id              Int         @id @default(autoincrement())
+  bankrollId      Int
+  bankroll        Bankroll    @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  date            DateTime    @default(now())
+  type            HistoryType
+  balanceBefore   Decimal
+  balanceAfter    Decimal
+  unidValue       Decimal
+  amount          Decimal?
+  eventId         Int?
+  eventName       String?
+  stake           Decimal?
+  odds            Decimal?
+  potentialWin    Decimal?
+  actualReturn    Decimal?
+  unidValueBefore Decimal?
+  unidValueAfter  Decimal?
+  description     String?
 
   @@index([bankrollId, date])
+  @@index([eventId])
+  @@index([type, date])
 }
 
 //Event Model
@@ -178,7 +196,7 @@ model Event {
 
   //@@index([userId, eventType])
   @@index([result, apiEventId])
-  @@index([eventDate]) // Índice útil para buscar eventos por data
+  @@index([eventDate])
 }
 
 // Email Verification Model

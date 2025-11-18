@@ -17,31 +17,24 @@ const optionalDecimalSchema = decimalSchema.optional().nullable();
 const optionalNumberSchema = z.number().optional().nullable();
 const optionalStringSchema = z.string().optional().nullable();
 
-export const CreateBankrollHistorySchema = z.object({
+export const BankrollHistorySchema = z.object({
+  id: z.number(),
   bankrollId: z.number(),
-  type: HistoryTypeEnum,
+  date: z.coerce.date(),
+  type: HistoryTypeEnum.or(z.string()),
   balanceBefore: decimalSchema,
   balanceAfter: decimalSchema,
   unidValue: decimalSchema,
   amount: optionalDecimalSchema,
-  eventId: optionalNumberSchema,
-  eventName: optionalStringSchema,
   stake: optionalDecimalSchema,
   odds: optionalDecimalSchema,
   potentialWin: optionalDecimalSchema,
   actualReturn: optionalDecimalSchema,
   unidValueBefore: optionalDecimalSchema,
   unidValueAfter: optionalDecimalSchema,
+  eventId: optionalNumberSchema,
+  eventName: optionalStringSchema,
   description: optionalStringSchema,
 });
 
-export type CreateBankrollHistoryDTO = SafeInfer<
-  typeof CreateBankrollHistorySchema
->;
-
-export const GetBankrollHistorySchema = CreateBankrollHistorySchema.extend({
-  id: z.number(),
-  date: z.coerce.date(),
-});
-
-export type GetBankrollHistoryDTO = SafeInfer<typeof GetBankrollHistorySchema>;
+export type BankrollHistoryDTO = SafeInfer<typeof BankrollHistorySchema>;

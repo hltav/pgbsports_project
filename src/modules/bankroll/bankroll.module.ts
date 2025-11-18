@@ -6,6 +6,7 @@ import { CreateBankrollService } from './services/create-bankroll.service';
 import { DeleteBankrollService } from './services/delete-bankroll.service';
 import { FindBankrollService } from './services/find-bankroll.service';
 import { UpdateBankrollService } from './services/update-bankroll.service';
+import { FindBankrollHistoryService } from './services/findBankrollHistory.service';
 
 @Module({
   imports: [PrismaModule],
@@ -16,6 +17,7 @@ import { UpdateBankrollService } from './services/update-bankroll.service';
     CreateBankrollService,
     UpdateBankrollService,
     DeleteBankrollService,
+    FindBankrollHistoryService,
   ],
   controllers: [BankrollController],
   exports: [
@@ -24,6 +26,7 @@ import { UpdateBankrollService } from './services/update-bankroll.service';
     CreateBankrollService,
     UpdateBankrollService,
     DeleteBankrollService,
+    FindBankrollHistoryService,
   ],
 })
 export class BankrollModule {}
