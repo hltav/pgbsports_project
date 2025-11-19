@@ -10,6 +10,7 @@ import {
   ValidationPipe,
   NotFoundException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { JwtAuthGuard, Roles, RolesGuard } from './../../libs/common';
@@ -18,6 +19,7 @@ import {
   GetEventDTO,
   UpdateEventDTO,
 } from './../../libs/common/dto';
+import { AuthenticatedRequest } from '../auth/dto/auth.schema';
 
 @Controller('events')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -32,8 +34,11 @@ export class EventsController {
   }
 
   @Get()
-  async findAllEvents(): Promise<GetEventDTO[]> {
-    return this.eventService.findAllEvents();
+  async findAllEvents(
+    @Req() req: AuthenticatedRequest,
+  ): Promise<GetEventDTO[]> {
+    const userId = req.user.id;
+    return this.eventService.findAllEventsByUser(userId);
   }
 
   @Get(':id')

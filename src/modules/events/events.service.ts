@@ -100,8 +100,11 @@ export class EventsService {
     return event;
   }
 
-  async findAllEvents(): Promise<GetEventDTO[]> {
-    return this.prisma.event.findMany();
+  async findAllEventsByUser(userId: number): Promise<GetEventDTO[]> {
+    return this.prisma.event.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findEventById(id: number): Promise<GetEventDTO> {
