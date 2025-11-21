@@ -16,7 +16,7 @@ module.exports = {
       // Configuração para PRODUÇÃO (--env production)
       env_production: {
         NODE_ENV: 'production',
-        FRONTEND_URL: 'https://rtsportsmanager.vercel.app',
+        FRONTEND_URL: 'https://rtsportsmanager.com/',
       },
       // --- ADICIONE ESTA LINHA AQUI PARA PRODUÇÃO ---
       env_file: '.env', 

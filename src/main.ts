@@ -52,7 +52,6 @@ async function bootstrap() {
         'https://admin.rtsportsmanager.com',
         'https://rtsportsmanager.com',
         'https://www.rtsportsmanager.com',
-        'https://rtsportsmanager.vercel.app',
       ];
 
       if (!origin || allowedOrigins.includes(origin)) {
