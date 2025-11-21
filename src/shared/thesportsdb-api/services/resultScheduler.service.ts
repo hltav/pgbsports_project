@@ -6,9 +6,7 @@ import { ResultUpdaterService } from './resultUpdater.service';
 export class ResultSchedulerService {
   private readonly logger = new Logger(ResultSchedulerService.name);
 
-  constructor(private resultUpdater: ResultUpdaterService) {
-    console.log('🟢 ResultSchedulerService instanciado');
-  }
+  constructor(private resultUpdater: ResultUpdaterService) {}
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async handleResultUpdate(): Promise<void> {

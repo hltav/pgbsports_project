@@ -11,7 +11,6 @@ export class ResultsController {
 
   @Post('update-all')
   async updateAllResults() {
-    console.log('Trigger chamado pelo frontend');
     return this.resultScheduler.triggerManualUpdate();
   }
 

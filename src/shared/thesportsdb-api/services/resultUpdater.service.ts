@@ -37,9 +37,7 @@ export class ResultUpdaterService {
     private readonly theSportsDbLiveApi: TheSportsDbLiveApiService,
     private readonly eventsService: TheSportsDbEventsService,
     private readonly eventsUpdateService: EventsService,
-  ) {
-    console.log('✅ ResultUpdaterService instanciado');
-  }
+  ) {}
 
   async updateAllPendingEvents(): Promise<void> {
     const pendingEvents = await this.prisma.event.findMany({

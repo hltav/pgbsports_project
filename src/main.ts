@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { LogLevel, ValidationPipe } from '@nestjs/common';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -34,9 +34,16 @@ async function bootstrap() {
   } else {
     fastifyAdapter = new FastifyAdapter();
   }
+
+  const logLevels: LogLevel[] =
+    process.env.NODE_ENV === 'production'
+      ? ['log', 'warn', 'error']
+      : ['log', 'warn', 'error', 'debug', 'verbose'];
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     fastifyAdapter,
+    { logger: logLevels },
   );
 
   const configService = app.get(ConfigService);

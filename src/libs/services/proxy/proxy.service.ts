@@ -18,11 +18,9 @@ export class ProxyService {
     const cached = await this.cacheService.get<T>(cacheKey);
 
     if (cached) {
-      console.log(`✅ Cache hit for ${url}`);
       return cached;
     }
 
-    console.log(`🌐 Fetching fresh data from ${url}`);
     const { data } = await firstValueFrom(this.http.get<T>(url));
 
     await this.cacheService.set(cacheKey, data, ttl);
