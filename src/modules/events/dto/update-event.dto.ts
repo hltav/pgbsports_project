@@ -10,5 +10,11 @@ export const UpdateEventSchema = z.object({
   amount: decimalSchema.optional(),
   result: z.nativeEnum(Result).optional(),
   userId: z.number(),
+  intHomeScore: z.string().optional(),
+  intAwayScore: z.string().optional(),
+  homeScoreHT: z.number().optional(),
+  awayScoreHT: z.number().optional(),
+  homeScoreFT: z.number().optional(),
+  awayScoreFT: z.number().optional(),
 });
 export type UpdateEventDTO = SafeInfer<typeof UpdateEventSchema>;

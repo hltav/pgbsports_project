@@ -13,5 +13,9 @@ export function analyzeDuplaChance(
     won = awayScore >= homeScore;
   else if (eventDetails.includes('Casa ou Fora')) won = homeScore !== awayScore;
 
-  return { result: won ? Result.win : Result.lose, shouldUpdate: true };
+  return {
+    result: won ? Result.win : Result.lose,
+    shouldUpdate: true,
+    isFinalizableEarly: true,
+  };
 }

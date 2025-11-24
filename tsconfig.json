@@ -22,16 +22,14 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["zod", "node"]
+    "types": ["zod", "node", "jest"]
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
+    "src/**/*.js",
+    "test/**/*.ts",
     "**/*.spec.ts",
     "**/*.test.ts"
-  ]
+  ],
+  "exclude": ["node_modules", "dist"]
 }

@@ -15,8 +15,9 @@ import {
   analyzeResultadoFinal,
   analyzeTotalGols,
   analyzeAmbasMarcam,
-  analyzePlacarExato,
   analyzeDuplaChance,
+  analyzeAmbasMarcamEmAmbosTempos,
+  analyzePlacarExatoImproved,
 } from './analysis';
 import { TheSportsDbEventsService } from './events-thesportsdb.service';
 import { LookupEvent } from '../schemas/allEvents/allEvents.schema';
@@ -24,9 +25,11 @@ import {
   analyzeAmbasMarcamPrimeiroTempo,
   analyzeGolsPrimeiroTempo,
   analyzeIntervaloFinal,
+  analyzeVencedor2oTempo,
   analyzeVencedorPrimeiroTempo,
 } from './analysis/finalInterval.analysis';
 import { EventsService } from './../../../modules';
+import { analyzeEmpateAnulaAposta } from './analysis/drawNoBet.analysis';
 
 @Injectable()
 export class ResultUpdaterService {
@@ -72,6 +75,7 @@ export class ResultUpdaterService {
         'strStatus' in liveEvent ? liveEvent.strStatus : 'FT',
       );
 
+      // 1) POSTPONED / CANCELLED → RETURNED
       if (
         eventStatus === EventStatus.POSTPONED ||
         eventStatus === EventStatus.CANCELLED
@@ -84,6 +88,7 @@ export class ResultUpdaterService {
         return;
       }
 
+      // 2) Placar atual
       const homeScore =
         'intHomeScore' in liveEvent
           ? parseInt(liveEvent.intHomeScore ?? '0', 10)
@@ -99,17 +104,44 @@ export class ResultUpdaterService {
         return;
       }
 
+      // 3) SALVAR HT AUTOMATICAMENTE (APENAS NO MOMENTO DO INTERVALO)
+      if (
+        eventStatus === EventStatus.HALF_TIME &&
+        (event.homeScoreHT === null ||
+          event.awayScoreHT === null ||
+          (event.homeScoreHT === 0 && event.awayScoreHT === 0))
+      ) {
+        await this.eventsUpdateService.updateEvent(eventId, {
+          userId: event.userId,
+          homeScoreHT: Number(homeScore),
+          awayScoreHT: Number(awayScore),
+        });
+
+        this.logger.log(
+          `HT score saved for event ${eventId}: ${homeScore}–${awayScore}`,
+        );
+      }
+
+      // 4) Preparar dados para análise
+      const homeScoreHT = event.homeScoreHT ?? homeScore;
+      const awayScoreHT = event.awayScoreHT ?? awayScore;
+
       const analysis = this.analyzeEventResult({
         ...event,
         intHomeScore: homeScore.toString(),
         intAwayScore: awayScore.toString(),
         strStatus: eventStatus,
+        homeScoreHT,
+        awayScoreHT,
+        homeScoreFT: homeScore,
+        awayScoreFT: awayScore,
       } as EventLiveScoreDTO);
 
       this.logger.debug(
         `Analysis result: shouldUpdate=${analysis.shouldUpdate}, isFinalizableEarly=${analysis.isFinalizableEarly}, result=${analysis.result}`,
       );
 
+      // 5) Condições para finalização
       const inProgressStatuses = [
         EventStatus.IN_PROGRESS,
         EventStatus.FIRST_HALF,
@@ -117,13 +149,26 @@ export class ResultUpdaterService {
         EventStatus.HALF_TIME,
       ];
 
+      const isFirstHalfMarket =
+        event.market.includes('1º Tempo') ||
+        event.market.includes('1st Half') ||
+        event.market.includes('Intervalo/Final') ||
+        event.market.includes('HT/FT');
+
+      const shouldFinalizeAtHalfTime =
+        isFirstHalfMarket && eventStatus === EventStatus.HALF_TIME;
+
+      const shouldFinalizeAtFinish =
+        !isFirstHalfMarket && eventStatus === EventStatus.FINISHED;
+
+      const canFinalizeEarly =
+        inProgressStatuses.includes(eventStatus) && analysis.isFinalizableEarly;
+
+      // 6) FINALIZAÇÃO
       if (
         analysis.shouldUpdate &&
-        (eventStatus === EventStatus.FINISHED ||
-          (inProgressStatuses.includes(eventStatus) &&
-            analysis.isFinalizableEarly))
+        (shouldFinalizeAtHalfTime || shouldFinalizeAtFinish || canFinalizeEarly)
       ) {
-        // ✅ Use o método que já tem a lógica de bankroll
         await this.eventsUpdateService.updateEvent(eventId, {
           userId: event.userId,
           result: analysis.result,
@@ -134,11 +179,13 @@ export class ResultUpdaterService {
             analysis.isFinalizableEarly ? ' (early)' : ''
           }`,
         );
-      } else {
-        this.logger.log(
-          `Event ${eventId} ainda não pode ser atualizado (${eventStatus})`,
-        );
+        return;
       }
+
+      // 7) Se chegou aqui, ainda não está pronto para finalizar
+      this.logger.log(
+        `Event ${eventId} ainda não pode ser atualizado (${eventStatus})`,
+      );
     } catch (error) {
       this.logger.error(`Error updating event ${eventId}`, error);
     }
@@ -177,18 +224,38 @@ export class ResultUpdaterService {
       `Analyzing event: market="${market}", details="${details}", homeScore=${homeScore}, awayScore=${awayScore}, homeScoreHT=${homeScoreHT}, awayScoreHT=${awayScoreHT}`,
     );
 
+    // --------------------- 1º TEMPO ---------------------
+
     if (market.includes('Gols 1º Tempo') || market.includes('1st Half Goals'))
       return analyzeGolsPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+
     if (
       market.includes('Vencedor 1º Tempo') ||
-      market.includes('1st Half Winner')
+      market.includes('1st Half Winner') ||
+      market.includes('Resultado do 1º Tempo')
     )
       return analyzeVencedorPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+
     if (
       market.includes('Ambas Marcam 1º Tempo') ||
       market.includes('BTTS 1st Half')
     )
       return analyzeAmbasMarcamPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+
+    // Ambas marcam em ambos os tempos
+    if (
+      market.includes('Ambas Marcam Ambos Tempos') ||
+      market.includes('BTTS Both Halves')
+    )
+      return analyzeAmbasMarcamEmAmbosTempos(
+        details,
+        homeScoreHT,
+        awayScoreHT,
+        homeScore,
+        awayScore,
+      );
+
+    // Intervalo/Final
     if (market.includes('Intervalo/Final') || market.includes('HT/FT'))
       return analyzeIntervaloFinal(
         details,
@@ -198,19 +265,56 @@ export class ResultUpdaterService {
         awayScore,
       );
 
+    // Vencedor do 2º Tempo
+    if (
+      market.includes('Vencedor 2º Tempo') ||
+      market.includes('2nd Half Winner')
+    )
+      return analyzeVencedor2oTempo(
+        details,
+        homeScoreHT,
+        awayScoreHT,
+        homeScore,
+        awayScore,
+      );
+
+    // --------------------- TEMPO FINAL ---------------------
+
     if (market.includes('Resultado Final'))
       return analyzeResultadoFinal(details, homeScore, awayScore);
+
     if (
       market.includes('Total de Gols') ||
       market.includes('Gols (Over/Under)')
     )
       return analyzeTotalGols(details, homeScore, awayScore);
+
+    // Ambas marcam (full-time)
     if (market.includes('Ambas'))
       return analyzeAmbasMarcam(details, homeScore, awayScore);
-    if (market.includes('Placar Exato'))
-      return analyzePlacarExato(details, homeScore, awayScore);
+
+    // Placar Exato
+    if (market.includes('Placar Exato')) {
+      return analyzePlacarExatoImproved(
+        details,
+        homeScore,
+        awayScore,
+        homeScoreHT,
+        awayScoreHT,
+      );
+    }
+
+    // Dupla Chance
     if (market.includes('Dupla Chance'))
       return analyzeDuplaChance(details, homeScore, awayScore);
+
+    // Empate Anula Aposta (DNB)
+    if (
+      market.includes('Empate Anula') ||
+      market.includes('Draw No Bet') ||
+      market.includes('DNB')
+    )
+      return analyzeEmpateAnulaAposta(details, homeScore, awayScore);
 
     return { result: Result.void, shouldUpdate: true };
   }

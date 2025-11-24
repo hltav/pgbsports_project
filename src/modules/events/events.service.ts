@@ -72,6 +72,12 @@ export class EventsService {
         strStatus: data.strStatus,
         strPostponed: data.strPostponed,
         strThumb: data.strThumb,
+        intHomeScore: '0',
+        intAwayScore: '0',
+        homeScoreHT: 0,
+        awayScoreHT: 0,
+        homeScoreFT: 0,
+        awayScoreFT: 0,
       },
     });
 
@@ -117,7 +123,19 @@ export class EventsService {
   async updateEvent(id: number, data: UpdateEventDTO): Promise<GetEventDTO> {
     const event = await this.prisma.event.findUnique({
       where: { id },
-      select: { id: true, bankId: true, amount: true, odd: true, result: true },
+      select: {
+        id: true,
+        bankId: true,
+        amount: true,
+        odd: true,
+        result: true,
+        intHomeScore: true,
+        intAwayScore: true,
+        homeScoreHT: true,
+        awayScoreHT: true,
+        homeScoreFT: true,
+        awayScoreFT: true,
+      },
     });
 
     if (!event) throw new NotFoundException('Event not found!');

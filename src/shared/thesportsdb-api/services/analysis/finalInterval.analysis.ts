@@ -45,7 +45,12 @@ export function analyzeVencedorPrimeiroTempo(
   homeScoreHT: number,
   awayScoreHT: number,
 ): EventMarketAnalysis {
+  console.log(
+    'analyzeVencedorPrimeiroTempo - details:',
+    JSON.stringify(details),
+  ); // ✅ Log aqui
   const detailsLower = details.toLowerCase();
+  console.log('detailsLower:', detailsLower);
 
   if (
     detailsLower.includes('casa') ||
@@ -84,6 +89,44 @@ export function analyzeVencedorPrimeiroTempo(
   }
 
   return voidResult();
+}
+
+// 🏆 Vencedor 2º Tempo
+export function analyzeVencedor2oTempo(
+  eventDetails: string,
+  homeScoreHT: number,
+  awayScoreHT: number,
+  homeScoreFT: number,
+  awayScoreFT: number,
+): EventMarketAnalysis {
+  const homeScore2ndHalf = homeScoreFT - homeScoreHT;
+  const awayScore2ndHalf = awayScoreFT - awayScoreHT;
+
+  if (eventDetails.includes('Casa')) {
+    return {
+      result: homeScore2ndHalf > awayScore2ndHalf ? Result.win : Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
+  }
+
+  if (eventDetails.includes('Empate')) {
+    return {
+      result: homeScore2ndHalf === awayScore2ndHalf ? Result.win : Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
+  }
+
+  if (eventDetails.includes('Fora')) {
+    return {
+      result: awayScore2ndHalf > homeScore2ndHalf ? Result.win : Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
+  }
+
+  return { result: Result.void, shouldUpdate: true };
 }
 
 // 🎯 Ambas Marcam 1º Tempo (Corrigido e Refatorado)
