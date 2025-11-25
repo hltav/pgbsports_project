@@ -4,6 +4,7 @@ export interface EventMarketAnalysis {
   result: Result;
   shouldUpdate: boolean;
   isFinalizableEarly?: boolean;
+  isMatchFinished?: boolean;
 }
 
 export function noUpdate(): EventMarketAnalysis {

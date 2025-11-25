@@ -3,6 +3,7 @@ Aaiun
 Ababa
 absoluto
 aceitos
+acento
 acertado
 Acertou
 acima
@@ -45,6 +46,7 @@ arredondar
 Artilheiro
 Asiático
 atingido
+atingir
 Atletismo
 atualizada
 atualizados
@@ -63,6 +65,7 @@ Burkina
 buscá
 Caicos
 Calcular
+CÁLCULO
 Campeão
 Campeonato
 cancelados
@@ -72,6 +75,7 @@ Cartões
 cedo
 chamador
 chega
+chegar
 Chuuk
 Ciclismo
 Classificação
@@ -89,6 +93,8 @@ concluídos
 condição
 condicional
 condições
+confirmadas
+confirmaram
 confirmou
 considerado
 considerando
@@ -109,10 +115,12 @@ decidida
 decidido
 decidir
 decimais
+DECISÃO
 Definições
 definidos
 definitivo
 deletado
+DEPENDE
 depositado
 depósito
 depósitos
@@ -121,6 +129,7 @@ desse
 desta
 Detalha
 detalhados
+Detecta
 Determina
 deveria
 devolução
@@ -142,6 +151,7 @@ empatam
 Empate
 encerrar
 Encontra
+entrou
 envolvido
 Equipes
 Equitação
@@ -169,7 +179,10 @@ Extrai
 Extraindo
 Extrair
 Fakaofo
+falharam
+falta
 Faso
+ficar
 finais
 finaliza
 Finalização
@@ -186,6 +199,7 @@ ganhar
 ganho
 ganhos
 ganhou
+garantiu
 Gelo
 geralmente
 gigante
@@ -208,6 +222,7 @@ importantes
 impossível
 Impossível
 inalterado
+informado
 inglês
 inteiros
 Internacionais
@@ -245,10 +260,12 @@ manuais
 Marca
 Marcador
 Marcam
+marcando
 Marcaram
 marcarem
 Marigot
 Marino
+matou
 melhorada
 Mercados
 metade
@@ -264,11 +281,13 @@ Montante
 Moresby
 motorsport
 Motorsport
+muda
 mudaram
 mudou
 Multiesportivos
 Murdo
 negativo
+Neste
 Neutraliza
 Normaliza
 Novos
@@ -283,6 +302,7 @@ parcial
 parcialmente
 partida
 partir
+passaram
 passou
 Patinação
 pela
@@ -292,6 +312,7 @@ pendentes
 perdas
 Perde
 perdedor
+perder
 perdeu
 Perigosa
 permanece
@@ -301,6 +322,7 @@ podemos
 Populares
 português
 positivo
+possibilidade
 possíveis
 possível
 Possível
@@ -312,6 +334,7 @@ precoce
 Prepara
 presente
 primariamente
+proibida
 Próximo
 puder
 Radicais
@@ -359,6 +382,7 @@ Suporta
 Tênis
 terá
 termina
+terminar
 terminou
 Tokelau
 tomou
@@ -370,6 +394,7 @@ totaizacoes
 totalização
 transação
 Transações
+trás
 trataremos
 Último
 Últimos

@@ -18,18 +18,20 @@ import {
   analyzeDuplaChance,
   analyzeAmbasMarcamEmAmbosTempos,
   analyzePlacarExatoImproved,
+  analyzeGolsPrimeiroTempo,
+  analyzeVencedorPrimeiroTempo,
+  analyzeEmpateAnulaAposta,
 } from './analysis';
 import { TheSportsDbEventsService } from './events-thesportsdb.service';
 import { LookupEvent } from '../schemas/allEvents/allEvents.schema';
 import {
   analyzeAmbasMarcamPrimeiroTempo,
-  analyzeGolsPrimeiroTempo,
   analyzeIntervaloFinal,
   analyzeVencedor2oTempo,
-  analyzeVencedorPrimeiroTempo,
 } from './analysis/finalInterval.analysis';
 import { EventsService } from './../../../modules';
-import { analyzeEmpateAnulaAposta } from './analysis/drawNoBet.analysis';
+import { mapStrStatusToEventStatus } from '../helpers/mapStatusToEvent.helper';
+import { parseEventStatus } from '../helpers/eventStatus.helper';
 
 @Injectable()
 export class ResultUpdaterService {
@@ -219,6 +221,8 @@ export class ResultUpdaterService {
 
     const homeScoreHT = eventData.homeScoreHT ?? 0;
     const awayScoreHT = eventData.awayScoreHT ?? 0;
+    const statusEnum = mapStrStatusToEventStatus(eventData.strStatus);
+    const status = parseEventStatus(statusEnum);
 
     this.logger.debug(
       `Analyzing event: market="${market}", details="${details}", homeScore=${homeScore}, awayScore=${awayScore}, homeScoreHT=${homeScoreHT}, awayScoreHT=${awayScoreHT}`,
@@ -253,6 +257,7 @@ export class ResultUpdaterService {
         awayScoreHT,
         homeScore,
         awayScore,
+        status.isFinished,
       );
 
     // Intervalo/Final
@@ -314,7 +319,12 @@ export class ResultUpdaterService {
       market.includes('Draw No Bet') ||
       market.includes('DNB')
     )
-      return analyzeEmpateAnulaAposta(details, homeScore, awayScore);
+      return analyzeEmpateAnulaAposta(
+        details,
+        homeScore,
+        awayScore,
+        status.isFinished,
+      );
 
     return { result: Result.void, shouldUpdate: true };
   }

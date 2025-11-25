@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from './base.analysis';
+import { EventMarketAnalysis } from '../base.analysis';
 
 export function analyzeDuplaChance(
   eventDetails: string,
