@@ -34,7 +34,8 @@
     "test/**/*.ts",
     "**/*.spec.ts",
     "**/*.test.ts",
-    "prisma.config.ts"
+    "prisma.config.ts",
+    "ecosystem.config.js"
   ],
   "exclude": ["node_modules", "dist", "generated", "prisma", "scripts"]
 }
