@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'rtsmanager',
-      script: './dist/main.js',
+      script: './dist/src/main.js',
       cwd: '/home/hltav/rtsmanager_backend',
       instances: 1,
       autorestart: true,
