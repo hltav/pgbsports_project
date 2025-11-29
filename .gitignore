@@ -16,8 +16,7 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
-/scripts/**/*.ts
-/scripts/**/*.js
+/scripts/
 /coverage
 /.nyc_output
 .jest-cache
