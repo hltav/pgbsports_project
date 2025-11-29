@@ -333,6 +333,7 @@ export class ResultUpdaterService {
 
   //   return { result: Result.void, shouldUpdate: true };
   // }
+
   private analyzeEventResult(
     eventData: EventLiveScoreDTO,
   ): EventMarketAnalysis {
