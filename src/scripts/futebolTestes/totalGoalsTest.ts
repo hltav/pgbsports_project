@@ -4,9 +4,8 @@ import { analyzeTotalGols } from './../../shared/thesportsdb-api/services/analys
 
 function run() {
   const tests = [
-    // ============================================================
     // 🟦 OVER - ACERTOU (TOTAL > THRESHOLD)
-    // ============================================================
+
     {
       scenario: 'Over 2.5: 2x1 (3 gols > 2.5) → WIN (early)',
       eventDetails: 'Over 2.5',
