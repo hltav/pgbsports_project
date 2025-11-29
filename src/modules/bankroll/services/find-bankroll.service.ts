@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database/prisma/prisma.service';
 import { GetBankrollDTO, GetBankrollHistoryDTO } from '../z.dto';
-import { Decimal } from '@prisma/internal/prismaNamespace';
+import { Decimal } from '@prisma/client/runtime/library';
 
 type BankrollWithHistory = GetBankrollDTO & {
   histories: GetBankrollHistoryDTO[];

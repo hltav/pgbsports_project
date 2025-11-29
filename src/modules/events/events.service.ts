@@ -6,7 +6,7 @@ import {
   getTimezoneByCountry,
 } from './utils/timezone.utils';
 import { UpdateBankrollService } from './../bankroll/services/update-bankroll.service';
-import { Decimal } from '@prisma/internal/prismaNamespace';
+import { Decimal } from '@prisma/client/runtime/library';
 
 interface EventWithBankId {
   id: number;

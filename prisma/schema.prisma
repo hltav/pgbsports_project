@@ -5,15 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
-  engineType      = "binary"
-  jsVersion       = "es5"
-  moduleFormat    = "commonjs"
+  provider = "prisma-client-js"
+  
 }
 
 datasource db {
   provider = "postgresql"
+   url      = env("DATABASE_URL")
 }
 
 // User types enum
