@@ -1,39 +1,72 @@
+// /** @type {import('jest').Config} */
+// module.exports = {
+//   preset: 'ts-jest/presets/default',
+//   testEnvironment: 'tsconfig.test.json',
+//   moduleFileExtensions: ['js', 'json', 'ts'],
+//   rootDir: 'src',
+//   testRegex: '.*\\.spec\\.ts$',
+
+//   transform: {
+//     '^.+\\.(t|j)s$': [
+//       'ts-jest',
+//       {
+//         tsconfig: 'tsconfig.test.json',
+//       },
+//     ],
+//   },
+
+//   collectCoverageFrom: ['**/*.(t|j)s'],
+//   coverageDirectory: '../coverage',
+
+//   transformIgnorePatterns: [],
+
+//   extensionsToTreatAsEsm: [],
+
+//   moduleNameMapper: {},
+
+//   resolver: undefined,
+
+//   cache: false,
+//   cacheDirectory: 'jest-cache',
+
+//   setupFilesAfterEnv: [],
+
+//   verbose: true,
+
+//   forceExit: true,
+
+//   detectOpenHandles: true,
+// };
+
 /** @type {import('jest').Config} */
 module.exports = {
-  preset: 'ts-jest/presets/default',
+  preset: 'ts-jest',
   testEnvironment: 'node',
   moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
-  testRegex: '.*\\.spec\\.ts$',
+  rootDir: '.',
+  testRegex: '.*\\.(spec|test)\\.ts$',
 
-  transform: {
-    '^.+\\.(t|j)s$': [
-      'ts-jest',
-      {
-        tsconfig: '<rootDir>/../tsconfig.test.json',
-      },
-    ],
+  // Configuração mais específica para ts-jest
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.test.json',
+    },
   },
 
-  collectCoverageFrom: ['**/*.(t|j)s'],
-  coverageDirectory: '../coverage',
+  transform: {
+    '^.+\\.(t|j)s$': 'ts-jest',
+  },
 
-  transformIgnorePatterns: [],
+  moduleNameMapping: {
+    '^src/(.*)$': '<rootDir>/src/$1',
+  },
 
-  extensionsToTreatAsEsm: [],
+  collectCoverageFrom: ['src/**/*.(t|j)s'],
+  coverageDirectory: './coverage',
 
-  moduleNameMapper: {},
-
-  resolver: undefined,
-
-  cache: false,
-  cacheDirectory: '<rootDir>/../.jest-cache',
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 
   setupFilesAfterEnv: [],
 
   verbose: true,
-
-  forceExit: true,
-
-  detectOpenHandles: true,
 };

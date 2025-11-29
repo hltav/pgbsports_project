@@ -14,6 +14,10 @@
     "rootDir": "src",
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@prisma/*": ["./generated/prisma/*"],
+      "@prisma/client": ["generated/prisma/client"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -29,7 +33,8 @@
     "src/**/*.js",
     "test/**/*.ts",
     "**/*.spec.ts",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "prisma.config.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

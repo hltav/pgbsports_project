@@ -5,6 +5,9 @@ import { CreateUserDTO } from './../../../../libs';
 import { CryptoService } from './../../../../libs/crypto/services/crypto.service';
 import { PrismaService } from './../../../../libs/database';
 import { EmailService } from './../../../../libs/services/mailer/mail.service';
+import { Role } from '@prisma/client';
+import { describe, beforeAll, it, expect, afterAll } from '@jest/globals';
+import { jest } from '@jest/globals';
 
 describe('RegisterUserService - Realistic Integration', () => {
   let service: RegisterUserService;
@@ -21,7 +24,7 @@ describe('RegisterUserService - Realistic Integration', () => {
         {
           provide: CryptoService,
           useValue: {
-            hashPassword: jest.fn((password) =>
+            hashPassword: jest.fn((password: string) =>
               Promise.resolve(`hashed-${password}`),
             ),
           },
@@ -56,6 +59,7 @@ describe('RegisterUserService - Realistic Integration', () => {
       nickname: 'alice123',
       email: 'alice@example.com',
       password: 'password',
+      role: Role.USER,
     };
 
     const user = await service.execute(createUserDto);
@@ -76,7 +80,7 @@ describe('RegisterUserService - Realistic Integration', () => {
     expect(userInDb!.password).toBe('hashed-password');
 
     // Verifica token de verificação
-    const verification = await prisma.emailVerification.findUnique({
+    const verification = await prisma.emailVerification.findFirst({
       where: { userId: user.id },
     });
     expect(verification).not.toBeNull();
@@ -100,6 +104,7 @@ describe('RegisterUserService - Realistic Integration', () => {
       nickname: 'bob123',
       email: 'alice@example.com', // mesmo email da Alice
       password: 'password',
+      role: Role.USER,
     };
 
     await expect(service.execute(createUserDto)).rejects.toThrow(
@@ -114,6 +119,7 @@ describe('RegisterUserService - Realistic Integration', () => {
       nickname: 'alice123', // mesmo nickname da Alice
       email: 'charlie@example.com',
       password: 'password',
+      role: Role.USER,
     };
 
     await expect(service.execute(createUserDto)).rejects.toThrow(
@@ -129,6 +135,7 @@ describe('RegisterUserService - Realistic Integration', () => {
         nickname: 'david1',
         email: 'david1@example.com',
         password: 'pw1',
+        role: Role.USER,
       },
       {
         firstname: 'Eve',
@@ -136,6 +143,7 @@ describe('RegisterUserService - Realistic Integration', () => {
         nickname: 'eve1',
         email: 'eve1@example.com',
         password: 'pw2',
+        role: Role.USER,
       },
     ];
 

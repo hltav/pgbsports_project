@@ -1,43 +1,5 @@
 import { Result } from '@prisma/client';
 import { EventMarketAnalysis, noUpdate, voidResult } from '../base.analysis';
-import { EventStatus } from './../../../../../shared/thesportsdb-api/enums/eventStatus.enum';
-
-// export function analyzeVencedor2oTempo(
-//   eventDetails: string,
-//   homeScoreHT: number,
-//   awayScoreHT: number,
-//   homeScoreFT: number,
-//   awayScoreFT: number,
-// ): EventMarketAnalysis {
-//   const homeScore2ndHalf = homeScoreFT - homeScoreHT;
-//   const awayScore2ndHalf = awayScoreFT - awayScoreHT;
-
-//   if (eventDetails.includes('Casa')) {
-//     return {
-//       result: homeScore2ndHalf > awayScore2ndHalf ? Result.win : Result.lose,
-//       shouldUpdate: true,
-//       isFinalizableEarly: false,
-//     };
-//   }
-
-//   if (eventDetails.includes('Empate')) {
-//     return {
-//       result: homeScore2ndHalf === awayScore2ndHalf ? Result.win : Result.lose,
-//       shouldUpdate: true,
-//       isFinalizableEarly: false,
-//     };
-//   }
-
-//   if (eventDetails.includes('Fora')) {
-//     return {
-//       result: awayScore2ndHalf > homeScore2ndHalf ? Result.win : Result.lose,
-//       shouldUpdate: true,
-//       isFinalizableEarly: false,
-//     };
-//   }
-
-//   return { result: Result.void, shouldUpdate: true };
-// }
 
 export function analyzeVencedor2oTempo(
   eventDetails: string,
@@ -45,7 +7,7 @@ export function analyzeVencedor2oTempo(
   awayScoreHT: number | null,
   homeScoreFT: number | null,
   awayScoreFT: number | null,
-  matchStatus: EventStatus,
+  matchStatus: boolean,
 ): EventMarketAnalysis {
   // Normalizar texto
   const details = eventDetails.toLowerCase().trim();
@@ -61,7 +23,7 @@ export function analyzeVencedor2oTempo(
   }
 
   // ❗ Antes do fim da partida → não finalizar
-  const matchFinished = matchStatus === EventStatus.FINISHED;
+  const matchFinished = matchStatus;
   if (!matchFinished) {
     return noUpdate();
   }

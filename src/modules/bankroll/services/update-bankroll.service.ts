@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database/prisma';
-import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from '@prisma/internal/prismaNamespace';
 import { GetBankrollDTO, CreateBankrollHistoryDTO } from '../z.dto';
 import { UpdateBankrollDTO, PatchBankrollDTO } from '../z.dto';
 import { BankrollUpdateFields } from '../z.dto/bankrollFields.dto';

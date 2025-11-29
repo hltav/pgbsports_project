@@ -9,7 +9,7 @@ import {
   analyzeHandicapEuropeu,
   analyzeHandicapAsiatico,
   analyzeHandicapPorTempo,
-} from './../shared/thesportsdb-api/services/analysis/handicapMarket.analysis';
+} from '../shared/thesportsdb-api/services/analysis/futebol/handicapMarket.analysis';
 import { EventMarketAnalysis } from './../shared/thesportsdb-api/services/analysis/base.analysis';
 
 interface TestCase {

@@ -17,6 +17,8 @@ import { JwtHandlerService } from '../../../../libs/crypto/services/jwt.service'
 import { SignInVerifyService } from '../../services/signInVerify.service';
 import { EmailService } from '../../../../libs/services/mailer/mail.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { describe, beforeEach, it, expect } from '@jest/globals';
+import { jest } from '@jest/globals';
 
 describe('AuthService', () => {
   let service: AuthService;

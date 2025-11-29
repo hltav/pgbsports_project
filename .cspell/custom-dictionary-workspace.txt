@@ -27,6 +27,8 @@ altera
 alteração
 alternativa
 Ambas
+Ambíguo
+AMBÍGUOS
 Analisa
 análise
 andamento
@@ -36,6 +38,7 @@ antecipado
 Anula
 anulada
 anuladas
+aplicado
 Aposta
 apostada
 apostado
@@ -45,6 +48,7 @@ Aquáticos
 arredondar
 Artilheiro
 Asiático
+atende
 atingido
 atingir
 Atletismo
@@ -69,9 +73,11 @@ CÁLCULO
 Campeão
 Campeonato
 cancelados
+captura
 caractere
 Cartão
 Cartões
+CASOS
 cedo
 chamador
 chega
@@ -104,6 +110,7 @@ CORREÇÃO
 corrigida
 CORRIGIDOS
 Críquete
+critério
 crítica
 cumpriram
 cumpriu
@@ -124,9 +131,11 @@ DEPENDE
 depositado
 depósito
 depósitos
+DERROTA
 desnecessário
 desse
 desta
+DESVANTAGEM
 Detalha
 detalhados
 Detecta
@@ -144,6 +153,7 @@ Distribuição
 Dois
 Duelo
 Dupla
+duplo
 Efate
 empata
 empatado
@@ -156,9 +166,12 @@ envolvido
 Equipes
 Equitação
 errado
+ERROU
 Escalada
 Escanteio
 Escanteios
+espaço
+espaços
 Especiais
 Espera
 esperada
@@ -178,7 +191,10 @@ Expulso
 Extrai
 Extraindo
 Extrair
+extremamente
+EXTREMOS
 Fakaofo
+falham
 falharam
 falta
 Faso
@@ -187,10 +203,13 @@ finais
 finaliza
 Finalização
 finalizável
+finalizou
 financeira
 financeiras
+flutuante
 Formata
 forneceu
+frente
 fundos
 Futuna
 Gaélicos
@@ -199,11 +218,14 @@ ganhar
 ganho
 ganhos
 ganhou
+garantida
 garantiu
 Gelo
 geralmente
 gigante
 Ginástica
+goleada
+GOLEADAS
 Golfe
 gols
 Gols
@@ -221,9 +243,11 @@ Importação
 importantes
 impossível
 Impossível
+imutável
 inalterado
 informado
 inglês
+insuficientes
 inteiros
 Internacionais
 Intervalo
@@ -255,6 +279,7 @@ luxon
 Mahe
 maior
 maioria
+maiúsculo
 Mandante
 manuais
 Marca
@@ -263,6 +288,7 @@ Marcam
 marcando
 Marcaram
 marcarem
+marcou
 Marigot
 Marino
 matou
@@ -284,13 +310,19 @@ Motorsport
 muda
 mudaram
 mudou
+muitos
+MUITOS
 Multiesportivos
+MÚLTIPLOS
 Murdo
 negativo
 Neste
 Neutraliza
+ninguém
 Normaliza
+Normalizar
 Novos
+NÚMEROS
 nunca
 Opção
 opcionais
@@ -298,8 +330,10 @@ outra
 Pago
 países
 Países
+palavra
 parcial
 parcialmente
+parímpar
 partida
 partir
 passaram
@@ -319,6 +353,7 @@ permanece
 Placar
 placares
 podemos
+ponto
 Populares
 português
 positivo
@@ -359,6 +394,7 @@ retornada
 retornam
 Retornamos
 Rica
+robusta
 Roteia
 Rúgbi
 saída
@@ -375,6 +411,7 @@ simplificar
 sinal
 Sinuca
 sistemas
+sofre
 Sofrer
 Subtrai
 subtrair
@@ -385,6 +422,7 @@ termina
 terminar
 terminou
 Tokelau
+tolerância
 tomou
 Tongatapu
 topo
@@ -402,6 +440,8 @@ ultrapassou
 unidade
 unidades
 usados
+VANTAGEM
+VARIAÇÕES
 Vence
 vencedor
 Vencedor

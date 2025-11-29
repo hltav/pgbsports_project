@@ -21,14 +21,18 @@ import {
   analyzeGolsPrimeiroTempo,
   analyzeVencedorPrimeiroTempo,
   analyzeEmpateAnulaAposta,
+  analyzeAmbasMarcamPrimeiroTempo,
+  analyzeVencedor2oTempo,
+  analyzeIntervaloFinal,
+  analyzeHandicapAsiatico,
+  analyzeHandicapEuropeu,
+  analyzeHandicapPorTempo,
+  analyzeTotalExatoGols,
+  analyzeVenceSemSofrerGol,
+  analyzeNumeroParImpar,
 } from './analysis';
 import { TheSportsDbEventsService } from './events-thesportsdb.service';
 import { LookupEvent } from '../schemas/allEvents/allEvents.schema';
-import {
-  analyzeAmbasMarcamPrimeiroTempo,
-  analyzeIntervaloFinal,
-  analyzeVencedor2oTempo,
-} from './analysis/finalInterval.analysis';
 import { EventsService } from './../../../modules';
 import { mapStrStatusToEventStatus } from '../helpers/mapStatusToEvent.helper';
 import { parseEventStatus } from '../helpers/eventStatus.helper';
@@ -211,6 +215,124 @@ export class ResultUpdaterService {
     return pastEvent ?? null;
   }
 
+  // private analyzeEventResult(
+  //   eventData: EventLiveScoreDTO,
+  // ): EventMarketAnalysis {
+  //   const homeScore = parseInt(eventData.intHomeScore || '0', 10);
+  //   const awayScore = parseInt(eventData.intAwayScore || '0', 10);
+  //   const market = eventData.market;
+  //   const details = eventData.optionMarket;
+
+  //   const homeScoreHT = eventData.homeScoreHT ?? 0;
+  //   const awayScoreHT = eventData.awayScoreHT ?? 0;
+  //   const statusEnum = mapStrStatusToEventStatus(eventData.strStatus);
+  //   const status = parseEventStatus(statusEnum);
+
+  //   this.logger.debug(
+  //     `Analyzing event: market="${market}", details="${details}", homeScore=${homeScore}, awayScore=${awayScore}, homeScoreHT=${homeScoreHT}, awayScoreHT=${awayScoreHT}`,
+  //   );
+
+  //   // --------------------- 1º TEMPO ---------------------
+
+  //   if (market.includes('Gols 1º Tempo') || market.includes('1st Half Goals'))
+  //     return analyzeGolsPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+
+  //   if (
+  //     market.includes('Vencedor 1º Tempo') ||
+  //     market.includes('1st Half Winner') ||
+  //     market.includes('Resultado do 1º Tempo')
+  //   )
+  //     return analyzeVencedorPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+
+  //   if (
+  //     market.includes('Ambas Marcam 1º Tempo') ||
+  //     market.includes('BTTS 1st Half')
+  //   )
+  //     return analyzeAmbasMarcamPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+
+  //   // Ambas marcam em ambos os tempos
+  //   if (
+  //     market.includes('Ambas Marcam Ambos Tempos') ||
+  //     market.includes('BTTS Both Halves')
+  //   )
+  //     return analyzeAmbasMarcamEmAmbosTempos(
+  //       details,
+  //       homeScoreHT,
+  //       awayScoreHT,
+  //       homeScore,
+  //       awayScore,
+  //       status.isFinished,
+  //     );
+
+  //   // Intervalo/Final
+  //   if (market.includes('Intervalo/Final') || market.includes('HT/FT'))
+  //     return analyzeIntervaloFinal(
+  //       details,
+  //       homeScoreHT,
+  //       awayScoreHT,
+  //       homeScore,
+  //       awayScore,
+  //     );
+
+  //   // Vencedor do 2º Tempo
+  //   if (
+  //     market.includes('Vencedor 2º Tempo') ||
+  //     market.includes('2nd Half Winner')
+  //   )
+  //     return analyzeVencedor2oTempo(
+  //       details,
+  //       homeScoreHT,
+  //       awayScoreHT,
+  //       homeScore,
+  //       awayScore,
+  //       status.isFinished,
+  //     );
+
+  //   // --------------------- TEMPO FINAL ---------------------
+
+  //   if (market.includes('Resultado Final'))
+  //     return analyzeResultadoFinal(details, homeScore, awayScore);
+
+  //   if (
+  //     market.includes('Total de Gols') ||
+  //     market.includes('Gols (Over/Under)')
+  //   )
+  //     return analyzeTotalGols(details, homeScore, awayScore);
+
+  //   // Ambas marcam (full-time)
+  //   if (market.includes('Ambas'))
+  //     return analyzeAmbasMarcam(details, homeScore, awayScore);
+
+  //   // Placar Exato
+  //   if (market.includes('Placar Exato')) {
+  //     return analyzePlacarExatoImproved(
+  //       details,
+  //       homeScore,
+  //       awayScore,
+  //       homeScoreHT,
+  //       awayScoreHT,
+  //     );
+  //   }
+
+  //   // Dupla Chance
+  //   if (market.includes('Dupla Chance'))
+  //     return analyzeDuplaChance(details, homeScore, awayScore);
+
+  //   // Empate Anula Aposta (DNB)
+  //   if (
+  //     market.includes('Empate Anula') ||
+  //     market.includes('Draw No Bet') ||
+  //     market.includes('DNB')
+  //   )
+  //     return analyzeEmpateAnulaAposta(
+  //       details,
+  //       homeScore,
+  //       awayScore,
+  //       status.isFinished,
+  //     );
+
+  //   return { result: Result.void, shouldUpdate: true };
+  // }
   private analyzeEventResult(
     eventData: EventLiveScoreDTO,
   ): EventMarketAnalysis {
@@ -244,7 +366,12 @@ export class ResultUpdaterService {
       market.includes('Ambas Marcam 1º Tempo') ||
       market.includes('BTTS 1st Half')
     )
-      return analyzeAmbasMarcamPrimeiroTempo(details, homeScoreHT, awayScoreHT);
+      return analyzeAmbasMarcamPrimeiroTempo(
+        details,
+        homeScoreHT,
+        awayScoreHT,
+        status.isFinished,
+      );
 
     // Ambas marcam em ambos os tempos
     if (
@@ -281,6 +408,7 @@ export class ResultUpdaterService {
         awayScoreHT,
         homeScore,
         awayScore,
+        status.isFinished,
       );
 
     // --------------------- TEMPO FINAL ---------------------
@@ -295,8 +423,69 @@ export class ResultUpdaterService {
       return analyzeTotalGols(details, homeScore, awayScore);
 
     // Ambas marcam (full-time)
-    if (market.includes('Ambas'))
+    if (
+      market.includes('Ambas Marcam') &&
+      !market.includes('1º Tempo') &&
+      !market.includes('Ambos Tempos')
+    )
       return analyzeAmbasMarcam(details, homeScore, awayScore);
+
+    // Vence Sem Sofrer Gol
+    if (
+      market.includes('Vence Sem Sofrer') ||
+      market.includes('Win to Nil') ||
+      market.includes('Clean Sheet')
+    )
+      return analyzeVenceSemSofrerGol(details, homeScore, awayScore);
+
+    // Par ou Ímpar (Número de Gols)
+    if (
+      market.includes('Par ou Ímpar') ||
+      market.includes('Gols Par') ||
+      market.includes('Gols Ímpar') ||
+      market.includes('Even Odd')
+    )
+      return analyzeNumeroParImpar(details, homeScore, awayScore);
+
+    // Total Exato de Gols
+    if (
+      market.includes('Total Exato') ||
+      market.includes('Exact Total') ||
+      market.includes('Total de Gols Exato')
+    )
+      return analyzeTotalExatoGols(details, homeScore, awayScore);
+
+    // Handicap Asiático
+    if (
+      market.includes('Handicap Asiático') ||
+      market.includes('Asian Handicap')
+    )
+      return analyzeHandicapAsiatico(details, homeScore, awayScore);
+
+    // Handicap Europeu
+    if (
+      market.includes('Handicap Europeu') ||
+      market.includes('European Handicap') ||
+      market.includes('Handicap')
+    )
+      return analyzeHandicapEuropeu(details, homeScore, awayScore);
+
+    // Handicap por Tempo (1º ou 2º Tempo)
+    if (market.includes('Handicap') && market.includes('Tempo')) {
+      const scores =
+        market.includes('1º Tempo') || market.includes('1st Half')
+          ? { homeScore: homeScoreHT, awayScore: awayScoreHT }
+          : {
+              homeScore: homeScore - homeScoreHT,
+              awayScore: awayScore - awayScoreHT,
+            };
+
+      return analyzeHandicapPorTempo(
+        details,
+        scores.homeScore,
+        scores.awayScore,
+      );
+    }
 
     // Placar Exato
     if (market.includes('Placar Exato')) {

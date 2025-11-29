@@ -13,9 +13,10 @@
   "root": true,
   "env": {
     "node": true,
-    "jest": true
+    "jest": true,
+    "prisma": true
   },
-  "ignorePatterns": [".eslintrc.js", "ecosystem.config.js"],
+  "ignorePatterns": [".eslintrc.js", "ecosystem.config.js", "prisma.config.ts"],
   "rules": {
     "linebreak-style": ["error", "unix"], // Usar 'lf' (Unix) como padrão
     "@typescript-eslint/interface-name-prefix": "off",
