@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeGolsPrimeiroTempo } from './../../shared/thesportsdb-api/services/analysis/futebol/firstHalfGoals.analysis';
+import { analyzeGolsPrimeiroTempo } from './../../shared/results/analysis';
 
 type MatchStatus = 'first_half' | 'half_time' | 'second_half';
 

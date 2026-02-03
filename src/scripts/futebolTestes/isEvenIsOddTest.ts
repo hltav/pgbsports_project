@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeNumeroParImpar } from './../../shared/thesportsdb-api/services/analysis/futebol/isEvenIsOdd.analysis';
+import { analyzeNumeroParImpar } from './../../shared/results/analysis';
 
 function run() {
   const tests = [

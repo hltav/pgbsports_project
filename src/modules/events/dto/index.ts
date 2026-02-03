@@ -1,3 +1,9 @@
-export { CreateEventDTO } from './create-event.dto';
+export { CreateBetDTO } from './create-event.dto';
+export { UpdateBetDTO } from './create-event.dto';
+export { SettleBetDTO } from './create-event.dto';
 export { UpdateEventDTO } from './update-event.dto';
-export { GetEventDTO } from './get-event.dto';
+export { GetBetDTO } from './get-event.dto';
+export { GetBetWithMatchDTO } from './get-event.dto';
+export { GetBetListItemDTO } from './get-event.dto';
+export { GetBetsPaginatedDTO } from './get-event.dto';
+export { BetFiltersDTO } from './get-event.dto';

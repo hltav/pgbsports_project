@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeEmpateAnulaAposta } from '../../shared/thesportsdb-api/services/analysis/futebol/drawNoBet.analysis';
+import { analyzeEmpateAnulaAposta } from './../../shared/results/analysis';
 
 function run() {
   const tests = [

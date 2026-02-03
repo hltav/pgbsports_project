@@ -4,64 +4,105 @@ import {
   Post,
   Body,
   Param,
-  Put,
+  Patch,
   Delete,
   UsePipes,
   ValidationPipe,
-  NotFoundException,
   UseGuards,
   Req,
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { JwtAuthGuard, Roles, RolesGuard } from './../../libs/common';
-import {
-  CreateEventDTO,
-  GetEventDTO,
-  UpdateEventDTO,
-} from './../../libs/common/dto';
+import { CreateBetDTO, UpdateBetDTO } from './dto/create-event.dto';
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
+import { Bets, $Enums } from '@prisma/client';
 
-@Controller('events')
+@Controller('bets')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('USER', 'TEST_USER')
 export class EventsController {
-  constructor(private readonly eventService: EventsService) {}
+  constructor(private readonly eventsService: EventsService) {}
 
+  // ==================== CREATE ====================
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  async createEvent(@Body() data: CreateEventDTO): Promise<GetEventDTO> {
-    return this.eventService.createEvent(data);
+  async createBet(
+    @Body() data: CreateBetDTO,
+    @Req() req: AuthenticatedRequest,
+  ): Promise<Bets> {
+    const userId = req.user.id;
+    return this.eventsService.createBet(data, userId);
   }
 
+  // ==================== READ ====================
   @Get()
-  async findAllEvents(
-    @Req() req: AuthenticatedRequest,
-  ): Promise<GetEventDTO[]> {
+  async getBetsByUser(@Req() req: AuthenticatedRequest): Promise<Bets[]> {
     const userId = req.user.id;
-    return this.eventService.findAllEventsByUser(userId);
+    return this.eventsService.getBetsByUser(userId);
+  }
+
+  @Get('filters')
+  async getBetsWithFilters(
+    @Req() req: AuthenticatedRequest,
+    @Query('bankrollId', new ParseIntPipe({ optional: true }))
+    bankrollId?: number,
+    @Query('result') result?: $Enums.Result,
+    @Query('sport') sport?: string,
+  ): Promise<Bets[]> {
+    const userId = req.user.id;
+
+    return this.eventsService.getBetsWithFilters({
+      userId,
+      bankrollId,
+      result,
+      sport,
+    });
+  }
+
+  @Get('bankroll/:bankrollId')
+  async getBetsByBankroll(
+    @Param('bankrollId', ParseIntPipe) bankrollId: number,
+  ): Promise<Bets[]> {
+    return this.eventsService.getBetsByBankroll(bankrollId);
   }
 
   @Get(':id')
-  async findEventById(@Param('id') id: string): Promise<GetEventDTO> {
-    const event = await this.eventService.findEventById(+id);
-
-    if (!event) {
-      throw new NotFoundException('Event not found!');
-    }
-
-    return event;
+  async getBetById(@Param('id', ParseIntPipe) id: number): Promise<Bets> {
+    return this.eventsService.getBetById(id);
   }
 
-  @Put(':id')
-  async updateEvent(
-    @Param('id') id: string,
-    @Body() data: UpdateEventDTO,
-  ): Promise<GetEventDTO> {
-    return this.eventService.updateEvent(+id, data);
+  // ==================== UPDATE ====================
+  @Patch()
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async updateBet(@Body() data: UpdateBetDTO): Promise<Bets> {
+    return this.eventsService.updateBet(data);
   }
 
+  // ==================== DELETE ====================
   @Delete(':id')
-  async deleteEvent(@Param('id') id: string): Promise<GetEventDTO> {
-    return this.eventService.deleteEvent(+id);
+  async deleteBet(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string; deletedBet: Bets }> {
+    return this.eventsService.deleteBet(id);
+  }
+
+  @Delete('batch/multiple')
+  async deleteBets(@Body('betIds') betIds: number[]): Promise<{
+    message: string;
+    deletedCount: number;
+    errors: Array<{ betId: number; error: string }>;
+  }> {
+    return this.eventsService.deleteBets(betIds);
+  }
+
+  @Post(':id/void')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async voidBet(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('reason') reason?: string,
+  ): Promise<Bets> {
+    return this.eventsService.voidBet(id, reason);
   }
 }

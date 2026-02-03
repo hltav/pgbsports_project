@@ -1,63 +1,82 @@
 import { z } from 'zod';
-import { Result } from '@prisma/client';
+import { Result, BetType } from '@prisma/client';
 import { decimalSchema } from '../../../libs/common/dto/decimalSchema.interface';
 import { SafeInfer } from '../../../types/zod';
 
-const ResultEnum = z.nativeEnum(Result);
+const optionalDecimal = decimalSchema.optional().nullable();
 
-export const CreateEventSchema = z.object({
-  bankId: z.number().int().positive(),
-  modality: z.string().trim().min(1),
-  league: z.string().trim().min(1),
-  event: z.string().trim().min(1),
-  market: z.string().trim().min(1),
-  marketCategory: z.string().trim().min(1),
+export const CreateBetSchema = z.object({
+  bankrollId: z.number().int().positive(),
+  externalMatchId: z.number().int().positive(),
+  apiSportsEventId: z.string().trim().optional().nullable(),
+  tsdbEventId: z.string().trim().optional().nullable(),
+  sport: z.string().trim().min(1, 'Esporte é obrigatório'),
+  league: z.string().trim().min(1, 'Liga é obrigatória'),
+  eventDescription: z
+    .string()
+    .trim()
+    .min(1, 'Descrição do evento é obrigatória')
+    .max(255),
+  eventDate: z.coerce.date().optional().nullable(),
+  homeTeam: z.string().trim().optional().nullable(),
+  awayTeam: z.string().trim().optional().nullable(),
+  homeTeamBadge: z.string().trim().optional().nullable(),
+  awayTeamBadge: z.string().trim().optional().nullable(),
+  leagueBadge: z.string().trim().optional().nullable(),
+  market: z.string().trim().min(1, 'Mercado é obrigatório'),
+  marketCategory: z
+    .string()
+    .trim()
+    .min(1, 'Categoria do mercado é obrigatória'),
   marketSub: z.string().trim().optional().nullable(),
-  optionMarket: z.string().trim().min(1),
-  amount: decimalSchema.refine(
-    (v) => v.greaterThan(0),
-    'Valor deve ser positivo',
+  selection: z.string().trim().min(1, 'Seleção é obrigatória'),
+  odd: z.preprocess(
+    (val) => Number(val),
+    decimalSchema.refine((v) => v.greaterThan(1)),
   ),
-  odd: decimalSchema.refine(
-    (v) => v.greaterThan(1),
-    'Odd deve ser maior que 1',
+  stake: z.preprocess(
+    (val) => Number(val),
+    decimalSchema.refine((v) => v.greaterThan(0)),
   ),
-  userId: z.number().int().positive(),
-  result: ResultEnum.optional().default('pending'),
-  apiEventId: z.string().optional().nullable(),
-  homeTeam: z.string().optional().nullable(),
-  awayTeam: z.string().optional().nullable(),
-  eventDate: z
-    .union([z.string(), z.date()])
-    .transform((val) => {
-      if (typeof val === 'string') {
-        return val.endsWith('Z') ? new Date(val) : new Date(val + 'Z');
-      }
-      return val;
-    })
-    .optional()
-    .nullable(),
-  createdAt: z
-    .date()
-    .optional()
-    .default(() => new Date()),
-  updatedAt: z
-    .date()
-    .optional()
-    .default(() => new Date()),
-  strBadge: z.string().optional().nullable(),
-  strSeason: z.string().optional().nullable(),
-  intRound: z.number().optional().nullable(),
-  strHomeTeamBadge: z.string().optional().nullable(),
-  strAwayTeamBadge: z.string().optional().nullable(),
-  strCountry: z.string().optional().nullable(),
-  strStatus: z.string().optional().nullable(),
-  strPostponed: z.string().optional().nullable(),
-  strThumb: z.string().optional().nullable(),
-  strTimestamp: z.string().optional().nullable(),
-  strTime: z.string().optional().nullable(),
-  strTimeLocal: z.string().optional().nullable(),
-  timezone: z.string().optional().nullable(),
+  potentialReturn: optionalDecimal,
+  actualReturn: optionalDecimal,
+  bankrollBalance: optionalDecimal,
+  unitValue: decimalSchema,
+  stakeInUnits: optionalDecimal,
+  result: z.nativeEnum(Result).optional().default(Result.pending),
+  profit: optionalDecimal,
+  roi: optionalDecimal,
+  isWin: z.boolean().optional().nullable(),
+  settledAt: z.date().optional().nullable(),
+  confidence: z.number().int().min(1).max(10).optional().nullable(),
+  expectedValue: optionalDecimal,
+  betType: z.nativeEnum(BetType).optional().default('SINGLE'),
+  isLive: z.boolean().optional().default(false),
+  tags: z.array(z.string()).optional().nullable(),
+  notes: z.string().optional().nullable(),
 });
 
-export type CreateEventDTO = SafeInfer<typeof CreateEventSchema>;
+export type CreateBetDTO = SafeInfer<typeof CreateBetSchema>;
+
+export const UpdateBetSchema = CreateBetSchema.partial().extend({
+  id: z.number().int().positive(),
+  userId: z.number().int().positive(),
+});
+
+export type UpdateBetDTO = SafeInfer<typeof UpdateBetSchema>;
+
+export const SettleBetSchema = z.object({
+  id: z.number().int().positive(),
+  userId: z.number().int().positive(),
+  result: z.nativeEnum(Result),
+  actualReturn: decimalSchema.refine(
+    (v) => v.greaterThanOrEqualTo(0),
+    'Retorno não pode ser negativo',
+  ),
+  settledAt: z
+    .date()
+    .optional()
+    .default(() => new Date()),
+});
+
+export type SettleBetDTO = SafeInfer<typeof SettleBetSchema>;

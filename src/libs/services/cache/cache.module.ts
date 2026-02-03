@@ -1,19 +1,32 @@
 import { Module } from '@nestjs/common';
-import { CacheModule } from '@nestjs/cache-manager';
-import redisStore from 'cache-manager-ioredis';
+import { CacheModule as NestCacheModule } from '@nestjs/cache-manager';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as redisStore from 'cache-manager-redis-store';
 import { CacheService } from './cache.service';
+import { CacheTestController } from './testeConecction/cacheTest.controller';
 
 @Module({
   imports: [
-    CacheModule.register({
-      store: redisStore,
-      host: 'localhost',
-      port: 6379,
-      ttl: 3600,
-      max: 1000,
+    ConfigModule,
+    NestCacheModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const redisUrl =
+          configService.get<string>('REDIS_PUBLIC_URL') ||
+          configService.get<string>('REDIS_URL') ||
+          'redis://localhost:6379';
+
+        return {
+          store: redisStore,
+          url: redisUrl,
+          ttl: 3600,
+        };
+      },
     }),
   ],
   providers: [CacheService],
-  exports: [CacheService, CacheModule],
+  controllers: [CacheTestController],
+  exports: [CacheService, NestCacheModule],
 })
 export class MyCacheModule {}

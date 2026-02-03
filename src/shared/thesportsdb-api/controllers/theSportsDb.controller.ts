@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { TheSportsDbSportsService } from '../services/sports-thesportsdb.service';
 import { TheSportsDbLeaguesService } from '../services/leagues-thesportsdb.service';
@@ -16,6 +17,7 @@ import { Roles } from './../../../libs/common/decorator';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('ADMIN', 'USER')
 export class TheSportsDbController {
+  private readonly logger = new Logger(TheSportsDbController.name);
   constructor(
     private readonly sportsService: TheSportsDbSportsService,
     private readonly leaguesService: TheSportsDbLeaguesService,
@@ -45,6 +47,37 @@ export class TheSportsDbController {
       console.error('Erro ao buscar ligas:', err);
       throw new HttpException(
         'Erro ao buscar ligas da API',
+        HttpStatus.BAD_GATEWAY,
+      );
+    }
+  }
+
+  @Get('soccer-leagues')
+  async getSoccerLeagues() {
+    const logger = new Logger('TheSportsDbController.getSoccerLeagues');
+
+    try {
+      logger.log('Fetching soccer leagues from TSDB...');
+      const leagues = await this.leaguesService.getSoccerLeagues();
+
+      logger.log(`Successfully fetched ${leagues.length} soccer leagues`);
+
+      return {
+        success: true,
+        count: leagues.length,
+        data: leagues,
+      };
+    } catch (err: unknown) {
+      logger.error('Failed to fetch soccer leagues', err);
+
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+
+      throw new HttpException(
+        {
+          success: false,
+          message: 'Erro ao buscar ligas de futebol da API',
+          error: errorMessage,
+        },
         HttpStatus.BAD_GATEWAY,
       );
     }

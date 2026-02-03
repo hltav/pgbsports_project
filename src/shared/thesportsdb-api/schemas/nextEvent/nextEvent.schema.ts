@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mapStrStatusToMatchStatus } from '../../helpers/mapStatusToEvent.helper';
 
 export const NextEventSchema = z.object({
   idEvent: z.string(),
@@ -108,7 +109,7 @@ export const NextEventSchema = z.object({
       z.string().url().nullable(),
     )
     .optional(),
-  strStatus: z.string().nullable().optional(),
+  strStatus: z.string().nullish().transform(mapStrStatusToMatchStatus),
   strPostponed: z.string().nullable().optional(),
   strLocked: z.string().nullable().optional(),
 });

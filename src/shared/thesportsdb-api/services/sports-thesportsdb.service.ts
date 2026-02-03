@@ -4,6 +4,7 @@ import {
   AllSportsResponseSchema,
   AllSportsResponse,
 } from '../schemas/allSports/allSports.schema';
+import { CACHE_TTL } from './../../../libs/utils/cache.constants';
 
 @Injectable()
 export class TheSportsDbSportsService {
@@ -13,7 +14,7 @@ export class TheSportsDbSportsService {
     const data = await this.cacheService.getWithCache<AllSportsResponse>(
       'all/sports',
       undefined,
-      30 * 24 * 60 * 60 * 1000, // 30 dias
+      CACHE_TTL.ONE_MONTH, // 30 dias
     );
 
     const parsed = AllSportsResponseSchema.parse(data);

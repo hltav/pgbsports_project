@@ -23,7 +23,7 @@ import {
   GetBankrollHistoryDTO,
 } from './z.dto';
 import { PatchBankrollDTO } from './z.dto/update-bankroll.dto';
-import { FindBankrollHistoryService } from './services/findBankrollHistory.service';
+import { FindBankrollHistoryService } from './core/services/findBankrollHistory.service';
 
 @Controller('bankrolls')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -43,15 +43,11 @@ export class BankrollController {
   }
 
   @Get(':id/bank')
-  async findBankrollById(@Param('id') id: string): Promise<GetBankrollDTO> {
-    return this.bankrollService.findBankrollById(+id);
-  }
-
-  @Get('user/:userId')
-  async findBankrollsByUserId(
-    @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<GetBankrollDTO[]> {
-    return this.bankrollService.findBankrollsByUserId(userId);
+  async findBankrollById(
+    @Param('id') id: string,
+    userId: number,
+  ): Promise<GetBankrollDTO> {
+    return this.bankrollService.findBankrollById(+id, userId);
   }
 
   @Post()

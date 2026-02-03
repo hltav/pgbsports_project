@@ -1,3 +1,5 @@
+import { mapStrStatusToMatchStatus } from '../../helpers/mapStatusToEvent.helper';
+import { SafeInfer } from './../../../../types/zod';
 import { z } from 'zod';
 
 export const EventSchema = z.object({
@@ -26,13 +28,14 @@ export const EventSchema = z.object({
   strPoster: z.string().nullable().optional(),
   strThumb: z.string().nullable().optional(),
   strVideo: z.string().nullable().optional(),
-  strStatus: z.string().nullable().optional(),
+  strStatus: z.string().nullish().transform(mapStrStatusToMatchStatus),
   strPostponed: z.string().nullable().optional(),
 });
 
 export const LookupEventResponseSchema = z.object({
-  lookup: z.array(EventSchema).nullable(),
+  lookup: z.array(EventSchema).nullable().optional(),
+  schedule: z.array(EventSchema).nullable().optional(),
 });
 
-export type LookupEvent = z.infer<typeof EventSchema>;
-export type LookupEventResponse = z.infer<typeof LookupEventResponseSchema>;
+export type LookupEvent = SafeInfer<typeof EventSchema>;
+export type LookupEventResponse = SafeInfer<typeof LookupEventResponseSchema>;

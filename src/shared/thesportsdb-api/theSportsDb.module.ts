@@ -10,7 +10,6 @@ import { TheSportsDbService } from './services/theSportsDb.service';
 import { PrismaModule } from './../../libs/database/prisma';
 import { TheSportsDbLiveApiService } from './services/theSportsDbLive.service';
 import { TSDBImageProxyController } from './images/theSportsDBImage.proxy';
-import { FirstHalfSettlementService } from './services/analysis/firstHalf.analysis';
 
 @Module({
   imports: [HttpModule, CacheModule.register(), PrismaModule],
@@ -22,7 +21,6 @@ import { FirstHalfSettlementService } from './services/analysis/firstHalf.analys
     TheSportsDbEventsService,
     TheSportsDbService,
     TheSportsDbLiveApiService,
-    FirstHalfSettlementService,
   ],
   exports: [
     TheSportsDbCachedService,
@@ -31,7 +29,6 @@ import { FirstHalfSettlementService } from './services/analysis/firstHalf.analys
     TheSportsDbEventsService,
     TheSportsDbService,
     TheSportsDbLiveApiService,
-    FirstHalfSettlementService,
   ],
 })
 export class TheSportsDbModule {}

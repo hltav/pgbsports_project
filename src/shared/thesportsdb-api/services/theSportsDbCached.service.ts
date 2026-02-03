@@ -1,17 +1,15 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { TheSportsDbService } from './theSportsDb.service';
 import { Cache } from 'cache-manager';
-import {
-  HistoricalParams,
-  LiveParams,
-  SportsApiParams,
-  StandingsParams,
-  TeamsParams,
-} from '../interface/theSportsDbCached.interface';
+import { CACHE_TTL } from './../../../libs/utils/cache.constants';
+
+export type TsdbParams = Record<string, string | number | undefined>;
 
 @Injectable()
 export class TheSportsDbCachedService {
+  private readonly logger = new Logger(TheSportsDbCachedService.name);
+
   constructor(
     private readonly sportsDbService: TheSportsDbService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -19,91 +17,35 @@ export class TheSportsDbCachedService {
 
   async getWithCache<T>(
     endpoint: string,
-    params?: SportsApiParams,
-    ttl?: number,
+    params?: TsdbParams,
+    ttls?: number,
   ): Promise<T> {
     const cacheKey = this.generateCacheKey(endpoint, params);
 
     const cachedData = await this.cacheManager.get<T>(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
+    if (cachedData) return cachedData;
 
     const liveData = await this.sportsDbService.get<T>(endpoint, params);
 
-    const cacheTtl = ttl ?? 60 * 60 * 1000; // default 1h
-    await this.cacheManager.set(cacheKey, liveData, cacheTtl);
+    const ttl = this.resolveTtl(endpoint, ttls);
+
+    await this.cacheManager.set(cacheKey, liveData, ttl);
 
     return liveData;
   }
 
-  private generateCacheKey(endpoint: string, params?: SportsApiParams): string {
+  private generateCacheKey(endpoint: string, params?: TsdbParams): string {
     const paramsString = params ? JSON.stringify(params) : '';
-    return `thesportsdb:${endpoint}:${paramsString}`;
+    return `tsdb:${endpoint}:${paramsString}`;
   }
 
-  private calculateTtl(params?: SportsApiParams, customTtl?: number): number {
-    if (customTtl) return customTtl;
+  private resolveTtl(endpoint: string, customTtlMs?: number): number {
+    if (customTtlMs) return customTtlMs;
 
-    if (this.isHistoricalData(params)) {
-      return 30 * 24 * 60 * 60 * 1000; // 30 days
+    if (endpoint.includes('schedule')) {
+      return CACHE_TTL.API_LONG; // ex: 30 dias
     }
 
-    if (this.isLiveData(params)) {
-      return 10 * 1000; // 10 seconds
-    }
-
-    if (this.isTeamsParams(params)) {
-      return 24 * 60 * 60 * 1000; // 24 hours
-    }
-
-    if (this.isStandingsParams(params)) {
-      return 30 * 60 * 1000; // 30 minutes
-    }
-
-    return 60 * 60 * 1000; // Default: 1 hour
-  }
-
-  private isHistoricalData(
-    params?: SportsApiParams,
-  ): params is HistoricalParams {
-    if (!params) return false;
-
-    const hasHistoricalFields =
-      'season' in params ||
-      'date' in params ||
-      'from' in params ||
-      'to' in params;
-    if (!hasHistoricalFields) return false;
-
-    const currentYear = new Date().getFullYear();
-
-    if ('season' in params && params.season && params.season < currentYear) {
-      return true;
-    }
-
-    if ('date' in params && params.date && new Date(params.date) < new Date()) {
-      return true;
-    }
-
-    if ('from' in params && params.from && new Date(params.from) < new Date()) {
-      return true;
-    }
-
-    return false;
-  }
-
-  private isLiveData(params?: SportsApiParams): params is LiveParams {
-    return params != null && 'live' in params;
-  }
-
-  private isTeamsParams(params?: SportsApiParams): params is TeamsParams {
-    return params != null && 'league' in params && 'season' in params;
-  }
-
-  private isStandingsParams(
-    params?: SportsApiParams,
-  ): params is StandingsParams {
-    return params != null && 'league' in params && 'season' in params;
+    return CACHE_TTL.API_SHORT; // ex: 24h
   }
 }

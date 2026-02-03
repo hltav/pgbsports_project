@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CreateBankrollService,
-  DeleteBankrollService,
-  FindBankrollService,
-  UpdateBankrollService,
-} from './services';
-import {
   CreateBankrollDTO,
   GetBankrollDTO,
   UpdateBankrollDTO,
   PatchBankrollDTO,
 } from './z.dto';
+import { CreateBankrollService } from './core/services/create-bankroll.service';
+import { DeleteBankrollService } from './core/services/delete-bankroll.service';
+import { FindBankrollService } from './core/services/find-bankroll.service';
+import { UpdateBankrollService } from './core/services/update-bankroll.service';
 
 @Injectable()
 export class BankrollService {
@@ -29,8 +27,8 @@ export class BankrollService {
     return this.readService.findAllBankrolls();
   }
 
-  async findBankrollById(id: number): Promise<GetBankrollDTO> {
-    return this.readService.findBankrollById(id);
+  async findBankrollById(id: number, userId: number): Promise<GetBankrollDTO> {
+    return this.readService.findBankrollById(id, userId);
   }
 
   async findBankrollsByUserId(userId: number): Promise<GetBankrollDTO[]> {

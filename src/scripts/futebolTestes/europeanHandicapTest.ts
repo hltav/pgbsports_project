@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeHandicapEuropeu } from './../../shared/thesportsdb-api/services/analysis';
+import { analyzeHandicapEuropeuBinary } from './../../shared/results/analysis';
 
 function run() {
   const tests = [
@@ -350,7 +350,7 @@ function run() {
   let failed = 0;
 
   tests.forEach((test) => {
-    const result = analyzeHandicapEuropeu(
+    const result = analyzeHandicapEuropeuBinary(
       test.eventDetails,
       test.homeScore,
       test.awayScore,

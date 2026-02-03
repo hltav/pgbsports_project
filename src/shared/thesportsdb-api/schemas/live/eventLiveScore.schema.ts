@@ -1,8 +1,9 @@
 import { SafeInfer } from './../../../../types/zod';
-import { GetEventSchema } from './../../../../modules/events/dto/get-event.dto';
+import { GetBetSchema } from './../../../../modules/events/dto/get-event.dto';
 import { z } from 'zod';
+import { mapStrStatusToMatchStatus } from '../../helpers/mapStatusToEvent.helper';
 
-export const EventLiveScoreSchema = GetEventSchema.extend({
+export const EventLiveScoreSchema = GetBetSchema.extend({
   apiEventId: z.string().nullish(),
   homeTeam: z.string().nullish(),
   awayTeam: z.string().nullish(),
@@ -25,7 +26,7 @@ export const EventLiveScoreSchema = GetEventSchema.extend({
   awayScoreHT: z.number().nullish().default(0),
   homeScoreFT: z.number().nullish().default(0),
   awayScoreFT: z.number().nullish().default(0),
-  strStatus: z.string().default('Not Started'),
+  strStatus: z.string().nullish().transform(mapStrStatusToMatchStatus),
 });
 
 export type EventLiveScoreDTO = SafeInfer<typeof EventLiveScoreSchema>;

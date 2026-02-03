@@ -6,6 +6,9 @@ export const LeagueSchema = z.object({
   strSport: z.string(),
   strLeagueAlternate: z.string().nullable().optional(),
   strBadge: z.string().nullable().optional(),
+  strLogo: z.string().url().optional().or(z.literal('')),
+  strBanner: z.string().url().optional().or(z.literal('')),
+  strCurrentSeason: z.string().url().optional().or(z.literal('')),
   strCountry: z.string().nullable().optional(),
 });
 

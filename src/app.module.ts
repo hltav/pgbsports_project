@@ -1,59 +1,63 @@
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { ScheduleModule } from '@nestjs/schedule';
 import { CryptoModule } from './libs/crypto/crypto.module';
-import { AllmoduleModule } from './modules/allmodule.module';
-import { LibsModule } from './libs/libs.module';
+import { ModulesModule } from './modules/allmodule.module';
 import { CompetitionsModule } from './shared/sports-radar/futebol/competitions/competitions.module';
 import { ApiSportsModule } from './shared/api-sports/api-sports.module';
 import { ImageModule } from './modules/image/image.module';
-import { CacheModule } from '@nestjs/cache-manager';
-import redisStore from 'cache-manager-ioredis';
 import { TheSportsDbModule } from './shared/thesportsdb-api/theSportsDb.module';
-import { ResultsModule } from './shared/thesportsdb-api/modules/result.module';
+import { HealthModule } from './modules/health/health.module';
+import { MonitoringModule } from './modules/monitoring/monitoring.module';
+import { MonitoringInterceptor } from './modules/monitoring/interceptors/monitoring.interceptor';
+import { ExceptionLoggerFilter } from './modules/monitoring/filters/exception-logger.filter';
+import { ResultsModule } from './shared/results/results.module';
+import { FutebolFusionModule } from './shared/dataFusion/futebol/futebolFusion.module';
+import { MyCacheModule } from './libs/services/cache/cache.module';
 
 @Module({
   imports: [
+    // 1. Schedule primeiro
+    ScheduleModule.forRoot(),
+
+    // 2. Config global
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-    CacheModule.registerAsync({
-      isGlobal: true,
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const redisHost = configService.get<string>('REDIS_HOST');
-        const redisPort = configService.get<number>('REDIS_PORT');
-        const redisPassword = configService.get<string>('REDIS_PASSWORD');
-        const redisDb = configService.get<number>('REDIS_DB') || 0;
 
-        if (!redisHost || !redisPort) {
-          throw new Error('Redis environment variables are not defined');
-        }
+    // 3. SEU MÓDULO DE CACHE CUSTOMIZADO
+    // ✅ Este é o único CacheModule que você precisa!
+    MyCacheModule,
 
-        return {
-          store: redisStore,
-          host: redisHost,
-          port: redisPort,
-          auth_pass: redisPassword,
-          db: redisDb,
-          ttl: 60 * 60,
-        };
-      },
-    }),
-    LibsModule,
-    AllmoduleModule,
+    // 4. Feature modules
+    ModulesModule,
     CryptoModule,
     CompetitionsModule,
     ApiSportsModule,
     ImageModule,
     TheSportsDbModule,
     ResultsModule,
+    FutebolFusionModule,
+    HealthModule,
+    MonitoringModule,
   ],
   controllers: [AppController],
-  providers: [AppService, JwtService],
+  providers: [
+    AppService,
+    JwtService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MonitoringInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: ExceptionLoggerFilter,
+    },
+  ],
 })
 export class AppModule {}

@@ -1,250 +1,68 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from './../../libs/database/prisma';
-import { CreateEventDTO, GetEventDTO, UpdateEventDTO } from './dto';
-import {
-  convertToSaoPauloTime,
-  getTimezoneByCountry,
-} from './utils/timezone.utils';
-import { UpdateBankrollService } from './../bankroll/services/update-bankroll.service';
-import { Decimal } from '@prisma/client/runtime/library';
-
-interface EventWithBankId {
-  id: number;
-  bankId: number;
-  amount: Decimal;
-  odd: Decimal;
-  result: string | null;
-}
-
-interface BankrollData {
-  id: number;
-  unidValue: Decimal;
-}
+import { Injectable } from '@nestjs/common';
+import { Bets, $Enums } from '@prisma/client';
+import { CreateBetDTO, UpdateBetDTO } from './dto/create-event.dto';
+import { CreateBetService } from './services/createBet.service';
+import { DeleteBetService } from './services/deleteBet.service';
+import { GetBetService } from './services/getBet.service';
+import { UpdateBetService } from './services/updateBet.service';
 
 @Injectable()
 export class EventsService {
   constructor(
-    private prisma: PrismaService,
-    private updateBankrollService: UpdateBankrollService,
+    private readonly createService: CreateBetService,
+    private readonly updateService: UpdateBetService,
+    private readonly deleteService: DeleteBetService,
+    private readonly getService: GetBetService,
   ) {}
 
-  async createEvent(data: CreateEventDTO): Promise<GetEventDTO> {
-    let processedEventDate: Date | null = null;
-
-    if (data.strTimestamp) {
-      processedEventDate = convertToSaoPauloTime(data.strTimestamp);
-    } else if (data.eventDate) {
-      processedEventDate = new Date(data.eventDate);
-    }
-
-    const timezone = data.strCountry
-      ? getTimezoneByCountry(data.strCountry)
-      : null;
-
-    const event = await this.prisma.event.create({
-      data: {
-        bankId: data.bankId,
-        modality: data.modality,
-        league: data.league,
-        odd: new Decimal(data.odd).toString(),
-        event: data.event,
-        market: data.market,
-        marketCategory: data.marketCategory,
-        marketSub: data.marketSub,
-        optionMarket: data.optionMarket,
-        amount: new Decimal(data.amount).toString(),
-        result: data.result ?? undefined,
-        userId: data.userId,
-        apiEventId: data.apiEventId,
-        homeTeam: data.homeTeam,
-        awayTeam: data.awayTeam,
-        eventDate: processedEventDate,
-        strTimestamp: data.strTimestamp,
-        strTime: data.strTime,
-        strTimeLocal: data.strTimeLocal,
-        timezone,
-        strBadge: data.strBadge,
-        strSeason: data.strSeason,
-        intRound: data.intRound,
-        strHomeTeamBadge: data.strHomeTeamBadge,
-        strAwayTeamBadge: data.strAwayTeamBadge,
-        strCountry: data.strCountry,
-        strStatus: data.strStatus,
-        strPostponed: data.strPostponed,
-        strThumb: data.strThumb,
-        intHomeScore: '0',
-        intAwayScore: '0',
-        homeScoreHT: 0,
-        awayScoreHT: 0,
-        homeScoreFT: 0,
-        awayScoreFT: 0,
-      },
-    });
-
-    const bankroll = await this.prisma.bankroll.findUnique({
-      where: { id: data.bankId },
-      select: { id: true, unidValue: true },
-    });
-
-    if (bankroll) {
-      const stakeDecimal = new Decimal(data.amount);
-      const monetaryChange = stakeDecimal.neg().mul(bankroll.unidValue);
-
-      await this.updateBankrollService.updateBankrollByEvent({
-        bankrollId: data.bankId,
-        type: 'BET_PLACED',
-        monetaryChange,
-        stake: stakeDecimal,
-        odds: new Decimal(data.odd),
-        potentialWin: stakeDecimal.mul(new Decimal(data.odd)),
-        eventId: undefined,
-        eventName: data.event,
-        description: data.market,
-      });
-    }
-
-    return event;
+  // ==================== CREATE ====================
+  async createBet(data: CreateBetDTO, userId: number): Promise<Bets> {
+    return this.createService.createBet(data, userId);
   }
 
-  async findAllEventsByUser(userId: number): Promise<GetEventDTO[]> {
-    return this.prisma.event.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
+  // ==================== READ ====================
+  async getBetById(id: number): Promise<Bets> {
+    return this.getService.getBetById(id);
   }
 
-  async findEventById(id: number): Promise<GetEventDTO> {
-    const event = await this.prisma.event.findUnique({ where: { id } });
-
-    if (!event) throw new NotFoundException('Event not found!');
-    return event;
+  async getBetsByUser(userId: number): Promise<Bets[]> {
+    return this.getService.getBetsByUser(userId);
   }
 
-  async updateEvent(id: number, data: UpdateEventDTO): Promise<GetEventDTO> {
-    const event = await this.prisma.event.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        bankId: true,
-        amount: true,
-        odd: true,
-        result: true,
-        intHomeScore: true,
-        intAwayScore: true,
-        homeScoreHT: true,
-        awayScoreHT: true,
-        homeScoreFT: true,
-        awayScoreFT: true,
-      },
-    });
-
-    if (!event) throw new NotFoundException('Event not found!');
-
-    const oldResult = event.result;
-    const newResult = data.result;
-
-    const updatedEvent = await this.prisma.event.update({
-      where: { id },
-      data,
-    });
-
-    if (newResult && oldResult !== newResult) {
-      const bankroll = await this.prisma.bankroll.findUnique({
-        where: { id: event.bankId },
-        select: { id: true, unidValue: true },
-      });
-
-      if (bankroll) {
-        const normalizedEvent: EventWithBankId = {
-          id: event.id,
-          bankId: event.bankId,
-          amount: new Decimal(event.amount),
-          odd: new Decimal(event.odd),
-          result: newResult,
-        };
-
-        await this.handleEventResult(normalizedEvent, bankroll);
-      }
-    }
-
-    return updatedEvent;
+  async getBetsByBankroll(bankrollId: number): Promise<Bets[]> {
+    return this.getService.getBetsByBankroll(bankrollId);
   }
 
-  private async handleEventResult(
-    event: EventWithBankId,
-    bankroll: BankrollData,
-  ) {
-    const resultLower = event.result?.toLowerCase();
-
-    if (resultLower === 'win') {
-      const totalReturnDecimal = event.amount.mul(event.odd);
-      const monetaryValue = totalReturnDecimal.mul(bankroll.unidValue);
-
-      await this.updateBankrollService.updateBankrollByEvent({
-        bankrollId: event.bankId,
-        type: 'BET_WON',
-        monetaryChange: monetaryValue,
-        stake: totalReturnDecimal,
-        actualReturn: monetaryValue,
-        eventId: event.id,
-        eventName: undefined,
-        description: 'Bet won',
-      });
-    } else if (resultLower === 'lose') {
-      await this.updateBankrollService.updateBankrollByEvent({
-        bankrollId: event.bankId,
-        type: 'BET_LOST',
-        monetaryChange: new Decimal(0),
-        stake: event.amount.neg(),
-        eventId: event.id,
-        description: 'Bet lost',
-      });
-    } else if (resultLower === 'returned') {
-      const refund = event.amount;
-      const monetaryValue = refund.mul(bankroll.unidValue);
-
-      await this.updateBankrollService.updateBankrollByEvent({
-        bankrollId: event.bankId,
-        type: 'BET_VOID',
-        monetaryChange: monetaryValue,
-        stake: refund,
-        actualReturn: monetaryValue,
-        eventId: event.id,
-        description: 'Bet returned',
-      });
-    }
+  async getBetsWithFilters(filters: {
+    userId?: number;
+    bankrollId?: number;
+    result?: $Enums.Result;
+    sport?: string;
+  }): Promise<Bets[]> {
+    return this.getService.getBetsWithFilters(filters);
   }
 
-  async deleteEvent(id: number): Promise<GetEventDTO> {
-    const event = await this.prisma.event.findUnique({
-      where: { id },
-      select: { id: true, bankId: true, amount: true, odd: true, result: true },
-    });
+  // ==================== UPDATE ====================
+  async updateBet(data: UpdateBetDTO): Promise<Bets> {
+    return this.updateService.updateBet(data);
+  }
 
-    if (!event) throw new NotFoundException('Event not found!');
+  // ==================== DELETE ====================
+  async deleteBet(
+    betId: number,
+  ): Promise<{ message: string; deletedBet: Bets }> {
+    return this.deleteService.deleteBet(betId);
+  }
 
-    if (!event.result || event.result.toLowerCase() === 'pending') {
-      const bankroll = await this.prisma.bankroll.findUnique({
-        where: { id: event.bankId },
-        select: { id: true, unidValue: true },
-      });
+  async deleteBets(betIds: number[]): Promise<{
+    message: string;
+    deletedCount: number;
+    errors: Array<{ betId: number; error: string }>;
+  }> {
+    return this.deleteService.deleteBets(betIds);
+  }
 
-      if (bankroll) {
-        const amountDecimal = new Decimal(event.amount);
-        const monetaryValue = amountDecimal.mul(bankroll.unidValue);
-
-        await this.updateBankrollService.updateBankrollByEvent({
-          bankrollId: event.bankId,
-          type: 'BET_VOID',
-          monetaryChange: monetaryValue,
-          stake: amountDecimal,
-          actualReturn: monetaryValue,
-          eventId: event.id,
-          description: 'Event deleted - returned stake',
-        });
-      }
-    }
-
-    return this.prisma.event.delete({ where: { id } });
+  async voidBet(betId: number, reason?: string): Promise<Bets> {
+    return this.deleteService.voidBet(betId, reason);
   }
 }

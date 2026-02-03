@@ -1,0 +1,126 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  Controller,
+  Get,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+  HttpStatus,
+  HttpCode,
+  Logger,
+  Post,
+  Delete,
+  UsePipes,
+} from '@nestjs/common';
+import { DiscoverFixture } from '../schemas/discoveryFixture.schema';
+import { DiscoverLeague } from '../schemas/discoveryLeague.schema';
+import { LeagueDiscoveryService } from '../services/leagueDiscovery.service';
+import { SoccerDiscoveryService } from '../services/soccerDiscovery.service';
+import { LeagueOrganizationService } from '../services/leagueOrganization.service';
+import { OrganizedLeaguesResponse } from '../services/leagueOrganization.service';
+import { ZodValidationPipe } from 'src/libs/utils/zodValidation.pipe';
+import {
+  GetOrganizedLeaguesDtoSchema,
+  GetOrganizedLeaguesDto,
+  parseSeason,
+  InvalidateCacheDtoSchema,
+  InvalidateCacheDto,
+} from '../schemas/organizationLeagues.schema';
+
+@Controller('soccer/discovery')
+export class SoccerDiscoveryController {
+  private readonly logger = new Logger(SoccerDiscoveryController.name);
+
+  constructor(
+    private readonly soccerDiscoveryService: SoccerDiscoveryService,
+    private readonly leagueDiscoveryService: LeagueDiscoveryService,
+    private readonly leagueOrgService: LeagueOrganizationService,
+  ) {}
+
+  // ========================================
+  // ENDPOINTS EXISTENTES (não modificados)
+  // ========================================
+
+  @Get('next-fixtures')
+  @HttpCode(HttpStatus.OK)
+  async getNextFixtures(
+    @Query('league') league: string,
+    @Query('next', new DefaultValuePipe(10), ParseIntPipe) next?: number,
+    @Query('season') seasonParam?: string,
+  ): Promise<DiscoverFixture[]> {
+    return this.soccerDiscoveryService.discoverNextFixtures(
+      parseInt(league),
+      next || 10,
+    );
+  }
+
+  @Get('current-season')
+  @HttpCode(HttpStatus.OK)
+  async getCurrentSeason(@Query('league') league: string) {
+    const leagueId = parseInt(league);
+    const season =
+      await this.soccerDiscoveryService.getCurrentSeasonForLeague(leagueId);
+    return { league: leagueId, currentSeason: season };
+  }
+
+  @Get('leagues')
+  @HttpCode(HttpStatus.OK)
+  async discoverLeagues(
+    @Query('season') season?: string,
+  ): Promise<DiscoverLeague[]> {
+    return this.leagueDiscoveryService.discoverLeaguesByQuery(season);
+  }
+
+  // ========================================
+  // 🆕 NOVOS ENDPOINTS (com validação Zod)
+  // ========================================
+
+  /**
+   * Ligas organizadas por país
+   * Validação automática com Zod
+   */
+  @Get('leagues/organized')
+  @HttpCode(HttpStatus.OK)
+  async getOrganizedLeagues(
+    @Query(new ZodValidationPipe(GetOrganizedLeaguesDtoSchema))
+    dto: GetOrganizedLeaguesDto,
+  ): Promise<OrganizedLeaguesResponse> {
+    return this.leagueOrgService.getOrganizedLeagues({
+      season: parseSeason(dto.season),
+      forceRefresh: dto.refresh || false,
+    });
+  }
+
+  /**
+   * Pré-aquece o cache (admin)
+   * Executa em background
+   */
+  @Post('cache/warmup')
+  @HttpCode(HttpStatus.ACCEPTED)
+  async warmupCache() {
+    await this.leagueOrgService
+      .warmupCache()
+      .catch((error) => this.logger.error('Warmup error:', error));
+
+    return { message: 'Cache warmup started' };
+  }
+
+  /**
+   * Invalida cache de ligas organizadas (admin)
+   * Validação automática com Zod
+   */
+  @Delete('cache/organized')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async invalidateOrganizedCache(
+    @Query(new ZodValidationPipe(InvalidateCacheDtoSchema))
+    dto: InvalidateCacheDto,
+  ) {
+    const parsedSeason = parseSeason(dto.season);
+
+    if (parsedSeason) {
+      await this.leagueOrgService.invalidateCache(parsedSeason);
+    } else {
+      await this.leagueOrgService.invalidateAllCache();
+    }
+  }
+}

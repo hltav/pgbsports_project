@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { decimalSchema } from './../../../libs/common/dto/decimalSchema.interface';
-import { SafeInfer } from './../../../types/zod';
-import { GetBankrollHistorySchema } from './createHistories.dto';
+import { decimalSchema } from '../../../libs/common/dto/decimalSchema.interface';
+import { SafeInfer } from '../../../types/zod';
+import { GetBankrollHistorySchema } from './history/createHistories.dto';
 
 export const GetBankrollSchema = z.object({
   id: z.number(),
@@ -9,14 +9,13 @@ export const GetBankrollSchema = z.object({
   name: z.string(),
   balance: decimalSchema,
   unidValue: decimalSchema,
-  bookmaker: z.string().nullable().default('Unknown'),
+  bookmaker: z.string().default('Unknown'),
   initialBalance: decimalSchema,
-  totalDeposited: decimalSchema.optional(),
-  totalWithdrawn: decimalSchema.optional(),
-  totalStaked: decimalSchema.optional(),
-  totalReturned: decimalSchema.optional(),
+  totalDeposited: decimalSchema,
+  totalWithdrawn: decimalSchema,
+  totalStaked: decimalSchema,
+  totalReturned: decimalSchema,
   lastHistory: GetBankrollHistorySchema.nullable().optional(),
-  history: z.array(GetBankrollHistorySchema).optional(),
   histories: z.array(GetBankrollHistorySchema).optional(),
 });
 

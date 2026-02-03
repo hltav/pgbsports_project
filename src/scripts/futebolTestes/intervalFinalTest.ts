@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeIntervaloFinal } from './../../shared/thesportsdb-api/services/analysis/futebol/intervalFinal.analysis';
+import { analyzeIntervaloFinal } from './../../shared/results/analysis';
 
 function run() {
   const tests = [

@@ -1,4 +1,4 @@
-import { Decimal } from '@prisma/client/runtime/library';
+import { Decimal } from './../../../libs/database/prisma';
 import { z } from 'zod';
 
 export const decimalSchema = z.preprocess((val) => {

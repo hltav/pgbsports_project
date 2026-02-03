@@ -10,6 +10,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { UsersModule } from './users/users.module';
 import { MyCacheModule } from './../libs/services/cache/cache.module';
 import { EncryptedDataModule } from './../libs/EncryptedData/services/encryptedData.module';
+import { MatchsModule } from './matchs/matchs.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { EncryptedDataModule } from './../libs/EncryptedData/services/encryptedD
     SubscriptionsModule,
     ClientDataModule,
     EncryptedDataModule,
+    MatchsModule,
   ],
   providers: [],
   exports: [
@@ -38,6 +40,7 @@ import { EncryptedDataModule } from './../libs/EncryptedData/services/encryptedD
     SubscriptionsModule,
     ClientDataModule,
     EncryptedDataModule,
+    MatchsModule,
   ],
 })
-export class AllmoduleModule {}
+export class ModulesModule {}

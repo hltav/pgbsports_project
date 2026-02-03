@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeHandicapPorTempo } from '../../shared/thesportsdb-api/services/analysis/futebol/handicapMarket.analysis';
+import { analyzeHandicapPorTempo } from './../../shared/results/analysis';
 
 // Helper local que replica a lógica do analyzer para gerar o EXPECTED
 function computeExpectedFromDetails(

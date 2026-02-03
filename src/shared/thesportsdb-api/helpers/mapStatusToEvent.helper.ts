@@ -1,41 +1,70 @@
-import { EventStatus } from '../enums/eventStatus.enum';
+import { MatchStatus } from '@prisma/client';
 
-export function mapStrStatusToEventStatus(strStatus: string): EventStatus {
-  const s = strStatus.trim().toLowerCase();
+export function mapStrStatusToMatchStatus(strStatus: string): MatchStatus {
+  if (!strStatus) return MatchStatus.NOT_STARTED;
 
-  if (s.includes('not started') || s.includes('ns') || s === '' || s === '0') {
-    return EventStatus.NOT_STARTED;
+  const s = strStatus.trim().toUpperCase();
+
+  // 1. NÃO INICIADO
+  if (s === 'NS' || s === 'TBD' || s.includes('NOT STARTED')) {
+    return MatchStatus.NOT_STARTED;
   }
 
-  if (s.includes('1st') || s.includes('first')) {
-    return EventStatus.FIRST_HALF;
+  // 2. EM ANDAMENTO
+  if (s === '1H' || s.includes('FIRST HALF') || s.includes('KICK OFF')) {
+    return MatchStatus.FIRST_HALF;
   }
 
-  if (s === 'ht' || s.includes('half time')) {
-    return EventStatus.HALF_TIME;
+  if (s === 'HT' || s.includes('HALFTIME')) {
+    return MatchStatus.HALF_TIME;
   }
 
-  if (s.includes('2nd') || s.includes('second')) {
-    return EventStatus.SECOND_HALF;
+  if (s === '2H' || s.includes('SECOND HALF')) {
+    return MatchStatus.SECOND_HALF;
   }
 
   if (
-    s === 'ft' ||
-    s.includes('full time') ||
-    s.includes('finished') ||
-    s.includes('end')
+    s === 'ET' ||
+    s === 'P' ||
+    s === 'BT' ||
+    s.includes('EXTRA TIME') ||
+    s.includes('PENALTY')
   ) {
-    return EventStatus.FINISHED;
+    return MatchStatus.LIVE;
   }
 
-  if (s.includes('postponed') || s.includes('pp')) {
-    return EventStatus.POSTPONED;
+  // 3. FINALIZADO
+  if (
+    s === 'FT' ||
+    s === 'AET' ||
+    s === 'PEN' ||
+    s.includes('MATCH FINISHED') ||
+    s.includes('FULL TIME') ||
+    s === 'FINISHED'
+  ) {
+    return MatchStatus.FINISHED;
   }
 
-  if (s.includes('cancel') || s.includes('abandoned')) {
-    return EventStatus.CANCELLED;
+  // 4. ADIADO
+  if (s === 'PST' || s.includes('POSTPONED')) {
+    return MatchStatus.POSTPONED;
   }
 
-  // fallback: jogo em andamento se nada mais casar
-  return EventStatus.IN_PROGRESS;
+  // 5. CANCELADO / ABANDONADO
+  if (
+    s === 'CANC' ||
+    s === 'ABD' ||
+    s === 'SUSP' ||
+    s === 'INT' ||
+    s === 'AWD' ||
+    s === 'WO' ||
+    s.includes('CANCELLED') ||
+    s.includes('ABANDONED') ||
+    s.includes('INTERRUPTED')
+  ) {
+    return MatchStatus.CANCELLED;
+  }
+
+  // Fallback seguro
+  return MatchStatus.LIVE;
 }

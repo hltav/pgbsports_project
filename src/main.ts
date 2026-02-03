@@ -12,32 +12,33 @@ import cors from '@fastify/cors';
 import cookie from '@fastify/cookie';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
+import { LoggingService } from './modules/monitoring/services/logging.service';
 import * as fs from 'fs';
+import * as path from 'path';
+import { SilentExceptionFilter } from './modules/auth/filter/exception.filter';
 
 async function bootstrap() {
   const isDev = process.env.NODE_ENV !== 'production';
 
   let fastifyAdapter: FastifyAdapter;
 
-  if (
-    isDev &&
-    fs.existsSync('./localhost+2-key.pem') &&
-    fs.existsSync('./localhost+2.pem')
-  ) {
-    const httpsOptions = {
+  const certPath = path.resolve(process.cwd(), 'cert', 'localhost+2.pem');
+  const keyPath = path.resolve(process.cwd(), 'cert', 'localhost+2-key.pem');
+
+  if (isDev && fs.existsSync(certPath) && fs.existsSync(keyPath)) {
+    fastifyAdapter = new FastifyAdapter({
       https: {
-        key: fs.readFileSync('./localhost+2-key.pem'),
-        cert: fs.readFileSync('./localhost+2.pem'),
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath),
       },
-    };
-    fastifyAdapter = new FastifyAdapter(httpsOptions);
+    });
   } else {
     fastifyAdapter = new FastifyAdapter();
   }
 
   const logLevels: LogLevel[] =
     process.env.NODE_ENV === 'production'
-      ? ['log', 'warn', 'error']
+      ? ['warn', 'error']
       : ['log', 'warn', 'error', 'debug', 'verbose'];
 
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -47,6 +48,7 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfigService);
+  const loggingService = app.get(LoggingService);
   const port = configService.get<number>('PORT') || 3000;
 
   // 🔧 CORS – Configurado antes de tudo
@@ -64,7 +66,7 @@ async function bootstrap() {
       if (!origin || allowedOrigins.includes(origin)) {
         cb(null, true);
       } else {
-        console.warn(`Blocked CORS origin: ${origin}`);
+        loggingService.warn(`Blocked CORS origin: ${origin}`, 'CORS');
         cb(new Error('Not allowed by CORS'), '');
       }
     },
@@ -106,11 +108,25 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalFilters(new SilentExceptionFilter());
+
   // 🚀 Inicialização
   await app.listen({ port, host: '0.0.0.0' });
 
-  console.log(`🚀✅ Server running on port ${port}🎉🔥`);
+  const protocol =
+    isDev && fs.existsSync('./localhost+2-key.pem') ? 'https' : 'http';
+  const url = `${protocol}://localhost:${port}`;
+
+  loggingService.log(`🚀 Application is running on: ${url}`, 'Bootstrap');
+  loggingService.log(`📊 Health check: ${url}/health`, 'Bootstrap');
+  loggingService.log(`📈 Monitoring: ${url}/monitoring/metrics`, 'Bootstrap');
+  loggingService.log(
+    `🔒 Environment: ${process.env.NODE_ENV || 'development'}`,
+    'Bootstrap',
+  );
+  loggingService.log(`✅ Server ready on port ${port} 🎉🔥`, 'Bootstrap');
 }
+
 bootstrap().catch((err) => {
   console.error('❌ Erro ao iniciar aplicação:', err);
   process.exit(1);

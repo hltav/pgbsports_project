@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { mapStrStatusToMatchStatus } from '../../helpers/mapStatusToEvent.helper';
 
 export const LiveScoreEventSchema = z.object({
   idLiveScore: z.string(),
@@ -16,7 +17,7 @@ export const LiveScoreEventSchema = z.object({
   intAwayScore: z.string(),
   intEventScore: z.string().nullable(),
   intEventScoreTotal: z.string().nullable(),
-  strStatus: z.string(),
+  strStatus: z.string().nullish().transform(mapStrStatusToMatchStatus),
   strProgress: z.string(),
   strEventTime: z.string(),
   dateEvent: z.string().nullable(),

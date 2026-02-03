@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeVenceSemSofrerGol } from './../../shared/thesportsdb-api/services/analysis/futebol/winCleanSheet.analysis';
+import { analyzeVenceSemSofrerGol } from './../../shared/results/analysis';
 
 function run() {
   const tests = [

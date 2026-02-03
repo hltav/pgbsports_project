@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeTotalExatoGols } from './../../shared/thesportsdb-api/services/analysis/futebol/exactTotalGoals.analysis';
+import { analyzeTotalExatoGols } from './../../shared/results/analysis';
 
 function run() {
   const tests = [

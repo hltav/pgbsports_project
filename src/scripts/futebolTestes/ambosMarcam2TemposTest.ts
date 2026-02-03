@@ -1,5 +1,5 @@
 import { Result } from '@prisma/client';
-import { analyzeAmbasMarcamEmAmbosTempos } from '../../shared/thesportsdb-api/services/analysis';
+import { analyzeAmbasMarcamEmAmbosTempos } from '../../shared/results/analysis';
 
 function run() {
   const tests = [

@@ -1,15 +1,15 @@
-import { EventStatus } from '../enums/eventStatus.enum';
+import { MatchStatus } from '@prisma/client';
 
-export function parseEventStatus(status: EventStatus) {
+export function parseEventStatus(status: MatchStatus) {
   return {
-    isNotStarted: status === EventStatus.NOT_STARTED,
-    isFirstHalf: status === EventStatus.FIRST_HALF,
-    isHalfTime: status === EventStatus.HALF_TIME,
-    isSecondHalf: status === EventStatus.SECOND_HALF,
-    isFinished: status === EventStatus.FINISHED,
+    isNotStarted: status === MatchStatus.NOT_STARTED,
+    isFirstHalf: status === MatchStatus.FIRST_HALF,
+    isHalfTime: status === MatchStatus.HALF_TIME,
+    isSecondHalf: status === MatchStatus.SECOND_HALF,
+    isFinished: status === MatchStatus.FINISHED,
     isLive:
-      status === EventStatus.FIRST_HALF ||
-      status === EventStatus.SECOND_HALF ||
-      status === EventStatus.HALF_TIME,
+      status === MatchStatus.FIRST_HALF ||
+      status === MatchStatus.SECOND_HALF ||
+      status === MatchStatus.HALF_TIME,
   };
 }
