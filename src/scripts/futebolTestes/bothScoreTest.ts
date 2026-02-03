@@ -166,6 +166,7 @@ function run() {
       test.eventDetails,
       test.homeScore,
       test.awayScore,
+      test.homeScore + test.awayScore > 0,
     );
 
     const isFinalizableEarly = result.isFinalizableEarly ?? false;

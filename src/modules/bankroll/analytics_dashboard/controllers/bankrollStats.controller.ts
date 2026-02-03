@@ -6,11 +6,11 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { FastifyRequest } from 'fastify';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../../../libs';
 import { BankrollStatsService } from '../services/bankrollStats.service';
 
-interface RequestWithUser extends Request {
+interface RequestWithUser extends FastifyRequest {
   user: {
     id: number;
   };

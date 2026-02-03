@@ -22,6 +22,10 @@ lerna-debug.log*
 .jest-cache
 .pem
 
+# Scripts de testes locais (não versionar)
+src/scripts/futebolTestes/
+
+
 # IDEs and editors
 /.idea
 .project

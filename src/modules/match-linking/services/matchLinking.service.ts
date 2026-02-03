@@ -115,7 +115,7 @@ export class MatchLinkingService {
       leagueBadge: apiMatch.league.logo,
       leagueId: apiMatch.league.id.toString(),
       season: apiMatch.league.season?.toString() || null,
-      round: apiMatch.league.round ? parseInt(apiMatch.league.round) : null,
+      round: apiMatch.league.round ? apiMatch.league.round.toString() : null,
       country: apiMatch.league.country || null,
       homeTeam: apiMatch.teams.home.name,
       awayTeam: apiMatch.teams.away.name,
