@@ -1,4 +1,4 @@
-import { Result } from '@prisma/client';
+import { MatchStatus, Result } from '@prisma/client';
 import { EventMarketAnalysis } from '../base.analysis';
 
 /**
@@ -46,53 +46,90 @@ function splitAsianHandicap(handicap: number): number[] {
 
 export function analyzeHandicapAsiatico(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
   const normalized = eventDetails.toLowerCase().trim();
 
-  // Extrai o handicap do texto
+  // Não começou / em andamento → não liquida (sem early aqui)
+  if (status !== MatchStatus.FINISHED) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  if (homeScore == null || awayScore == null) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
   const match = normalized.match(/([+-]?\d+(\.\d+)?)/);
   if (!match) {
     return { result: Result.void, shouldUpdate: true };
   }
 
   const handicap = parseFloat(match[1]);
-
-  // Divide o handicap (se necessário)
   const handicaps = splitAsianHandicap(handicap);
 
-  // Resolve cada parte
   const results = handicaps.map((h) =>
     resolveSimpleHandicap(h, homeScore, awayScore),
   );
 
   // Handicap simples
   if (results.length === 1) {
-    return { result: results[0], shouldUpdate: true };
+    return {
+      result: results[0],
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
   }
 
   // Handicap composto (.25 / .75)
   const [r1, r2] = results;
 
   if (r1 === Result.win && r2 === Result.win)
-    return { result: Result.win, shouldUpdate: true };
+    return {
+      result: Result.win,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
 
   if (r1 === Result.lose && r2 === Result.lose)
-    return { result: Result.lose, shouldUpdate: true };
+    return {
+      result: Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
 
   if (
     (r1 === Result.win && r2 === Result.returned) ||
     (r2 === Result.win && r1 === Result.returned)
   )
-    return { result: Result.half_win, shouldUpdate: true };
+    return {
+      result: Result.half_win,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
 
   if (
     (r1 === Result.lose && r2 === Result.returned) ||
     (r2 === Result.lose && r1 === Result.returned)
   )
-    return { result: Result.half_lose, shouldUpdate: true };
+    return {
+      result: Result.half_lose,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
 
-  // returned + returned
-  return { result: Result.returned, shouldUpdate: true };
+  return {
+    result: Result.returned,
+    shouldUpdate: true,
+    isFinalizableEarly: false,
+  };
 }

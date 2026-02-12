@@ -1,37 +1,83 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeAmbasMarcamPrimeiroTempo(
   details: string,
-  homeScoreHT: number,
-  awayScoreHT: number,
-  isFinalized: boolean = false, // novo parâmetro
+  homeScoreHT: number | null,
+  awayScoreHT: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
-  const ambasMarcam = homeScoreHT > 0 && awayScoreHT > 0;
-  const apostouSim =
-    details.toLowerCase().includes('sim') ||
-    details.toLowerCase().includes('yes');
+  const normalized = details.toLowerCase();
 
-  // 🟦 Caso: SIM (apostou que ambas marcam)
-  if (apostouSim) {
+  const isSim = normalized.includes('sim') || normalized.includes('yes');
+  const isNao =
+    normalized.includes('não') ||
+    normalized.includes('nao') ||
+    normalized.includes('no');
+
+  if (!isSim && !isNao) return voidResult();
+
+  // 🔒 Guard 1: jogo não começou → nunca liquida
+  if (status === MatchStatus.NOT_STARTED) {
     return {
-      result: ambasMarcam ? Result.win : Result.lose,
-      shouldUpdate: true,
-      // Early só se ambas já marcaram (aposta garantida)
-      // OU se jogo finalizou e não marcaram ambas (aposta perdeu)
-      isFinalizableEarly: ambasMarcam || isFinalized,
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
     };
   }
 
-  // 🟥 Caso: NÃO (apostou que não ambas marcam)
-  const perdeu = ambasMarcam; // perde se marcaram ambas
+  // 🔒 Guard 2: precisa de HT válido para qualquer lógica
+  if (homeScoreHT == null || awayScoreHT == null) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
 
+  const ambasNoHT = homeScoreHT > 0 && awayScoreHT > 0;
+
+  // ✅ Irreversível durante o 1º tempo: se ambas já marcaram no HT, acabou o mercado
+  if (ambasNoHT) {
+    if (isSim) {
+      return {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      };
+    }
+    // isNao
+    return {
+      result: Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: true,
+    };
+  }
+
+  const htEnded =
+    status === MatchStatus.HALF_TIME || status === MatchStatus.FINISHED;
+
+  // ✅ HT terminou: agora dá pra decidir (sem “early” — é decisão do mercado)
+  if (htEnded) {
+    if (isSim) {
+      return {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      };
+    }
+    // isNao
+    return {
+      result: Result.win,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
+  }
+
+  // ⏳ 1º tempo em andamento e ainda não houve ambas → aposta viva
   return {
-    result: perdeu ? Result.lose : Result.win,
-    shouldUpdate: true,
-    // Early se:
-    // 1. Ambas marcaram (perdeu garantido)
-    // 2. Jogo finalizou e não marcaram ambas (ganhou garantido)
-    isFinalizableEarly: perdeu || isFinalized,
+    result: Result.pending,
+    shouldUpdate: false,
+    isFinalizableEarly: false,
   };
 }

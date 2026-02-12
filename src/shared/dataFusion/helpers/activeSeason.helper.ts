@@ -11,8 +11,8 @@ export interface ApiSportsSeason {
   };
 }
 
-const SEASON_PRE_START_MS = CACHE_TTL.ONE_MONTH;
-const SEASON_POST_END_MS = CACHE_TTL.TWO_MONTH;
+const SEASON_PRE_START_MS = CACHE_TTL.THREE_MONTHS;
+const SEASON_POST_END_MS = CACHE_TTL.THREE_MONTHS;
 
 export function isActiveSeasonNow(season: ApiSportsSeason): boolean {
   if (!season?.start || !season?.end) return false;

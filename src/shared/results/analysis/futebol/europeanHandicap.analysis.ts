@@ -1,46 +1,51 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeHandicapEuropeuBinary(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
   const normalized = eventDetails.toLowerCase().trim();
 
-  // Handicap Europeu (modelo binário):
-  // A aposta só é vencedora se, após aplicar o handicap ao time da casa,
-  // o placar ajustado da casa for MAIOR que o do visitante.
-  // Empate ajustado = aposta perdedora.
-  // Opções: -2, -1, +1, +2
-  let handicap: number | null = null;
+  // 🔒 Não começou / sem score → não liquida
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
 
+  // Handicap Europeu (binário) decide no FT
+  if (status !== MatchStatus.FINISHED) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  // Extrai handicap inteiro (ex: -2, -1, +1, +2)
   const match = normalized.match(/([+-]?\d+)/);
-  if (match) {
-    handicap = parseInt(match[1], 10);
-  }
+  if (!match) return voidResult();
 
-  if (handicap === null) {
-    return { result: Result.void, shouldUpdate: true };
-  }
-
-  // Nota: o handicap é do time CASA
-  // Casa -1 significa: subtrair 1 do score da casa
-  // Casa +1 significa: adicionar 1 ao score da casa
+  const handicap = parseInt(match[1], 10);
+  if (Number.isNaN(handicap)) return voidResult();
 
   const adjustedHomeScore = homeScore + handicap;
   const adjustedAwayScore = awayScore;
 
-  let won = false;
-
-  if (adjustedHomeScore > adjustedAwayScore) {
-    won = true;
-  } else {
-    won = false;
-  }
+  const won = adjustedHomeScore > adjustedAwayScore; // empate ajustado = lose
 
   return {
     result: won ? Result.win : Result.lose,
     shouldUpdate: true,
+    isFinalizableEarly: false,
   };
 }

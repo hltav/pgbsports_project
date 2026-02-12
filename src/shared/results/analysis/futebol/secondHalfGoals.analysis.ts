@@ -1,22 +1,15 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
-
-type MatchStatus = 'first_half' | 'half_time' | 'second_half';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeGolsSegundoTempo(
   details: string,
-  homeScoreHT: number,
-  awayScoreHT: number,
-  homeScoreFT: number,
-  awayScoreFT: number,
-  matchStatus: MatchStatus = 'second_half',
+  homeScoreHT: number | null,
+  awayScoreHT: number | null,
+  homeScoreFT: number | null,
+  awayScoreFT: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
   const normalized = details.toLowerCase().trim();
-
-  // ===== CALCULA GOLS DO 2º TEMPO =====
-  const home2H = homeScoreFT - homeScoreHT;
-  const away2H = awayScoreFT - awayScoreHT;
-  const totalGols2H = home2H + away2H;
 
   const isOver = normalized.includes('mais') || normalized.includes('over');
   const isUnder = normalized.includes('menos') || normalized.includes('under');
@@ -24,111 +17,83 @@ export function analyzeGolsSegundoTempo(
   const match = normalized.match(/\d+\.?\d*/);
   const threshold = match ? parseFloat(match[0]) : null;
 
-  // ===== VALIDAÇÃO =====
-  if (threshold === null) {
-    return voidResult();
-  }
+  if (threshold == null || Number.isNaN(threshold)) return voidResult();
+  if (!isOver && !isUnder) return voidResult();
 
-  if (!isOver && !isUnder) {
-    return voidResult();
-  }
-
-  // ===== CÁLCULO DO RESULTADO =====
-  const won =
-    (isOver && totalGols2H > threshold) || (isUnder && totalGols2H < threshold);
-
-  const isAlreadyImpossible = isGoalsImpossible2H(
-    totalGols2H,
-    threshold,
-    isOver,
-    isUnder,
-  );
-
-  // ===== DECISÃO EARLY FINISH =====
-
-  // Se já venceu
-  if (won) {
+  // 🔒 Não começou / sem placares suficientes
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScoreHT == null ||
+    awayScoreHT == null ||
+    homeScoreFT == null ||
+    awayScoreFT == null
+  ) {
     return {
-      result: Result.win,
-      shouldUpdate: true,
-      isFinalizableEarly: true,
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
     };
   }
 
-  // Se já é impossível vencer
-  if (isAlreadyImpossible) {
+  // Antes do 2º tempo começar, este mercado não pode ser resolvido
+  const secondHalfOngoing =
+    status === MatchStatus.SECOND_HALF || status === MatchStatus.LIVE;
+  const finished = status === MatchStatus.FINISHED;
+
+  if (!secondHalfOngoing && !finished) {
     return {
-      result: Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: true,
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
     };
   }
 
-  // ===== APOSTA VIVA - DEPENDE DO STATUS =====
+  // Gols do 2º tempo
+  const home2H = homeScoreFT - homeScoreHT;
+  const away2H = awayScoreFT - awayScoreHT;
+  const total2H = home2H + away2H;
 
-  // Se AINDA está em segundo tempo, aposta está viva (pode haver gols)
-  if (matchStatus === 'second_half') {
-    return {
-      result: Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: false, // Pode mudar até FT
-    };
-  }
+  const wonNow =
+    (isOver && total2H > threshold) || (isUnder && total2H < threshold);
 
-  // Se JÁ está finalizado, resultado é definitivo
-  if (matchStatus === 'half_time') {
+  // ✅ FINISHED: decisão final
+  if (finished) {
     return {
-      result: Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: true, // Resultado final do 2H
-    };
-  }
-
-  // Por segurança, se status for first_half (improvável pra 2H), trata como live
-  if (matchStatus === 'first_half') {
-    return {
-      result: Result.lose,
+      result: wonNow ? Result.win : Result.lose,
       shouldUpdate: true,
       isFinalizableEarly: false,
     };
   }
 
-  return {
-    result: Result.lose,
-    shouldUpdate: true,
-    isFinalizableEarly: false,
-  };
-}
-
-/**
- * Verifica se já é impossível atingir a meta de gols
- *
- * OVER: impossível se já chegou/ultrapassou o threshold
- * UNDER: impossível se já chegou/ultrapassou o threshold
- */
-export function isGoalsImpossible2H(
-  totalGols2H: number,
-  threshold: number,
-  isOver: boolean,
-  isUnder: boolean,
-): boolean {
+  // ✅ LIVE (2º tempo): early irreversível
   if (isOver) {
-    // OVER: se gols >= threshold, não pode mais ganhar
-    return totalGols2H >= threshold;
+    if (total2H > threshold) {
+      return {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      };
+    }
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
   }
 
-  if (isUnder) {
-    // UNDER: se gols >= threshold, não pode mais ganhar
-    return totalGols2H >= threshold;
+  // isUnder
+  // Under perde cedo se ultrapassou a linha (não volta)
+  if (total2H > threshold) {
+    return {
+      result: Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: true,
+    };
   }
 
-  return false;
-}
-
-function voidResult(): EventMarketAnalysis {
   return {
-    result: Result.void,
-    shouldUpdate: true,
+    result: Result.pending,
+    shouldUpdate: false,
     isFinalizableEarly: false,
   };
 }

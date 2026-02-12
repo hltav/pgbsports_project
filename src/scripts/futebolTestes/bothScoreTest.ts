@@ -1,140 +1,67 @@
-import { Result } from '@prisma/client';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { MatchStatus, Result } from '@prisma/client';
 import { analyzeAmbasMarcam } from './../../shared/results/analysis';
 
+type Expected = {
+  result: Result;
+  shouldUpdate: boolean;
+  isFinalizableEarly: boolean;
+};
+
+type TestCase = {
+  scenario: string;
+  eventDetails: string;
+  homeScore: number | null;
+  awayScore: number | null;
+  status: MatchStatus;
+  expected: Expected;
+};
+
+function normalizeEarly(v: any): boolean {
+  return Boolean(v?.isFinalizableEarly);
+}
+
+function assertResult(test: TestCase) {
+  const got = analyzeAmbasMarcam(
+    test.eventDetails,
+    test.homeScore,
+    test.awayScore,
+    test.status,
+  );
+
+  const gotEarly = normalizeEarly(got);
+
+  const pass =
+    got.result === test.expected.result &&
+    got.shouldUpdate === test.expected.shouldUpdate &&
+    gotEarly === test.expected.isFinalizableEarly;
+
+  return { pass, got, gotEarly };
+}
+
 function run() {
-  const tests = [
-    // ============================
-    // AMBOS MARCAM - SIM
-    // ============================
+  const tests: TestCase[] = [
+    // =========================================================
+    // NOT_STARTED: nunca liquida, mesmo que score venha 0-0
+    // =========================================================
     {
-      scenario: 'SIM — 1x1 → WIN',
+      scenario: 'NOT_STARTED — BTTS SIM → PENDING',
       eventDetails: 'Ambos Marcam - Sim',
-      homeScore: 1,
-      awayScore: 1,
-      expected: {
-        result: Result.win,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-    {
-      scenario: 'SIM — 1x0 → LOSE',
-      eventDetails: 'Ambos Marcam - Sim',
-      homeScore: 1,
+      homeScore: 0,
       awayScore: 0,
+      status: MatchStatus.NOT_STARTED,
       expected: {
-        result: Result.lose,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
+        result: Result.pending,
+        shouldUpdate: false,
+        isFinalizableEarly: false,
       },
     },
-
-    // ============================
-    // AMBOS MARCAM - NÃO
-    // ============================
     {
-      scenario: 'NÃO — 1x0 → WIN',
+      scenario: 'NOT_STARTED — BTTS NÃO → PENDING',
       eventDetails: 'Ambos Marcam - Não',
-      homeScore: 1,
+      homeScore: 0,
       awayScore: 0,
-      expected: {
-        result: Result.win,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-    {
-      scenario: 'NÃO — 1x1 → LOSE',
-      eventDetails: 'Ambos Marcam - Não',
-      homeScore: 1,
-      awayScore: 1,
-      expected: {
-        result: Result.lose,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-
-    // Aceita "Nao" sem acento
-    {
-      scenario: 'NÃO — sem acento → WIN',
-      eventDetails: 'Ambos Marcam - Nao',
-      homeScore: 2,
-      awayScore: 0,
-      expected: {
-        result: Result.win,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-
-    // ============================
-    // AMBOS MARCAM E +2.5
-    // ============================
-    {
-      scenario: 'SIM & +2.5 — ambas + total >2.5 → WIN',
-      eventDetails: 'Ambos Marcam e + 2.5',
-      homeScore: 2,
-      awayScore: 1,
-      expected: {
-        result: Result.win,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-    {
-      scenario: 'SIM & +2.5 — ambas mas total =2 → LOSE',
-      eventDetails: 'Ambos Marcam e + 2.5',
-      homeScore: 1,
-      awayScore: 1,
-      expected: {
-        result: Result.lose,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-    {
-      scenario: 'SIM & +2.5 — não ambas → LOSE',
-      eventDetails: 'Ambos Marcam e + 2.5',
-      homeScore: 2,
-      awayScore: 0,
-      expected: {
-        result: Result.lose,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-
-    // ============================
-    // AMBOS MARCAM OU +2.5
-    // ============================
-    {
-      scenario: 'OU — ambas → WIN',
-      eventDetails: 'Ambos Marcam ou + 2.5',
-      homeScore: 1,
-      awayScore: 1,
-      expected: {
-        result: Result.win,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-    {
-      scenario: 'OU — total > 2.5 → WIN',
-      eventDetails: 'Ambos Marcam ou + 2.5',
-      homeScore: 3,
-      awayScore: 0,
-      expected: {
-        result: Result.win,
-        shouldUpdate: true,
-        isFinalizableEarly: true,
-      },
-    },
-    {
-      scenario: 'OU — ambas = false e total < 2.5 → PENDING (SÓ ESTE MERCADO!)',
-      eventDetails: 'Ambos Marcam ou + 2.5',
-      homeScore: 1,
-      awayScore: 0,
+      status: MatchStatus.NOT_STARTED,
       expected: {
         result: Result.pending,
         shouldUpdate: false,
@@ -142,14 +69,223 @@ function run() {
       },
     },
 
-    // ============================
-    // MERCADO INVÁLIDO
-    // ============================
+    // =========================================================
+    // BTTS simples: "Ambos Marcam - Sim"
+    // =========================================================
+    {
+      scenario: 'LIVE — BTTS SIM — 1x1 → WIN early',
+      eventDetails: 'Ambos Marcam - Sim',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.FIRST_HALF,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'LIVE — BTTS SIM — 1x0 → PENDING (pode virar)',
+      eventDetails: 'Ambos Marcam - Sim',
+      homeScore: 1,
+      awayScore: 0,
+      status: MatchStatus.SECOND_HALF,
+      expected: {
+        result: Result.pending,
+        shouldUpdate: false,
+        isFinalizableEarly: false,
+      },
+    },
+    {
+      scenario: 'FINISHED — BTTS SIM — 1x0 → LOSE',
+      eventDetails: 'Ambos Marcam - Sim',
+      homeScore: 1,
+      awayScore: 0,
+      status: MatchStatus.FINISHED,
+      expected: {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      },
+    },
+
+    // =========================================================
+    // BTTS simples: "Ambos Marcam - Não" / "Nao"
+    // =========================================================
+    {
+      scenario: 'LIVE — BTTS NÃO — 1x0 → PENDING (NÃO ganha antes de terminar)',
+      eventDetails: 'Ambos Marcam - Não',
+      homeScore: 1,
+      awayScore: 0,
+      status: MatchStatus.FIRST_HALF,
+      expected: {
+        result: Result.pending,
+        shouldUpdate: false,
+        isFinalizableEarly: false,
+      },
+    },
+    {
+      scenario: 'LIVE — BTTS NÃO — 1x1 → LOSE early (ambos já marcaram)',
+      eventDetails: 'Ambos Marcam - Não',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.SECOND_HALF,
+      expected: {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'FINISHED — BTTS NÃO — 1x0 → WIN',
+      eventDetails: 'Ambos Marcam - Nao',
+      homeScore: 1,
+      awayScore: 0,
+      status: MatchStatus.FINISHED,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      },
+    },
+
+    // =========================================================
+    // "Ambos marcam e + 2.5 gols - Sim/Não"
+    // =========================================================
+    {
+      scenario: 'LIVE — AND+2.5 SIM — 2x1 (ambas e total>2.5) → WIN early',
+      eventDetails: 'Ambos marcam e + 2.5 gols - Sim',
+      homeScore: 2,
+      awayScore: 1,
+      status: MatchStatus.SECOND_HALF,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'LIVE — AND+2.5 SIM — 1x1 (ambas mas total=2) → PENDING',
+      eventDetails: 'Ambos marcam e + 2.5 gols - Sim',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.SECOND_HALF,
+      expected: {
+        result: Result.pending,
+        shouldUpdate: false,
+        isFinalizableEarly: false,
+      },
+    },
+    {
+      scenario: 'FINISHED — AND+2.5 SIM — 1x1 → LOSE',
+      eventDetails: 'Ambos marcam e + 2.5 gols - Sim',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.FINISHED,
+      expected: {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      },
+    },
+    {
+      scenario: 'LIVE — AND+2.5 NÃO — 2x1 (condição aconteceu) → LOSE early',
+      eventDetails: 'Ambos marcam e + 2.5 gols - Não',
+      homeScore: 2,
+      awayScore: 1,
+      status: MatchStatus.SECOND_HALF,
+      expected: {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'FINISHED — AND+2.5 NÃO — 1x1 (condição NÃO aconteceu) → WIN',
+      eventDetails: 'Ambos marcam e + 2.5 gols - Não',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.FINISHED,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      },
+    },
+
+    // =========================================================
+    // "Ambos marcam ou + 2.5 gols - Sim/Não"
+    // =========================================================
+    {
+      scenario: 'LIVE — OR+2.5 SIM — 1x1 → WIN early (ambas)',
+      eventDetails: 'Ambos marcam ou + 2.5 gols - Sim',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.FIRST_HALF,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'LIVE — OR+2.5 SIM — 3x0 → WIN early (total>2.5)',
+      eventDetails: 'Ambos marcam ou + 2.5 gols - Sim',
+      homeScore: 3,
+      awayScore: 0,
+      status: MatchStatus.FIRST_HALF,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'LIVE — OR+2.5 SIM — 1x0 → PENDING',
+      eventDetails: 'Ambos marcam ou + 2.5 gols - Sim',
+      homeScore: 1,
+      awayScore: 0,
+      status: MatchStatus.FIRST_HALF,
+      expected: {
+        result: Result.pending,
+        shouldUpdate: false,
+        isFinalizableEarly: false,
+      },
+    },
+    {
+      scenario: 'LIVE — OR+2.5 NÃO — 1x1 (condição aconteceu) → LOSE early',
+      eventDetails: 'Ambos marcam ou + 2.5 gols - Não',
+      homeScore: 1,
+      awayScore: 1,
+      status: MatchStatus.SECOND_HALF,
+      expected: {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      },
+    },
+    {
+      scenario: 'FINISHED — OR+2.5 NÃO — 1x0 (condição NÃO aconteceu) → WIN',
+      eventDetails: 'Ambos marcam ou + 2.5 gols - Não',
+      homeScore: 1,
+      awayScore: 0,
+      status: MatchStatus.FINISHED,
+      expected: {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      },
+    },
+
+    // =========================================================
+    // Mercado inválido → VOID (depende do seu voidResult)
+    // =========================================================
     {
       scenario: 'Mercado desconhecido → VOID',
       eventDetails: 'Ambas marcam ???',
       homeScore: 1,
       awayScore: 1,
+      status: MatchStatus.FINISHED,
       expected: {
         result: Result.void,
         shouldUpdate: true,
@@ -159,49 +295,32 @@ function run() {
   ];
 
   let passed = 0;
-  let failed = 0;
 
-  tests.forEach((test) => {
-    const result = analyzeAmbasMarcam(
-      test.eventDetails,
-      test.homeScore,
-      test.awayScore,
-      test.homeScore + test.awayScore > 0,
-    );
+  for (const t of tests) {
+    const { pass, got, gotEarly } = assertResult(t);
 
-    const isFinalizableEarly = result.isFinalizableEarly ?? false;
-
-    const testPassed =
-      result.result === test.expected.result &&
-      result.shouldUpdate === test.expected.shouldUpdate &&
-      isFinalizableEarly === test.expected.isFinalizableEarly;
-
-    if (testPassed) {
-      passed++;
-    } else {
-      failed++;
-    }
+    if (pass) passed++;
 
     console.log(
-      `${testPassed ? '✅' : '❌'} ${test.scenario} → ${
-        Result[result.result]
-      } (early: ${isFinalizableEarly})`,
+      `${pass ? '✅' : '❌'} ${t.scenario} → ${Result[got.result]} | shouldUpdate=${
+        got.shouldUpdate
+      } | early=${gotEarly} | status=${MatchStatus[t.status]}`,
     );
 
-    if (!testPassed) {
+    if (!pass) {
       console.log(
-        `   Esperado: ${Result[test.expected.result]} (early: ${test.expected.isFinalizableEarly})`,
+        `   Esperado: ${Result[t.expected.result]} | shouldUpdate=${t.expected.shouldUpdate} | early=${t.expected.isFinalizableEarly}`,
       );
       console.log(
-        `   Recebido: ${Result[result.result]} (early: ${isFinalizableEarly})`,
+        `   Recebido:  ${Result[got.result]} | shouldUpdate=${got.shouldUpdate} | early=${gotEarly}`,
+      );
+      console.log(
+        `   Details: "${t.eventDetails}" score=${t.homeScore}-${t.awayScore}`,
       );
     }
-  });
+  }
 
   console.log(`\n📊 ${passed}/${tests.length} testes passaram`);
-  if (failed > 0) {
-    console.log(`❌ ${failed} teste(s) falharam`);
-  }
 }
 
 run();

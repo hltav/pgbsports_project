@@ -9,6 +9,7 @@ export const EventSchema = z.object({
   strSport: z.string(),
   idLeague: z.string(),
   strLeague: z.string(),
+  strLeagueBadge: z.string().nullable().optional(),
   strHomeTeam: z.string(),
   strAwayTeam: z.string(),
   intHomeScore: z.string().nullable().optional(),

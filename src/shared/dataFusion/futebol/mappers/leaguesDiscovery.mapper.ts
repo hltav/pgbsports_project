@@ -45,7 +45,7 @@ export class LeagueDiscoveryMapper {
       tsdbLeagueId: tsdbLeague?.idLeague,
       name: tsdbLeague?.strLeague ?? apiLeague?.league.name ?? 'Unknown league',
       country: translateCountry(rawCountryName),
-      logo: apiLeague?.league.logo ?? tsdbLeague?.strLogo ?? undefined,
+      logo: apiLeague?.league.logo ?? tsdbLeague?.strBadge ?? undefined,
       flag: apiLeague?.country.flag ?? undefined,
       badge: tsdbLeague?.strBadge ?? undefined,
       banner: tsdbLeague?.strBanner ?? undefined,

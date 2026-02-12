@@ -1,4 +1,4 @@
-import { Result } from '@prisma/client';
+import { MatchStatus, Result } from '@prisma/client';
 import { EventMarketAnalysis, noUpdate, voidResult } from '../base.analysis';
 
 export function analyzeVencedor2oTempo(
@@ -7,12 +7,25 @@ export function analyzeVencedor2oTempo(
   awayScoreHT: number | null,
   homeScoreFT: number | null,
   awayScoreFT: number | null,
-  matchStatus: boolean,
+  status: MatchStatus,
 ): EventMarketAnalysis {
-  // Normalizar texto
-  const details = eventDetails.toLowerCase().trim();
+  const d = eventDetails.toLowerCase().trim();
 
-  // Validação — dados insuficientes
+  const isHome = d.includes('casa') || d.includes('home') || d === '1';
+  const isAway = d.includes('fora') || d.includes('away') || d === '2';
+  const isDraw = d.includes('empate') || d.includes('draw') || d === 'x';
+
+  // Mercado inválido (seleção não reconhecida)
+  if (!isHome && !isAway && !isDraw) {
+    return voidResult();
+  }
+
+  // Só decide no FINISHED
+  if (status !== MatchStatus.FINISHED) {
+    return noUpdate();
+  }
+
+  // Se terminou mas faltam dados, aí sim é problema de dados → void (ou você pode optar por noUpdate)
   if (
     homeScoreHT == null ||
     awayScoreHT == null ||
@@ -22,43 +35,17 @@ export function analyzeVencedor2oTempo(
     return voidResult();
   }
 
-  // ❗ Antes do fim da partida → não finalizar
-  const matchFinished = matchStatus;
-  if (!matchFinished) {
-    return noUpdate();
-  }
-
-  // Placar do segundo tempo
   const home2H = homeScoreFT - homeScoreHT;
   const away2H = awayScoreFT - awayScoreHT;
 
-  // CASA vence 2º tempo
-  if (details.includes('casa')) {
-    return {
-      result: home2H > away2H ? Result.win : Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: false,
-    };
-  }
+  let won = false;
+  if (isHome) won = home2H > away2H;
+  if (isAway) won = away2H > home2H;
+  if (isDraw) won = home2H === away2H;
 
-  // FORA vence 2º tempo
-  if (details.includes('fora')) {
-    return {
-      result: away2H > home2H ? Result.win : Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: false,
-    };
-  }
-
-  // EMPATE no 2º tempo
-  if (details.includes('empate')) {
-    return {
-      result: home2H === away2H ? Result.win : Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: false,
-    };
-  }
-
-  // Caso nenhum dos termos seja encontrado → mercado inválido
-  return voidResult();
+  return {
+    result: won ? Result.win : Result.lose,
+    shouldUpdate: true,
+    isFinalizableEarly: false,
+  };
 }

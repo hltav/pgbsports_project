@@ -8,6 +8,12 @@ export const TheSportsDbEventSchema = z.object({
   strSport: z.string(),
   idLeague: z.string(),
   strLeague: z.string(),
+  strLeagueBadge: z
+    .preprocess(
+      (val) => (typeof val === 'string' && val.trim() ? val : null),
+      z.string().url().nullable(),
+    )
+    .optional(),
   strHomeTeam: z.string(),
   strAwayTeam: z.string(),
   intHomeScore: z.string().nullable().optional(),

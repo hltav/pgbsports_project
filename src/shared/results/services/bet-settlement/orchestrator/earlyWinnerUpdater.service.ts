@@ -7,6 +7,7 @@ import { PrismaService } from './../../../../../libs/database';
 import { BetSettlementService } from '../../betSettlement.service';
 import { EventDataResolverService } from '../../eventDataResolver.service';
 import { EarlyWinnerEventsAnalyzerService } from './earlyWinnerEventsAnalyzer.service';
+import { ValidateEventService } from '../settlement/validateEvent.service';
 
 @Injectable()
 export class EarlyWinnerUpdateService {
@@ -17,6 +18,7 @@ export class EarlyWinnerUpdateService {
     private readonly dataResolver: EventDataResolverService,
     private readonly settlementService: BetSettlementService,
     private readonly eventsAnalyzer: EarlyWinnerEventsAnalyzerService,
+    private readonly validateEventService: ValidateEventService,
   ) {}
 
   async updateEarlyWinnerBets(): Promise<number> {
@@ -259,13 +261,56 @@ export class EarlyWinnerUpdateService {
         `📊 Event ${tsdbEventId} status: ${canonicalStatus} | ${homeTeam} ${homeScore}-${awayScore} ${awayTeam}`,
       );
 
-      await Promise.allSettled(
+      // await Promise.allSettled(
+      //   eventBets.map(async (bet) => {
+      //     const eventData: EventLiveScoreDTO = {
+      //       ...bet,
+      //       intHomeScore: homeScore.toString(),
+      //       intAwayScore: awayScore.toString(),
+      //       strStatus: canonicalStatus,
+      //       homeScoreHT: 0,
+      //       awayScoreHT: 0,
+      //       homeScoreFT: homeScore,
+      //       awayScoreFT: awayScore,
+      //       optionMarket: bet.selection,
+      //     } as EventLiveScoreDTO;
+
+      //     const validation =
+      //       this.settlementService.validateEventData(eventData);
+
+      //     if (!validation.isValid) {
+      //       this.logger.debug(
+      //         `Bet ${bet.id} validation failed: ${validation.reason}`,
+      //       );
+      //       return;
+      //     }
+
+      //     const analysis = analyzeVencedorAntecipado(
+      //       bet.selection,
+      //       homeScore,
+      //       awayScore,
+      //       canonicalStatus,
+      //     );
+
+      //     this.logger.debug(
+      //       `Analyzing bet ${bet.id}: market="${bet.market}", selection="${bet.selection}", ${homeTeam} ${homeScore}-${awayScore} ${awayTeam}, shouldUpdate=${analysis.shouldUpdate}`,
+      //     );
+
+      //     if (!analysis.shouldUpdate) return;
+
+      //     await this.settlementService.settleBet(bet, eventData, analysis);
+      //     processed++;
+      //   }),
+      // );
+      const results = await Promise.allSettled(
         eventBets.map(async (bet) => {
           const eventData: EventLiveScoreDTO = {
             ...bet,
             intHomeScore: homeScore.toString(),
             intAwayScore: awayScore.toString(),
             strStatus: canonicalStatus,
+            // Se você não tem HT real aqui, prefira null (se o DTO permitir).
+            // Se NÃO permitir, mantenha 0, mas saiba que é “placeholder”.
             homeScoreHT: 0,
             awayScoreHT: 0,
             homeScoreFT: homeScore,
@@ -274,32 +319,48 @@ export class EarlyWinnerUpdateService {
           } as EventLiveScoreDTO;
 
           const validation =
-            this.settlementService.validateEventData(eventData);
+            this.validateEventService.validateEventData(eventData);
 
           if (!validation.isValid) {
             this.logger.debug(
               `Bet ${bet.id} validation failed: ${validation.reason}`,
             );
-            return;
+            return 0;
           }
 
           const analysis = analyzeVencedorAntecipado(
             bet.selection,
             homeScore,
             awayScore,
-            false,
+            canonicalStatus,
           );
 
           this.logger.debug(
-            `Analyzing bet ${bet.id}: market="${bet.market}", selection="${bet.selection}", ${homeTeam} ${homeScore}-${awayScore} ${awayTeam}, shouldUpdate=${analysis.shouldUpdate}`,
+            `Analyzing bet ${bet.id}: market="${bet.market}", selection="${bet.selection}", ` +
+              `${homeTeam} ${homeScore}-${awayScore} ${awayTeam}, shouldUpdate=${analysis.shouldUpdate}`,
           );
 
-          if (!analysis.shouldUpdate) return;
+          if (!analysis.shouldUpdate) return 0;
 
-          await this.settlementService.settleBet(bet, eventData, analysis);
-          processed++;
+          const settled = await this.settlementService.settleBet(
+            bet,
+            eventData,
+            analysis,
+          );
+
+          // settleBet retorna boolean no seu service — use isso pra contar com precisão
+          return settled ? 1 : 0;
         }),
       );
+
+      processed += results.reduce((sum, r) => {
+        if (r.status === 'fulfilled') return sum + r.value;
+        // opcional: logar erro do Promise rejeitado
+        this.logger.warn(
+          `Early-winner bet processing failed: ${String(r.reason)}`,
+        );
+        return sum;
+      }, 0);
     }
 
     return processed;

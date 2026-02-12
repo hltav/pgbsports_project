@@ -1,68 +1,63 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzePlacarExatoImproved(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
-  homeScoreHT?: number,
-  awayScoreHT?: number,
-  isMatchFinished = false,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
-  const parts = eventDetails.split(/[-x]/);
+  const normalized = eventDetails.trim();
 
-  if (parts.length !== 2) {
-    return { result: Result.void, shouldUpdate: true };
+  // NOT_STARTED / sem score → não liquida
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
   }
+
+  // Aceita "1-0" ou "1x0"
+  const parts = normalized.split(/[-x]/i);
+  if (parts.length !== 2) return voidResult();
 
   const expectedHome = parseInt(parts[0].trim(), 10);
   const expectedAway = parseInt(parts[1].trim(), 10);
 
-  if (isNaN(expectedHome) || isNaN(expectedAway)) {
-    return { result: Result.void, shouldUpdate: true };
+  if (Number.isNaN(expectedHome) || Number.isNaN(expectedAway)) {
+    return voidResult();
   }
-
-  const isAlreadyImpossible = isScoreImpossible(
-    homeScore,
-    awayScore,
-    expectedHome,
-    expectedAway,
-  );
 
   const won = homeScore === expectedHome && awayScore === expectedAway;
 
-  if (won) {
+  // ✅ Jogo finalizado → decisão final
+  if (status === MatchStatus.FINISHED) {
     return {
-      result: Result.win,
+      result: won ? Result.win : Result.lose,
       shouldUpdate: true,
-      isFinalizableEarly: !isMatchFinished,
+      isFinalizableEarly: false,
     };
   }
 
-  if (isAlreadyImpossible) {
+  // ✅ Early LOSE: impossível bater o placar exato se já passou do esperado
+  const impossible = homeScore > expectedHome || awayScore > expectedAway;
+  if (impossible) {
     return {
       result: Result.lose,
       shouldUpdate: true,
-      isFinalizableEarly: !isMatchFinished,
+      isFinalizableEarly: true,
     };
   }
 
+  // ⏳ Ainda pode acontecer (mesmo se estiver “batendo” agora, pode mudar depois)
   return {
-    result: Result.lose,
-    shouldUpdate: true,
+    result: Result.pending,
+    shouldUpdate: false,
     isFinalizableEarly: false,
   };
-}
-
-export function isScoreImpossible(
-  currentHome: number,
-  currentAway: number,
-  expectedHome: number,
-  expectedAway: number,
-): boolean {
-  if (currentHome > expectedHome || currentAway > expectedAway) {
-    return true;
-  }
-
-  return false;
 }

@@ -1,18 +1,53 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeResultadoFinal(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
+  const detail = eventDetails.trim().toLowerCase();
+
+  const isHomePick =
+    detail.includes('casa') || detail.includes('home') || detail === '1';
+  const isDrawPick =
+    detail.includes('empate') || detail.includes('draw') || detail === 'x';
+  const isAwayPick =
+    detail.includes('fora') || detail.includes('away') || detail === '2';
+
+  if (!isHomePick && !isDrawPick && !isAwayPick) return voidResult();
+
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  if (status !== MatchStatus.FINISHED) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
   let won = false;
+  if (isHomePick && homeScore > awayScore) won = true;
+  if (isDrawPick && homeScore === awayScore) won = true;
+  if (isAwayPick && awayScore > homeScore) won = true;
 
-  if (eventDetails.includes('Casa') && homeScore > awayScore) won = true;
-  if (eventDetails.includes('Empate') && homeScore === awayScore) won = true;
-  if (eventDetails.includes('Fora') && awayScore > homeScore) won = true;
-
-  return { result: won ? Result.win : Result.lose, shouldUpdate: true };
+  return {
+    result: won ? Result.win : Result.lose,
+    shouldUpdate: true,
+    isFinalizableEarly: false,
+  };
 }
 
 /**
@@ -31,30 +66,37 @@ export function analyzeResultadoFinal(
  */
 export function analyzeVencedorAntecipado(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
-  isFinished: boolean,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
-  const detail = eventDetails.trim();
+  const detail = eventDetails.trim().toLowerCase();
 
-  const isHomePick = detail.includes('Casa');
-  const isDrawPick = detail.includes('Empate');
-  const isAwayPick = detail.includes('Fora');
+  const isHomePick =
+    detail.includes('casa') || detail.includes('home') || detail === '1';
+  const isDrawPick =
+    detail.includes('empate') || detail.includes('draw') || detail === 'x';
+  const isAwayPick =
+    detail.includes('fora') || detail.includes('away') || detail === '2';
 
-  // Seleção não reconhecida
-  if (!isHomePick && !isDrawPick && !isAwayPick) {
+  if (!isHomePick && !isDrawPick && !isAwayPick) return voidResult();
+
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
     return {
-      result: Result.void,
-      shouldUpdate: true,
+      result: Result.pending,
+      shouldUpdate: false,
       isFinalizableEarly: false,
     };
   }
 
-  //Analisa o placar a cada atualização.
   const homeDiff = homeScore - awayScore;
   const awayDiff = awayScore - homeScore;
 
-  // ✅ Finalização antecipada (somente Casa/Fora)
+  // ✅ Early WIN (somente Casa/Fora) quando abre 2 gols
   if (isHomePick && homeDiff >= 2) {
     return { result: Result.win, shouldUpdate: true, isFinalizableEarly: true };
   }
@@ -63,10 +105,9 @@ export function analyzeVencedorAntecipado(
     return { result: Result.win, shouldUpdate: true, isFinalizableEarly: true };
   }
 
-  // ✅ Se terminou, resolve definitivamente (inclusive Empate)
-  if (isFinished) {
+  // ✅ FINISHED: resolve definitivo
+  if (status === MatchStatus.FINISHED) {
     let won = false;
-
     if (isHomePick && homeScore > awayScore) won = true;
     if (isDrawPick && homeScore === awayScore) won = true;
     if (isAwayPick && awayScore > homeScore) won = true;
@@ -78,7 +119,7 @@ export function analyzeVencedorAntecipado(
     };
   }
 
-  // Ainda não abriu 2 gols e não terminou -> aguarda
+  // ⏳ Ainda não bateu condição e não terminou
   return {
     result: Result.pending,
     shouldUpdate: false,

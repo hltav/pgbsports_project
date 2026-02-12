@@ -1,4 +1,10 @@
-export const COUNTRY_CANONICAL_MAP = {
+export interface CountryData {
+  readonly apiFootball: string | null;
+  readonly theSportsDB: string;
+  readonly aliases: readonly string[];
+}
+
+export const COUNTRY_CANONICAL_MAP: Record<string, CountryData> = {
   afghanistan: {
     apiFootball: 'Afghanistan',
     theSportsDB: 'Afghanistan',
@@ -17,12 +23,12 @@ export const COUNTRY_CANONICAL_MAP = {
   andorra: {
     apiFootball: 'Andorra',
     theSportsDB: 'Andorra',
-    aliases: ['ad'],
+    aliases: ['andorra', 'ad'],
   },
   angola: {
     apiFootball: 'Angola',
     theSportsDB: 'Angola',
-    aliases: ['ao'],
+    aliases: ['angola', 'ao'],
   },
   'antigua and barbuda': {
     apiFootball: 'Antigua-and-barbuda',
@@ -37,7 +43,7 @@ export const COUNTRY_CANONICAL_MAP = {
   argentina: {
     apiFootball: 'Argentina',
     theSportsDB: 'Argentina',
-    aliases: ['ar'],
+    aliases: ['argentina', 'ar'],
   },
   armenia: {
     apiFootball: 'Armenia',
@@ -47,7 +53,7 @@ export const COUNTRY_CANONICAL_MAP = {
   aruba: {
     apiFootball: 'Aruba',
     theSportsDB: 'Aruba',
-    aliases: ['aw'],
+    aliases: ['aruba', 'aw'],
   },
   australia: {
     apiFootball: 'Australia',
@@ -67,7 +73,7 @@ export const COUNTRY_CANONICAL_MAP = {
   bahamas: {
     apiFootball: null,
     theSportsDB: 'Bahamas',
-    aliases: ['bs'],
+    aliases: ['bahamas', 'bs'],
   },
   bahrain: {
     apiFootball: 'Bahrain',
@@ -77,12 +83,12 @@ export const COUNTRY_CANONICAL_MAP = {
   bangladesh: {
     apiFootball: 'Bangladesh',
     theSportsDB: 'Bangladesh',
-    aliases: ['bd'],
+    aliases: ['bangladesh', 'bd'],
   },
   barbados: {
     apiFootball: 'Barbados',
     theSportsDB: 'Barbados',
-    aliases: ['bb'],
+    aliases: ['barbados', 'bb'],
   },
   belgium: {
     apiFootball: 'Belgium',
@@ -92,17 +98,17 @@ export const COUNTRY_CANONICAL_MAP = {
   belize: {
     apiFootball: 'Belize',
     theSportsDB: 'Belize',
-    aliases: ['bz'],
+    aliases: ['belize', 'bz'],
   },
   benin: {
     apiFootball: 'Benin',
     theSportsDB: 'Benin',
-    aliases: ['bj'],
+    aliases: ['benim', 'bj'],
   },
   bermuda: {
     apiFootball: 'Bermuda',
     theSportsDB: 'Bermuda',
-    aliases: ['bm'],
+    aliases: ['bermudas', 'bm'],
   },
   belarus: {
     apiFootball: 'Belarus',
@@ -117,12 +123,18 @@ export const COUNTRY_CANONICAL_MAP = {
   'bosnia and herzegovina': {
     apiFootball: 'Bosnia',
     theSportsDB: 'Bosnia and Herzegovina',
-    aliases: ['bósnia e herzegovina', 'bosnia', 'ba'],
+    aliases: [
+      'bósnia e herzegovina',
+      'bosnia',
+      'bósnia-herzegovina',
+      'bosnia-herzegovina',
+      'ba',
+    ],
   },
   botswana: {
     apiFootball: 'Botswana',
     theSportsDB: 'Botswana',
-    aliases: ['bw'],
+    aliases: ['botswana', 'bw'],
   },
   brazil: {
     apiFootball: 'Brazil',
@@ -132,7 +144,7 @@ export const COUNTRY_CANONICAL_MAP = {
   brunei: {
     apiFootball: null,
     theSportsDB: 'Brunei',
-    aliases: ['bn'],
+    aliases: ['brunei', 'bn'],
   },
   bulgaria: {
     apiFootball: 'Bulgaria',
@@ -147,7 +159,7 @@ export const COUNTRY_CANONICAL_MAP = {
   burundi: {
     apiFootball: 'Burundi',
     theSportsDB: 'Burundi',
-    aliases: ['bi'],
+    aliases: ['burundi', 'bi'],
   },
   bhutan: {
     apiFootball: 'Bhutan',
@@ -192,12 +204,12 @@ export const COUNTRY_CANONICAL_MAP = {
   chile: {
     apiFootball: 'Chile',
     theSportsDB: 'Chile',
-    aliases: ['cl'],
+    aliases: ['chile', 'cl'],
   },
   china: {
     apiFootball: 'China',
     theSportsDB: 'China',
-    aliases: ['cn'],
+    aliases: ['china', 'cn'],
   },
   cyprus: {
     apiFootball: 'Cyprus',
@@ -217,7 +229,7 @@ export const COUNTRY_CANONICAL_MAP = {
   congo: {
     apiFootball: 'Congo',
     theSportsDB: 'Congo',
-    aliases: ['cg'],
+    aliases: ['congo', 'cg'],
   },
   'congo dr': {
     apiFootball: 'Congo-dr',
@@ -252,7 +264,7 @@ export const COUNTRY_CANONICAL_MAP = {
   cuba: {
     apiFootball: 'Cuba',
     theSportsDB: 'Cuba',
-    aliases: ['cu'],
+    aliases: ['cuba', 'cu'],
   },
   curacao: {
     apiFootball: 'Curacao',
@@ -267,12 +279,12 @@ export const COUNTRY_CANONICAL_MAP = {
   djibouti: {
     apiFootball: null,
     theSportsDB: 'Djibouti',
-    aliases: ['dj'],
+    aliases: ['djibuti', 'dj'],
   },
   dominica: {
     apiFootball: null,
     theSportsDB: 'Dominica',
-    aliases: ['dm'],
+    aliases: ['dominica', 'dm'],
   },
   egypt: {
     apiFootball: 'Egypt',
@@ -302,7 +314,7 @@ export const COUNTRY_CANONICAL_MAP = {
   scotland: {
     apiFootball: 'Scotland',
     theSportsDB: 'Scotland',
-    aliases: ['escócia', 'gb-sct', 's2'],
+    aliases: ['escócia', 'gb-sct', 'ei', 's2'],
   },
   slovakia: {
     apiFootball: 'Slovakia',
@@ -342,7 +354,7 @@ export const COUNTRY_CANONICAL_MAP = {
   fiji: {
     apiFootball: 'Fiji',
     theSportsDB: 'Fiji',
-    aliases: ['fj'],
+    aliases: ['fiji', 'fj'],
   },
   philippines: {
     apiFootball: 'Philippines',
@@ -382,7 +394,7 @@ export const COUNTRY_CANONICAL_MAP = {
   gibraltar: {
     apiFootball: 'Gibraltar',
     theSportsDB: 'Gibraltar',
-    aliases: ['gi'],
+    aliases: ['gibraltar', 'gi'],
   },
   grenada: {
     apiFootball: 'Grenada',
@@ -407,17 +419,17 @@ export const COUNTRY_CANONICAL_MAP = {
   guam: {
     apiFootball: null,
     theSportsDB: 'Guam',
-    aliases: ['gu'],
+    aliases: ['guam', 'gu'],
   },
   guatemala: {
     apiFootball: 'Guatemala',
     theSportsDB: 'Guatemala',
-    aliases: ['gt'],
+    aliases: ['guatemala', 'gt'],
   },
   guernsey: {
     apiFootball: null,
     theSportsDB: 'Guernsey',
-    aliases: ['gg'],
+    aliases: ['guernsey', 'gg'],
   },
   guyana: {
     apiFootball: null,
@@ -447,7 +459,7 @@ export const COUNTRY_CANONICAL_MAP = {
   haiti: {
     apiFootball: 'Haiti',
     theSportsDB: 'Haiti',
-    aliases: ['ht'],
+    aliases: ['haiti', 'ht'],
   },
   netherlands: {
     apiFootball: 'Netherlands',
@@ -457,7 +469,7 @@ export const COUNTRY_CANONICAL_MAP = {
   honduras: {
     apiFootball: 'Honduras',
     theSportsDB: 'Honduras',
-    aliases: ['hn'],
+    aliases: ['honduras', 'hn'],
   },
   'hong kong': {
     apiFootball: 'Hong-kong',
@@ -502,7 +514,7 @@ export const COUNTRY_CANONICAL_MAP = {
   iran: {
     apiFootball: 'Iran',
     theSportsDB: 'Iran',
-    aliases: ['irã', 'ir'],
+    aliases: ['irã', 'irao', 'ir'],
   },
   iraq: {
     apiFootball: 'Iraq',
@@ -527,7 +539,7 @@ export const COUNTRY_CANONICAL_MAP = {
   israel: {
     apiFootball: 'Israel',
     theSportsDB: 'Israel',
-    aliases: ['il'],
+    aliases: ['israel', 'il'],
   },
   italy: {
     apiFootball: 'Italy',
@@ -537,7 +549,7 @@ export const COUNTRY_CANONICAL_MAP = {
   jamaica: {
     apiFootball: 'Jamaica',
     theSportsDB: 'Jamaica',
-    aliases: ['jm'],
+    aliases: ['jamaica', 'jm'],
   },
   japan: {
     apiFootball: 'Japan',
@@ -547,7 +559,7 @@ export const COUNTRY_CANONICAL_MAP = {
   jersey: {
     apiFootball: null,
     theSportsDB: 'Jersey',
-    aliases: ['je'],
+    aliases: ['jersey', 'je'],
   },
   jordan: {
     apiFootball: 'Jordan',
@@ -557,22 +569,22 @@ export const COUNTRY_CANONICAL_MAP = {
   kiribati: {
     apiFootball: null,
     theSportsDB: 'Kiribati',
-    aliases: ['ki'],
+    aliases: ['kiribati', 'ki'],
   },
   kosovo: {
     apiFootball: 'Kosovo',
     theSportsDB: 'Kosovo',
-    aliases: ['xk'],
+    aliases: ['kosovo', 'xk'],
   },
   kuwait: {
     apiFootball: 'Kuwait',
     theSportsDB: 'Kuwait',
-    aliases: ['kw'],
+    aliases: ['kuwait', 'koweit', 'kw'],
   },
   laos: {
     apiFootball: 'Laos',
     theSportsDB: 'Laos',
-    aliases: ['la'],
+    aliases: ['laos', 'la'],
   },
   lesotho: {
     apiFootball: 'Lesotho',
@@ -602,7 +614,7 @@ export const COUNTRY_CANONICAL_MAP = {
   liechtenstein: {
     apiFootball: 'Liechtenstein',
     theSportsDB: 'Liechtenstein',
-    aliases: ['li'],
+    aliases: ['liechtenstein', 'li'],
   },
   lithuania: {
     apiFootball: 'Lithuania',
@@ -622,7 +634,7 @@ export const COUNTRY_CANONICAL_MAP = {
   madagascar: {
     apiFootball: null,
     theSportsDB: 'Madagascar',
-    aliases: ['mg'],
+    aliases: ['madagáscar', 'mg'],
   },
   malaysia: {
     apiFootball: 'Malaysia',
@@ -632,7 +644,7 @@ export const COUNTRY_CANONICAL_MAP = {
   malawi: {
     apiFootball: 'Malawi',
     theSportsDB: 'Malawi',
-    aliases: ['mw'],
+    aliases: ['malawi', 'mw'],
   },
   maldives: {
     apiFootball: 'Maldives',
@@ -642,12 +654,12 @@ export const COUNTRY_CANONICAL_MAP = {
   mali: {
     apiFootball: 'Mali',
     theSportsDB: 'Mali',
-    aliases: ['ml'],
+    aliases: ['mali', 'ml'],
   },
   malta: {
     apiFootball: 'Malta',
     theSportsDB: 'Malta',
-    aliases: ['mt'],
+    aliases: ['malta', 'mt'],
   },
   morocco: {
     apiFootball: 'Morocco',
@@ -677,7 +689,7 @@ export const COUNTRY_CANONICAL_MAP = {
   micronesia: {
     apiFootball: null,
     theSportsDB: 'Micronesia',
-    aliases: ['fm'],
+    aliases: ['micronésia', 'fm'],
   },
   mozambique: {
     apiFootball: null,
@@ -702,12 +714,12 @@ export const COUNTRY_CANONICAL_MAP = {
   montenegro: {
     apiFootball: 'Montenegro',
     theSportsDB: 'Montenegro',
-    aliases: ['me'],
+    aliases: ['montenegro', 'me'],
   },
   myanmar: {
     apiFootball: 'Myanmar',
     theSportsDB: 'Myanmar',
-    aliases: ['mm'],
+    aliases: ['myanmar', 'mm'],
   },
   namibia: {
     apiFootball: 'Namibia',
@@ -717,12 +729,12 @@ export const COUNTRY_CANONICAL_MAP = {
   nauru: {
     apiFootball: null,
     theSportsDB: 'Nauru',
-    aliases: ['nr'],
+    aliases: ['nauru', 'nr'],
   },
   nepal: {
     apiFootball: 'Nepal',
     theSportsDB: 'Nepal',
-    aliases: ['np'],
+    aliases: ['nepal', 'np'],
   },
   nicaragua: {
     apiFootball: 'Nicaragua',
@@ -732,7 +744,7 @@ export const COUNTRY_CANONICAL_MAP = {
   niger: {
     apiFootball: null,
     theSportsDB: 'Niger',
-    aliases: ['ne'],
+    aliases: ['niger', 'ne'],
   },
   nigeria: {
     apiFootball: 'Nigeria',
@@ -757,12 +769,12 @@ export const COUNTRY_CANONICAL_MAP = {
   palau: {
     apiFootball: null,
     theSportsDB: 'Palau',
-    aliases: ['pw'],
+    aliases: ['palau', 'pw'],
   },
   palestine: {
     apiFootball: 'Palestine',
     theSportsDB: 'Palestine',
-    aliases: ['ps'],
+    aliases: ['palestina', 'ps'],
   },
   panama: {
     apiFootball: 'Panama',
@@ -787,7 +799,7 @@ export const COUNTRY_CANONICAL_MAP = {
   peru: {
     apiFootball: 'Peru',
     theSportsDB: 'Peru',
-    aliases: ['pe'],
+    aliases: ['peru', 'pe'],
   },
   poland: {
     apiFootball: 'Poland',
@@ -802,7 +814,7 @@ export const COUNTRY_CANONICAL_MAP = {
   portugal: {
     apiFootball: 'Portugal',
     theSportsDB: 'Portugal',
-    aliases: ['pt'],
+    aliases: ['portugal', 'pt'],
   },
   kenya: {
     apiFootball: 'Kenya',
@@ -827,7 +839,14 @@ export const COUNTRY_CANONICAL_MAP = {
   'czech republic': {
     apiFootball: 'Czech-republic',
     theSportsDB: 'Czechia',
-    aliases: ['república checa', 'czech-republic', 'cz'],
+    aliases: [
+      'república checa',
+      'republica checa',
+      'chéquia',
+      'chequia',
+      'czech-republic',
+      'cz',
+    ],
   },
   'dominican republic': {
     apiFootball: 'Dominican-republic',
@@ -857,7 +876,7 @@ export const COUNTRY_CANONICAL_MAP = {
   samoa: {
     apiFootball: null,
     theSportsDB: 'Samoa',
-    aliases: ['ws'],
+    aliases: ['samoa', 'ws'],
   },
   'saint lucia': {
     apiFootball: null,
@@ -896,7 +915,7 @@ export const COUNTRY_CANONICAL_MAP = {
   senegal: {
     apiFootball: 'Senegal',
     theSportsDB: 'Senegal',
-    aliases: ['sn'],
+    aliases: ['senegal', 'sn'],
   },
   'sierra leone': {
     apiFootball: null,
@@ -951,7 +970,7 @@ export const COUNTRY_CANONICAL_MAP = {
   suriname: {
     apiFootball: 'Suriname',
     theSportsDB: 'Suriname',
-    aliases: ['sr'],
+    aliases: ['suriname', 'sr'],
   },
   thailand: {
     apiFootball: 'Thailand',
@@ -981,12 +1000,12 @@ export const COUNTRY_CANONICAL_MAP = {
   togo: {
     apiFootball: 'Togo',
     theSportsDB: 'Togo',
-    aliases: ['tg'],
+    aliases: ['togo', 'tg'],
   },
   tonga: {
     apiFootball: null,
     theSportsDB: 'Tonga',
-    aliases: ['to'],
+    aliases: ['tonga', 'to'],
   },
   'trinidad and tobago': {
     apiFootball: 'Trinidad-and-tobago',
@@ -1011,7 +1030,7 @@ export const COUNTRY_CANONICAL_MAP = {
   tuvalu: {
     apiFootball: null,
     theSportsDB: 'Tuvalu',
-    aliases: ['tv'],
+    aliases: ['tuvalu', 'tv'],
   },
   ukraine: {
     apiFootball: 'Ukraine',
@@ -1021,7 +1040,7 @@ export const COUNTRY_CANONICAL_MAP = {
   uganda: {
     apiFootball: 'Uganda',
     theSportsDB: 'Uganda',
-    aliases: ['ug'],
+    aliases: ['uganda', 'ug'],
   },
   uruguay: {
     apiFootball: 'Uruguay',
@@ -1036,7 +1055,7 @@ export const COUNTRY_CANONICAL_MAP = {
   vanuatu: {
     apiFootball: null,
     theSportsDB: 'Vanuatu',
-    aliases: ['vu'],
+    aliases: ['vanuatu', 'vu'],
   },
   vatican: {
     apiFootball: null,
@@ -1046,22 +1065,52 @@ export const COUNTRY_CANONICAL_MAP = {
   venezuela: {
     apiFootball: 'Venezuela',
     theSportsDB: 'Venezuela',
-    aliases: ['ve'],
+    aliases: ['venezuela', 've'],
   },
   vietnam: {
     apiFootball: 'Vietnam',
     theSportsDB: 'Vietnam',
-    aliases: ['vietnã', 'vn'],
+    aliases: ['vietnã', 'vietname', 'vn'],
   },
   wales: {
     apiFootball: 'Wales',
     theSportsDB: 'Wales',
-    aliases: ['gb-wls', 'wa'],
+    aliases: ['gb-wls', 'gales', 'país de gales', 'wa'],
   },
   world: {
-    apiFootball: null,
+    apiFootball: 'World',
     theSportsDB: 'World',
-    aliases: ['mundial', 'worldwide', 'w1', 'w2'],
+    aliases: ['mundial', 'worldwide', 'mundo', 'wo', 'w1', 'w2'],
+  },
+  europe: {
+    apiFootball: null,
+    theSportsDB: 'Europa',
+    aliases: ['europa', 'eu'],
+  },
+  'south america': {
+    apiFootball: null,
+    theSportsDB: 'South America',
+    aliases: ['américa do sul', 'south-america', 'ac'],
+  },
+  'north and central america': {
+    apiFootball: null,
+    theSportsDB: 'North and Central America',
+    aliases: ['américa do norte e centro-oeste', 'north-central-america', 'nb'],
+  },
+  africa: {
+    apiFootball: null,
+    theSportsDB: 'Africa',
+    aliases: ['áfrica', 'an'],
+  },
+  asia: {
+    apiFootball: null,
+    theSportsDB: 'Asia',
+    aliases: ['ásia', 'aa'],
+  },
+  oceania: {
+    apiFootball: null,
+    theSportsDB: 'Oceania',
+    aliases: ['oceania', 'oc'],
   },
   zambia: {
     apiFootball: 'Zambia',
@@ -1072,6 +1121,17 @@ export const COUNTRY_CANONICAL_MAP = {
     apiFootball: 'Zimbabwe',
     theSportsDB: 'Zimbabwe',
     aliases: ['zimbábue', 'zw'],
+  },
+  germany: {
+    apiFootball: 'Germany',
+    theSportsDB: 'Germany',
+    aliases: ['alemanha', 'de'],
+  },
+
+  'south africa': {
+    apiFootball: 'South-africa',
+    theSportsDB: 'South Africa',
+    aliases: ['áfrica do sul', 'south-africa', 'za'],
   },
 } as const;
 

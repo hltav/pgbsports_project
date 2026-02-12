@@ -1,32 +1,51 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeEmpateAnulaAposta(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
-  isMatchFinished: boolean,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
-  const apostouCasa = eventDetails.toLowerCase().includes('casa');
-  const apostouFora = eventDetails.toLowerCase().includes('fora');
+  const normalized = eventDetails.toLowerCase().trim();
+
+  const apostouCasa =
+    normalized.includes('casa') ||
+    normalized.includes('home') ||
+    normalized.includes('1');
+  const apostouFora =
+    normalized.includes('fora') ||
+    normalized.includes('away') ||
+    normalized.includes('2');
 
   // Mercado inválido
   if (!apostouCasa && !apostouFora) {
-    return {
-      result: Result.void,
-      shouldUpdate: true,
-      isFinalizableEarly: false,
-    };
+    return voidResult();
   }
-  // O jogo AINDA NÃO terminou → nunca pode finalizar EAA
-  if (!isMatchFinished) {
+
+  // 🔒 Não começou / sem score → não liquida
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
     return {
       result: Result.pending,
       shouldUpdate: false,
       isFinalizableEarly: false,
     };
   }
-  //       JOGO FINALIZADO
+
+  // EAA/DNB só decide no FINISHED
+  if (status !== MatchStatus.FINISHED) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  // Jogo finalizado
   if (homeScore === awayScore) {
     return {
       result: Result.returned,
@@ -43,16 +62,9 @@ export function analyzeEmpateAnulaAposta(
     };
   }
 
-  if (apostouFora) {
-    return {
-      result: awayScore > homeScore ? Result.win : Result.lose,
-      shouldUpdate: true,
-      isFinalizableEarly: false,
-    };
-  }
-
+  // apostouFora
   return {
-    result: Result.void,
+    result: awayScore > homeScore ? Result.win : Result.lose,
     shouldUpdate: true,
     isFinalizableEarly: false,
   };

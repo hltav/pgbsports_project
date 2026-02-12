@@ -1,35 +1,90 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeTotalGols(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
   const normalized = eventDetails.toLowerCase().trim();
-  const totalGols = homeScore + awayScore;
 
   const isOver = normalized.includes('mais') || normalized.includes('over');
   const isUnder = normalized.includes('menos') || normalized.includes('under');
 
   const match = normalized.match(/\d+\.?\d*/);
-  const threshold = match ? parseFloat(match[0]) : 0;
+  const threshold = match ? parseFloat(match[0]) : null;
 
-  let won = false;
-  if (isOver && totalGols > threshold) won = true;
-  if (isUnder && totalGols < threshold) won = true;
+  if ((!isOver && !isUnder) || threshold == null || Number.isNaN(threshold)) {
+    return voidResult();
+  }
 
-  let isFinalizableEarly = false;
+  // 🔒 NOT_STARTED / sem score → não liquida
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
 
+  const totalGols = homeScore + awayScore;
+  const isFinished = status === MatchStatus.FINISHED;
+
+  // ===== OVER =====
   if (isOver) {
-    isFinalizableEarly = won;
-  } else if (isUnder) {
-    isFinalizableEarly = totalGols >= threshold;
+    // WIN irreversível quando passa da linha
+    if (totalGols > threshold) {
+      return {
+        result: Result.win,
+        shouldUpdate: true,
+        isFinalizableEarly: true,
+      };
+    }
+
+    // Se terminou e não passou → LOSE
+    if (isFinished) {
+      return {
+        result: Result.lose,
+        shouldUpdate: true,
+        isFinalizableEarly: false,
+      };
+    }
+
+    // Ainda pode virar
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  // ===== UNDER =====
+  // LOSE irreversível quando passa da linha
+  if (totalGols > threshold) {
+    return {
+      result: Result.lose,
+      shouldUpdate: true,
+      isFinalizableEarly: true,
+    };
+  }
+
+  // WIN só quando terminar sem passar
+  if (isFinished) {
+    return {
+      result: Result.win,
+      shouldUpdate: true,
+      isFinalizableEarly: false,
+    };
   }
 
   return {
-    result: won ? Result.win : Result.lose,
-    shouldUpdate: true,
-    isFinalizableEarly,
+    result: Result.pending,
+    shouldUpdate: false,
+    isFinalizableEarly: false,
   };
 }

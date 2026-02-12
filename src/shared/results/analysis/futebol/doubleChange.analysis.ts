@@ -1,21 +1,55 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeDuplaChance(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
-  let won = false;
+  const normalized = eventDetails.toLowerCase().trim();
 
-  if (eventDetails.includes('Casa ou Empate')) won = homeScore >= awayScore;
-  else if (eventDetails.includes('Fora ou Empate'))
+  // 🔒 Guard: não começou / sem placar → não liquida
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  // Dupla chance (1X / X2 / 12) é decidida no FT
+  if (status !== MatchStatus.FINISHED) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  let won: boolean | null = null;
+
+  // Aceita textos comuns PT
+  if (normalized.includes('casa ou empate') || normalized.includes('1x')) {
+    won = homeScore >= awayScore;
+  } else if (
+    normalized.includes('fora ou empate') ||
+    normalized.includes('x2')
+  ) {
     won = awayScore >= homeScore;
-  else if (eventDetails.includes('Casa ou Fora')) won = homeScore !== awayScore;
+  } else if (normalized.includes('casa ou fora') || normalized.includes('12')) {
+    won = homeScore !== awayScore;
+  }
+
+  if (won == null) return voidResult();
 
   return {
     result: won ? Result.win : Result.lose,
     shouldUpdate: true,
-    isFinalizableEarly: true,
+    isFinalizableEarly: false, // sem early aqui
   };
 }

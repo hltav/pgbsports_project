@@ -19,6 +19,9 @@ import { SingleBetService } from './services/bet-settlement/orchestrator/singleB
 import { StatsUpdateService } from './services/bet-settlement/orchestrator/statsUpdater.service';
 import { UpdateAllPendingBetsService } from './services/bet-settlement/orchestrator/updateAllPendingBets.service';
 import { EarlyWinnerEventsAnalyzerService } from './services/bet-settlement/orchestrator/earlyWinnerEventsAnalyzer.service';
+import { CalculateARService } from './services/bet-settlement/settlement/calculate.service';
+import { ValidateEventService } from './services/bet-settlement/settlement/validateEvent.service';
+import { CanFinalizeBetService } from './services/bet-settlement/settlement/canFinalize.service';
 
 @Global()
 @Module({
@@ -48,6 +51,9 @@ import { EarlyWinnerEventsAnalyzerService } from './services/bet-settlement/orch
     SingleBetService,
     StatsUpdateService,
     UpdateAllPendingBetsService,
+    CalculateARService,
+    ValidateEventService,
+    CanFinalizeBetService,
   ],
   exports: [
     BetSettlementOrchestratorService,
@@ -63,6 +69,9 @@ import { EarlyWinnerEventsAnalyzerService } from './services/bet-settlement/orch
     SingleBetService,
     StatsUpdateService,
     UpdateAllPendingBetsService,
+    CalculateARService,
+    ValidateEventService,
+    CanFinalizeBetService,
   ],
 })
 export class ResultsModule {}

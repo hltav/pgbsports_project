@@ -1,31 +1,51 @@
-import { Result } from '@prisma/client';
-import { EventMarketAnalysis } from '../base.analysis';
+import { MatchStatus, Result } from '@prisma/client';
+import { EventMarketAnalysis, voidResult } from '../base.analysis';
 
 export function analyzeNumeroParImpar(
   eventDetails: string,
-  homeScore: number,
-  awayScore: number,
+  homeScore: number | null,
+  awayScore: number | null,
+  status: MatchStatus,
 ): EventMarketAnalysis {
   const normalized = eventDetails.toLowerCase().trim();
+
+  const isEven =
+    normalized.includes('par') &&
+    !normalized.includes('ímpar') &&
+    !normalized.includes('impar');
+  const isOdd = normalized.includes('ímpar') || normalized.includes('impar');
+
+  if (!isEven && !isOdd) return voidResult();
+
+  // 🔒 NOT_STARTED / sem score → não liquida
+  if (
+    status === MatchStatus.NOT_STARTED ||
+    homeScore == null ||
+    awayScore == null
+  ) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
+  // Par/Ímpar decide no FT
+  if (status !== MatchStatus.FINISHED) {
+    return {
+      result: Result.pending,
+      shouldUpdate: false,
+      isFinalizableEarly: false,
+    };
+  }
+
   const totalGols = homeScore + awayScore;
 
-  const isEven = normalized.includes('par') && !normalized.includes('ímpar');
-  const isOdd = normalized.includes('ímpar');
-
-  let won = false;
-
-  if (isEven) {
-    // 0, 2, 4, 6... são pares
-    won = totalGols % 2 === 0;
-  } else if (isOdd) {
-    // 1, 3, 5, 7... são ímpares
-    won = totalGols % 2 !== 0;
-  } else {
-    return { result: Result.void, shouldUpdate: true };
-  }
+  const won = isEven ? totalGols % 2 === 0 : totalGols % 2 !== 0;
 
   return {
     result: won ? Result.win : Result.lose,
     shouldUpdate: true,
+    isFinalizableEarly: false,
   };
 }

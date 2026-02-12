@@ -17,7 +17,6 @@ import { DiscoverLeague } from '../schemas/discoveryLeague.schema';
 import { LeagueDiscoveryService } from '../services/leagueDiscovery.service';
 import { SoccerDiscoveryService } from '../services/soccerDiscovery.service';
 import { LeagueOrganizationService } from '../services/leagueOrganization.service';
-import { OrganizedLeaguesResponse } from '../services/leagueOrganization.service';
 import { ZodValidationPipe } from 'src/libs/utils/zodValidation.pipe';
 import {
   GetOrganizedLeaguesDtoSchema,
@@ -26,6 +25,7 @@ import {
   InvalidateCacheDtoSchema,
   InvalidateCacheDto,
 } from '../schemas/organizationLeagues.schema';
+import { OrganizedLeaguesResponse } from '../interfaces/organized.interface';
 
 @Controller('soccer/discovery')
 export class SoccerDiscoveryController {

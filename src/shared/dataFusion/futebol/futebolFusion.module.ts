@@ -10,6 +10,7 @@ import { SoccerDiscoveryService } from './services/soccerDiscovery.service';
 import { MyCacheModule } from './../../../libs/services/cache/cache.module';
 import { ImageUrlProxyModule } from '../images/imageUrlProxy.module';
 import { LeagueOrganizationService } from './services/leagueOrganization.service';
+import { LeagueTranslationService } from './services/leagueTranslation.service';
 
 @Module({
   imports: [
@@ -24,14 +25,15 @@ import { LeagueOrganizationService } from './services/leagueOrganization.service
     SoccerDiscoveryService,
     LeagueDiscoveryService,
     LeagueOrganizationService,
+    LeagueTranslationService,
   ],
   controllers: [FutebolFusionController, SoccerDiscoveryController],
-
   exports: [
     FutebolFusionService,
     SoccerDiscoveryService,
     LeagueDiscoveryService,
     LeagueOrganizationService,
+    LeagueTranslationService,
   ],
 })
 export class FutebolFusionModule {}

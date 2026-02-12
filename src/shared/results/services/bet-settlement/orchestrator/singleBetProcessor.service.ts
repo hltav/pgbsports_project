@@ -3,12 +3,16 @@ import { BetWithExternalMatch } from '../types/betWithExternal.types';
 import { MatchStatus, Result } from '@prisma/client';
 import { EventLiveScoreDTO } from './../../../../../shared/thesportsdb-api/schemas/live/eventLiveScore.schema';
 import { BetSettlementService } from '../../betSettlement.service';
+import { ValidateEventService } from '../settlement/validateEvent.service';
 
 @Injectable()
 export class SingleBetService {
   private readonly logger = new Logger(SingleBetService.name);
 
-  constructor(private readonly settlementService: BetSettlementService) {}
+  constructor(
+    private readonly settlementService: BetSettlementService,
+    private readonly validateEventService: ValidateEventService,
+  ) {}
 
   async settleSingleBet(
     bet: BetWithExternalMatch,
@@ -33,7 +37,7 @@ export class SingleBetService {
     } as EventLiveScoreDTO;
 
     // Validar dados
-    const validation = this.settlementService.validateEventData(eventData);
+    const validation = this.validateEventService.validateEventData(eventData);
     if (!validation.isValid) {
       this.logger.warn(
         `Bet ${bet.id} has invalid event data: ${validation.reason}`,
