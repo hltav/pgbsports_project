@@ -32,5 +32,5 @@
     "**/*.test.ts",
     "ecosystem.config.js"
   ],
-  "exclude": ["node_modules", "dist", "scripts", "src/scripts/futebolTestes"]
+  "exclude": ["node_modules", "dist", "scripts"]
 }
