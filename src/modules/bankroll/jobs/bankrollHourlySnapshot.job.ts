@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Prisma } from '@prisma/client';
 import { Decimal, PrismaService } from 'src/libs/database';
+import { DateTime } from 'luxon';
 import { BankrollHourlySnapshotService } from '../snapshots/services/bankrollHourlySnapshot.service';
 import { CreateHourlySnapshotDTO } from '../snapshots/dto/hourlySnapshot.dto';
 import {
@@ -15,6 +16,7 @@ import { BankrollHistoryDTO } from '../z.dto/history/bankrollHistory.dto';
 export class BankrollHourlySnapshotJob {
   private readonly logger = new Logger(BankrollHourlySnapshotJob.name);
   private static readonly BATCH_SIZE = 500;
+  private static readonly TIME_ZONE = 'America/Sao_Paulo';
 
   /**
    * Backfill leve: tenta gerar hora anterior + mais 1 hora atrás (total 2 buckets).
@@ -28,21 +30,22 @@ export class BankrollHourlySnapshotJob {
   ) {}
 
   /**
-   * Roda no minuto 05 de toda hora (HH:05).
+   * Roda no minuto 07 de toda hora (HH:07).
    * Cron do Nest usa 6 campos: second minute hour day month dayOfWeek
    */
   @Cron('0 7 * * * *', {
     name: 'hourly-bankroll-snapshot',
-    timeZone: 'America/Sao_Paulo',
+    timeZone: BankrollHourlySnapshotJob.TIME_ZONE,
   })
   async handleHourlySnapshot(): Promise<void> {
     this.logger.log(
       '🕐 Iniciando geração de snapshots horários (batch + backfill)...',
     );
 
-    // end = início da hora atual
-    const endBase = new Date();
-    endBase.setMinutes(0, 0, 0);
+    // end = início da hora atual no mesmo timezone do cron
+    const endBase = DateTime.now()
+      .setZone(BankrollHourlySnapshotJob.TIME_ZONE)
+      .startOf('hour');
 
     // Processa buckets: 1h atrás, 2h atrás, ...
     for (
@@ -50,15 +53,15 @@ export class BankrollHourlySnapshotJob {
       offset <= BankrollHourlySnapshotJob.LOOKBACK_HOURS;
       offset++
     ) {
-      const end = new Date(endBase);
-      end.setHours(end.getHours() - (offset - 1));
-
-      const start = new Date(end);
-      start.setHours(start.getHours() - 1);
-
+      const end = endBase.minus({ hours: offset - 1 });
+      const start = end.minus({ hours: 1 });
       const bucketStart = start;
 
-      await this.processBucket(bucketStart, start, end);
+      await this.processBucket(
+        bucketStart.toJSDate(),
+        start.toJSDate(),
+        end.toJSDate(),
+      );
     }
   }
 
@@ -79,24 +82,28 @@ export class BankrollHourlySnapshotJob {
       });
       const existingIds = new Set(existingSnapshots.map((s) => s.bankrollId));
 
-      let skip = 0;
+      let lastBankrollId = 0;
       let totalCreated = 0;
       let totalSkippedEqualPrev = 0;
 
       while (true) {
         const bankrolls = await this.prisma.bankroll.findMany({
-          skip,
+          where: {
+            id: { gt: lastBankrollId },
+          },
+          orderBy: { id: 'asc' },
           take: BankrollHourlySnapshotJob.BATCH_SIZE,
+          select: { id: true },
         });
 
         if (bankrolls.length === 0) break;
+        lastBankrollId = bankrolls[bankrolls.length - 1].id;
 
         const bankrollIds = bankrolls
           .map((b) => b.id)
           .filter((id) => !existingIds.has(id));
 
         if (bankrollIds.length === 0) {
-          skip += BankrollHourlySnapshotJob.BATCH_SIZE;
           continue;
         }
 
@@ -126,7 +133,7 @@ export class BankrollHourlySnapshotJob {
             FROM "bankroll_histories"
             WHERE "bankrollId" IN (${Prisma.join(bankrollIds)})
               AND "date" < ${start}
-            ORDER BY "bankrollId", "date" DESC
+            ORDER BY "bankrollId", "date" DESC, "id" DESC
           `,
 
             // Último snapshot antes do bucket (pra comparar e pular se igual)
@@ -222,8 +229,6 @@ export class BankrollHourlySnapshotJob {
             await this.snapshotService.createManySnapshots(snapshotsToCreate);
           totalCreated += createdCount;
         }
-
-        skip += BankrollHourlySnapshotJob.BATCH_SIZE;
       }
 
       this.logger.log(
@@ -297,11 +302,12 @@ export class BankrollHourlySnapshotJob {
       ? ZERO
       : hourlyProfit.dividedBy(balanceStart).times(100);
 
-    const unitsChange = unidValueStart.isZero()
-      ? ZERO
-      : balanceEnd
-          .dividedBy(unidValueEnd)
-          .minus(balanceStart.dividedBy(unidValueStart));
+    const unitsChange =
+      unidValueStart.isZero() || unidValueEnd.isZero()
+        ? ZERO
+        : balanceEnd
+            .dividedBy(unidValueEnd)
+            .minus(balanceStart.dividedBy(unidValueStart));
 
     let peakBalance = balanceStart;
     let maxDrawdown = ZERO;

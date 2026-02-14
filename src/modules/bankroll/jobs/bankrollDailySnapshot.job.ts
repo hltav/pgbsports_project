@@ -4,6 +4,7 @@ import { Decimal, PrismaService } from '../../../libs/database';
 import { BankrollDailySnapshotService } from '../snapshots/services/bankrollDailySnapshot.service';
 import { BankrollHistoryDTO } from '../z.dto/history/bankrollHistory.dto';
 import { Prisma } from '@prisma/client';
+import { DateTime } from 'luxon';
 import { CreateDailySnapshotDTO } from '../snapshots/dto/dailySnapshot.dto';
 import {
   HourlySnapshotRow,
@@ -15,6 +16,7 @@ import {
 export class BankrollDailySnapshotJob {
   private readonly logger = new Logger(BankrollDailySnapshotJob.name);
   private static readonly BATCH_SIZE = 500;
+  private static readonly TIME_ZONE = 'America/Sao_Paulo';
 
   constructor(
     private readonly prisma: PrismaService,
@@ -23,21 +25,23 @@ export class BankrollDailySnapshotJob {
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
     name: 'daily-bankroll-snapshot',
-    timeZone: 'America/Sao_Paulo',
+    timeZone: BankrollDailySnapshotJob.TIME_ZONE,
   })
   async handleDailySnapshot(): Promise<void> {
     this.logger.log('🕐 Iniciando geração de snapshots diários (batch)...');
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    yesterday.setHours(0, 0, 0, 0);
+    const yesterdayBase = DateTime.now()
+      .setZone(BankrollDailySnapshotJob.TIME_ZONE)
+      .startOf('day')
+      .minus({ days: 1 });
 
-    const today = new Date(yesterday);
-    today.setDate(today.getDate() + 1);
+    const todayBase = yesterdayBase.plus({ days: 1 });
 
-    const year = yesterday.getFullYear();
-    const month = yesterday.getMonth() + 1;
-    const day = yesterday.getDate();
+    const year = yesterdayBase.year;
+    const month = yesterdayBase.month;
+    const day = yesterdayBase.day;
+    const yesterday = yesterdayBase.toJSDate();
+    const today = todayBase.toJSDate();
 
     try {
       const existingSnapshots = await this.prisma.dailySnapshot.findMany({
@@ -46,25 +50,30 @@ export class BankrollDailySnapshotJob {
       });
       const existingIds = new Set(existingSnapshots.map((s) => s.bankrollId));
 
-      let skip = 0;
+      let lastBankrollId = 0;
       let totalCreated = 0;
       let totalFromHourly = 0;
       let totalFromHistoryFallback = 0;
 
       while (true) {
         const bankrolls = await this.prisma.bankroll.findMany({
-          skip,
+          where: {
+            id: { gt: lastBankrollId },
+          },
+          orderBy: { id: 'asc' },
           take: BankrollDailySnapshotJob.BATCH_SIZE,
+          select: { id: true },
         });
 
         if (bankrolls.length === 0) break;
+        lastBankrollId = bankrolls[bankrolls.length - 1].id;
 
         const bankrollIds = bankrolls
           .map((b) => b.id)
           .filter((id) => !existingIds.has(id));
+        const bankrollIdSet = new Set(bankrollIds);
 
         if (bankrollIds.length === 0) {
-          skip += BankrollDailySnapshotJob.BATCH_SIZE;
           continue;
         }
 
@@ -106,7 +115,7 @@ export class BankrollDailySnapshotJob {
               FROM "snapshots_hourly"
               WHERE "bankrollId" IN (${Prisma.join(bankrollIds)})
                 AND "bucketStart" < ${yesterday}
-              ORDER BY "bankrollId", "bucketStart" DESC
+              ORDER BY "bankrollId", "bucketStart" DESC, "id" DESC
             `,
 
           // Fallback: histories do dia
@@ -133,7 +142,7 @@ export class BankrollDailySnapshotJob {
               FROM "bankroll_histories"
               WHERE "bankrollId" IN (${Prisma.join(bankrollIds)})
                 AND "date" < ${yesterday}
-              ORDER BY "bankrollId", "date" DESC
+              ORDER BY "bankrollId", "date" DESC, "id" DESC
             `,
         ]);
 
@@ -171,7 +180,7 @@ export class BankrollDailySnapshotJob {
         const snapshotsToCreate: CreateDailySnapshotDTO[] = [];
 
         for (const bankroll of bankrolls) {
-          if (!bankrollIds.includes(bankroll.id)) continue;
+          if (!bankrollIdSet.has(bankroll.id)) continue;
 
           try {
             const hs = hourlyMap[bankroll.id] ?? [];
@@ -226,8 +235,6 @@ export class BankrollDailySnapshotJob {
             await this.snapshotService.createManySnapshots(snapshotsToCreate);
           totalCreated += createdCount;
         }
-
-        skip += BankrollDailySnapshotJob.BATCH_SIZE;
       }
 
       this.logger.log(
@@ -266,11 +273,12 @@ export class BankrollDailySnapshotJob {
       ? ZERO
       : dailyProfit.dividedBy(balanceStart).times(100);
 
-    const unitsChange = unidValueStart.isZero()
-      ? ZERO
-      : balanceEnd
-          .dividedBy(unidValueEnd)
-          .minus(balanceStart.dividedBy(unidValueStart));
+    const unitsChange =
+      unidValueStart.isZero() || unidValueEnd.isZero()
+        ? ZERO
+        : balanceEnd
+            .dividedBy(unidValueEnd)
+            .minus(balanceStart.dividedBy(unidValueStart));
 
     const betsPlaced = hourlies.reduce((acc, h) => acc + h.betsPlaced, 0);
     const betsWon = hourlies.reduce((acc, h) => acc + h.betsWon, 0);
@@ -353,11 +361,12 @@ export class BankrollDailySnapshotJob {
       ? ZERO
       : dailyProfit.dividedBy(balanceStart).times(100);
 
-    const unitsChange = unidValueStart.isZero()
-      ? ZERO
-      : balanceEnd
-          .dividedBy(unidValueEnd)
-          .minus(balanceStart.dividedBy(unidValueStart));
+    const unitsChange =
+      unidValueStart.isZero() || unidValueEnd.isZero()
+        ? ZERO
+        : balanceEnd
+            .dividedBy(unidValueEnd)
+            .minus(balanceStart.dividedBy(unidValueStart));
 
     let peakBalance = balanceStart;
     let maxDrawdown = ZERO;

@@ -5,12 +5,14 @@ import { FutebolFusionService } from './services/futebolFusion.service';
 import { FutebolFusionController } from './controllers/futebolFusion.controller';
 import { PrismaModule } from './../../../libs/database';
 import { SoccerDiscoveryController } from './controllers/discovery.controller';
+import { FavoritesLeaguesController } from './controllers/favoritesLeagues.controller';
 import { LeagueDiscoveryService } from './services/leagueDiscovery.service';
 import { SoccerDiscoveryService } from './services/soccerDiscovery.service';
 import { MyCacheModule } from './../../../libs/services/cache/cache.module';
 import { ImageUrlProxyModule } from '../images/imageUrlProxy.module';
 import { LeagueOrganizationService } from './services/leagueOrganization.service';
 import { LeagueTranslationService } from './services/leagueTranslation.service';
+import { FavoritesLeaguesService } from './services/favoritesLeagues.service';
 
 @Module({
   imports: [
@@ -26,14 +28,20 @@ import { LeagueTranslationService } from './services/leagueTranslation.service';
     LeagueDiscoveryService,
     LeagueOrganizationService,
     LeagueTranslationService,
+    FavoritesLeaguesService,
   ],
-  controllers: [FutebolFusionController, SoccerDiscoveryController],
+  controllers: [
+    FutebolFusionController,
+    SoccerDiscoveryController,
+    FavoritesLeaguesController,
+  ],
   exports: [
     FutebolFusionService,
     SoccerDiscoveryService,
     LeagueDiscoveryService,
     LeagueOrganizationService,
     LeagueTranslationService,
+    FavoritesLeaguesService,
   ],
 })
 export class FutebolFusionModule {}
