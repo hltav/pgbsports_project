@@ -11,24 +11,56 @@ export class LeagueTranslationService {
   private readonly logger = new Logger(LeagueTranslationService.name);
 
   // ✅ Tradução “strict”: só aplica se for forte; senão devolve original
-  getTranslation(originalName: string): LeagueTranslation {
-    const dbg = translateLeagueWithDebug(originalName);
+  // getTranslation(originalName: string): LeagueTranslation {
+  //   const dbg = translateLeagueWithDebug(originalName);
 
-    const isStrong =
-      dbg.confidence === 'high' &&
-      (dbg.method === 'direct_exact' ||
-        dbg.method === 'via_alias' ||
-        dbg.method === 'normalized_direct');
+  //   const isStrong =
+  //     dbg.confidence === 'high' &&
+  //     (dbg.method === 'direct_exact' ||
+  //       dbg.method === 'via_alias' ||
+  //       dbg.method === 'normalized_direct');
 
-    if (!isStrong) {
+  //   if (!isStrong) {
+  //     return { name: originalName };
+  //   }
+
+  //   return dbg.translation;
+  // }
+
+  getTranslation(
+    originalName: string,
+    currentCountry: string,
+  ): LeagueTranslation {
+    const dbg = translateLeagueWithDebug(originalName, currentCountry);
+
+    // 1. Se não for um match forte, retorna o original imediatamente
+    if (dbg.confidence !== 'high') {
       return { name: originalName };
     }
 
-    return dbg.translation;
+    const translation = dbg.translation as LeagueTranslation & {
+      expectedCountry?: string;
+    };
+
+    // 2. Validação de Escopo Geográfico (A CHAVE DO PROBLEMA)
+    // Se a tradução tem um "país esperado", mas a liga atual é de outro país,
+    // ignoramos a tradução pois é um "falso positivo" (Ex: FA Cup de Omã)
+    if (translation.expectedCountry && currentCountry) {
+      const normalizedCurrent = this.translateCountryName(currentCountry);
+
+      if (translation.expectedCountry !== normalizedCurrent) {
+        this.logger.warn(
+          `Falso positivo evitado: Tradução "${translation.name}" ignorada para liga de "${normalizedCurrent}"`,
+        );
+        return { name: originalName };
+      }
+    }
+
+    return translation;
   }
 
-  translateLeagueName(originalName: string): string {
-    return this.getTranslation(originalName).name;
+  translateLeagueName(originalName: string, country: string): string {
+    return this.getTranslation(originalName, country).name;
   }
 
   hasTranslation(originalName: string): boolean {
@@ -50,8 +82,12 @@ export class LeagueTranslationService {
    * ✅ Logo: só usa o da tradução se existir e não for vazio.
    * Caso contrário, mantém o fallback (API).
    */
-  getLeagueLogo(originalName: string, fallbackLogo?: string): string | null {
-    const translation = this.getTranslation(originalName);
+  getLeagueLogo(
+    originalName: string,
+    country: string,
+    fallbackLogo?: string,
+  ): string | null {
+    const translation = this.getTranslation(originalName, country);
     return pickAsset(translation.logo, fallbackLogo);
   }
 
@@ -59,8 +95,12 @@ export class LeagueTranslationService {
    * ✅ Flag: só usa o da tradução se existir e não for vazio.
    * Caso contrário, mantém o fallback (API).
    */
-  getLeagueFlag(originalName: string, fallbackFlag?: string): string | null {
-    const translation = this.getTranslation(originalName);
+  getLeagueFlag(
+    originalName: string,
+    country: string,
+    fallbackFlag?: string,
+  ): string | null {
+    const translation = this.getTranslation(originalName, country);
     return pickAsset(translation.flag, fallbackFlag);
   }
 

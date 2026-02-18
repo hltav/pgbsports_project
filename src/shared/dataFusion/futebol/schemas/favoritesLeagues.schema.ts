@@ -1,7 +1,7 @@
-import { LogoSource } from '@prisma/client';
+import { LogoSource, LeagueSource } from '@prisma/client';
 import { z } from 'zod';
 
-const LeagueSourceSchema = z.enum(['THESPORTSDB', 'APIFOOTBALL', 'INTERNAL']);
+const LeagueSourceSchema = z.nativeEnum(LeagueSource);
 
 export const FavoriteLeagueKeySchema = z.object({
   sport: z.string().trim().min(1).max(50),

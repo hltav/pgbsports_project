@@ -3,6 +3,7 @@ import { leagueTranslations } from './translateLeagueNames';
 
 export interface LeagueTranslation {
   name: string;
+  expectedCountry?: string;
   flag?: string;
   logo?: string;
 }
@@ -113,53 +114,79 @@ class LeagueTranslator {
     return bestMatch;
   }
 
-  translateWithDebug(leagueName: string) {
+  translateWithDebug(leagueName: string, country?: string) {
     const normalized = this.normalize(leagueName);
 
-    if (leagueTranslations[leagueName]) {
+    const buildResult = (
+      translation: LeagueTranslation,
+      method: string,
+      confidence: 'high' | 'medium' | 'low',
+    ) => {
+      if (!this.validateCountry(translation, country)) {
+        return {
+          translation: { name: leagueName },
+          method: `${method}_country_mismatch`,
+          confidence: 'none' as const,
+        };
+      }
+
       return {
-        translation: leagueTranslations[leagueName],
-        method: 'direct_exact',
-        confidence: 'high' as const,
+        translation,
+        method,
+        confidence,
       };
+    };
+
+    // 1️⃣ exato
+    if (leagueTranslations[leagueName]) {
+      return buildResult(
+        leagueTranslations[leagueName],
+        'direct_exact',
+        'high',
+      );
     }
 
+    // 2️⃣ alias
     const aliasValue = this.aliasIndex.get(normalized);
     if (aliasValue) {
       const translationKey = this.translationIndex.get(aliasValue);
+
       if (translationKey) {
-        return {
-          translation: leagueTranslations[translationKey],
-          method: 'via_alias',
-          confidence: 'high' as const,
-        };
+        return buildResult(
+          leagueTranslations[translationKey],
+          'via_alias',
+          'high',
+        );
       }
+
       const partialMatch = this.findPartialMatch(aliasValue);
       if (partialMatch) {
-        return {
-          translation: leagueTranslations[partialMatch],
-          method: 'alias_partial_match',
-          confidence: 'medium' as const,
-        };
+        return buildResult(
+          leagueTranslations[partialMatch],
+          'alias_partial_match',
+          'medium',
+        );
       }
     }
 
+    // 3️⃣ normalizado direto
     const directMatch = this.translationIndex.get(normalized);
     if (directMatch) {
-      return {
-        translation: leagueTranslations[directMatch],
-        method: 'normalized_direct',
-        confidence: 'high' as const,
-      };
+      return buildResult(
+        leagueTranslations[directMatch],
+        'normalized_direct',
+        'high',
+      );
     }
 
+    // 4️⃣ keywords
     const keywordMatch = this.findByKeywords(leagueName);
     if (keywordMatch) {
-      return {
-        translation: leagueTranslations[keywordMatch],
-        method: 'keyword_match',
-        confidence: 'low' as const,
-      };
+      return buildResult(
+        leagueTranslations[keywordMatch],
+        'keyword_match',
+        'low',
+      );
     }
 
     return {
@@ -168,11 +195,23 @@ class LeagueTranslator {
       confidence: 'none' as const,
     };
   }
+
+  private validateCountry(
+    translation: LeagueTranslation,
+    country?: string,
+  ): boolean {
+    if (!translation.expectedCountry || !country) return true;
+
+    const normalizedInput = this.normalize(country);
+    const normalizedExpected = this.normalize(translation.expectedCountry);
+
+    return normalizedInput === normalizedExpected;
+  }
 }
 
 const translator = new LeagueTranslator();
 
 export const translateLeague = (league: string): LeagueTranslation =>
   translator.translate(league);
-export const translateLeagueWithDebug = (league: string) =>
-  translator.translateWithDebug(league);
+export const translateLeagueWithDebug = (league: string, country?: string) =>
+  translator.translateWithDebug(league, country);

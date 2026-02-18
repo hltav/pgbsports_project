@@ -1,11 +1,14 @@
 import { LookupEvent } from './../../../../shared/thesportsdb-api/schemas/allEvents/allEvents.schema';
 import { DiscoverFixture } from '../schemas/discoveryFixture.schema';
 import { ApiSportsFixture } from './../../../../shared/api-sports/api/soccer/schemas/fixtures/apiSportsFixture.scheme';
+import { DiscoverLeague } from '../schemas/discoveryLeague.schema';
+import { resolveCanonicalTeamName } from '../../helpers/nomalizeTeamName.helper';
 
 export class SoccerDiscoveryMapper {
   static fromSources(
     apiFixture: ApiSportsFixture | null,
     tsdbMatch: LookupEvent | null,
+    translatedLeague?: DiscoverLeague,
   ): DiscoverFixture {
     const hasApiSports = Boolean(apiFixture);
     const hasTsdb = Boolean(tsdbMatch);
@@ -34,9 +37,9 @@ export class SoccerDiscoveryMapper {
       league: hasApiSports
         ? {
             id: apiFixture!.league.id,
-            name: apiFixture!.league.name,
+            name: translatedLeague?.name || apiFixture!.league.name,
             flag: apiFixture!.league.flag,
-            logo: apiFixture!.league.logo,
+            logo: translatedLeague?.logo || apiFixture!.league.logo,
           }
         : {
             id: Number(tsdbMatch?.idLeague ?? 0),
@@ -51,15 +54,29 @@ export class SoccerDiscoveryMapper {
         (tsdbMatch?.strTimestamp ? `${tsdbMatch.strTimestamp}Z` : ''),
       status: apiFixture?.fixture.status.short ?? tsdbMatch?.strStatus ?? 'UNK',
 
+      // teams: {
+      //   home: {
+      //     name:
+      //       apiFixture?.teams.home.name ?? tsdbMatch?.strHomeTeam ?? 'Unknown',
+      //     logo: apiFixture?.teams.home.logo ?? undefined,
+      //   },
+      //   away: {
+      //     name:
+      //       apiFixture?.teams.away.name ?? tsdbMatch?.strAwayTeam ?? 'Unknown',
+      //     logo: apiFixture?.teams.away.logo ?? undefined,
+      //   },
+      // },
       teams: {
         home: {
-          name:
+          name: resolveCanonicalTeamName(
             apiFixture?.teams.home.name ?? tsdbMatch?.strHomeTeam ?? 'Unknown',
+          ),
           logo: apiFixture?.teams.home.logo ?? undefined,
         },
         away: {
-          name:
+          name: resolveCanonicalTeamName(
             apiFixture?.teams.away.name ?? tsdbMatch?.strAwayTeam ?? 'Unknown',
+          ),
           logo: apiFixture?.teams.away.logo ?? undefined,
         },
       },

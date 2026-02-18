@@ -7,12 +7,13 @@ import { DiscoverFixture } from '../schemas/discoveryFixture.schema';
 import { LookupEvent } from './../../../../shared/thesportsdb-api/schemas/allEvents/allEvents.schema';
 import { ApiSportsFixture } from './../../../../shared/api-sports/api/soccer/schemas/fixtures/apiSportsFixture.scheme';
 import { CacheService } from './../../../../libs/services/cache/cache.service';
-import { LeagueDiscoveryService } from './leagueDiscovery.service';
 import {
   areTeamsEquivalent,
   normalizeTeamName,
 } from '../../helpers/nomalizeTeamName.helper';
 import { CACHE_TTL } from './../../../../libs/utils/cache.constants';
+import { LeagueOrganizationService } from './leagueOrganization.service';
+import { DiscoverLeague } from '../schemas/discoveryLeague.schema';
 
 interface LeagueMapping {
   tsdbLeagueId: string;
@@ -31,44 +32,49 @@ export class SoccerDiscoveryService {
     private readonly cache: CacheService,
     private readonly apiSportsService: SoccerService,
     private readonly tsdbEventsService: TheSportsDbEventsService,
-    private readonly leagueDiscoveryService: LeagueDiscoveryService,
+    private readonly leagueOrganizationService: LeagueOrganizationService,
   ) {}
 
   async discoverNextFixtures(
     league: number,
     next = 10,
   ): Promise<DiscoverFixture[]> {
-    // 1. Busca os fixtures
     const apiFixtures = await this.loadApiFixtures(league, next);
     if (!apiFixtures.length) return [];
 
-    // 🎯 2. USA A SEASON DO FIXTURE (que sempre será a current)
     const season = apiFixtures[0].league.season;
-
     const cacheKey = `discovery:league:${league}:next:${next}:season:${season}`;
 
     const cached = await this.cache.get<DiscoverFixture[]>(cacheKey);
     if (cached) return cached;
 
-    const leagueMapping = await this.getLeagueMapping(league, season);
+    // 1. Buscamos o mapeamento completo (técnico + tradução)
+    const mappingResult = await this.getLeagueMapping(league, season);
 
-    if (!leagueMapping) {
-      const result = apiFixtures.map((f) =>
-        SoccerDiscoveryMapper.fromSources(f, null),
+    // 2. Se não houver mapeamento TSDB, mapeamos apenas com os dados da API + Tradução (se houver)
+    if (!mappingResult) {
+      const result = apiFixtures.map(
+        (f) => SoccerDiscoveryMapper.fromSources(f, null, undefined), // Mapper tratará o fallback
       );
       await this.cache.set(cacheKey, result, CACHE_TTL.DISCOVERY_1_DAY);
       return result;
     }
 
+    // 3. Se houver mapeamento, preparamos o contexto TSDB
     const context = await this.buildDiscoveryContext(
       apiFixtures,
-      leagueMapping,
+      mappingResult, // Aqui TypeScript já entende que tem tsdbLeagueId e seasonRange
       season,
     );
 
+    // 4. Fusão final com dados traduzidos
     const fused = apiFixtures.map((fixture) => {
       const tsdbMatch = this.findMatch(fixture, context);
-      return SoccerDiscoveryMapper.fromSources(fixture, tsdbMatch);
+      return SoccerDiscoveryMapper.fromSources(
+        fixture,
+        tsdbMatch,
+        mappingResult.translatedLeague, // Passando o objeto tipado DiscoverLeague
+      );
     });
 
     await this.cache.set(cacheKey, fused, CACHE_TTL.DISCOVERY_1_DAY);
@@ -120,17 +126,54 @@ export class SoccerDiscoveryService {
       ),
     ];
 
+    // 🛠️ Normalização do seasonRange
+    // Se for '2026-2026', vira '2026'. Se for '2025-2026', mantém.
+    const [start, end] = mapping.seasonRange.split('-');
+    const normalizedSeason = start === end ? start : mapping.seasonRange;
+
+    this.logger.debug(
+      `Buscando eventos TSDB. League: ${mapping.tsdbLeagueId}, Season Original: ${mapping.seasonRange}, Normalizada: ${normalizedSeason}`,
+    );
+
     const tsdbEventsByDate =
       await this.tsdbEventsService.searchEventsByDateCached(
         uniqueDates,
         mapping.tsdbLeagueId,
-        mapping.seasonRange,
+        normalizedSeason, // <--- Passa a versão normalizada aqui
       );
 
     return { tsdbEventsByDate };
   }
 
   // 🔍 MATCH ENGINE
+  // private findMatch(
+  //   fixture: ApiSportsFixture,
+  //   context: DiscoveryContext,
+  // ): LookupEvent | null {
+  //   const dateKey = new Date(fixture.fixture.date).toISOString().slice(0, 10);
+  //   const events = context.tsdbEventsByDate.get(dateKey) ?? [];
+
+  //   if (!events.length) return null;
+
+  //   const homeOriginal = fixture.teams.home.name;
+  //   const awayOriginal = fixture.teams.away.name;
+  //   const home = normalizeTeamName(homeOriginal);
+  //   const away = normalizeTeamName(awayOriginal);
+
+  //   // Ordem de prioridade: ALIAS > EXACT > CONTAINS > RELAXED
+  //   return (
+  //     events.find(
+  //       (e) =>
+  //         areTeamsEquivalent(e.strHomeTeam, homeOriginal) &&
+  //         areTeamsEquivalent(e.strAwayTeam, awayOriginal),
+  //     ) ??
+  //     events.find((e) => this.isExactMatch(e, home, away)) ??
+  //     events.find((e) => this.isContainsMatch(e, home, away)) ??
+  //     events.find((e) => this.isRelaxedMatch(e, home, away)) ??
+  //     null
+  //   );
+  // }
+
   private findMatch(
     fixture: ApiSportsFixture,
     context: DiscoveryContext,
@@ -142,19 +185,31 @@ export class SoccerDiscoveryService {
 
     const homeOriginal = fixture.teams.home.name;
     const awayOriginal = fixture.teams.away.name;
-    const home = normalizeTeamName(homeOriginal);
-    const away = normalizeTeamName(awayOriginal);
 
-    // Ordem de prioridade: ALIAS > EXACT > CONTAINS > RELAXED
+    const homeNormalized = normalizeTeamName(homeOriginal);
+    const awayNormalized = normalizeTeamName(awayOriginal);
+
     return (
+      // 1️⃣ Alias (mais forte)
       events.find(
         (e) =>
           areTeamsEquivalent(e.strHomeTeam, homeOriginal) &&
           areTeamsEquivalent(e.strAwayTeam, awayOriginal),
       ) ??
-      events.find((e) => this.isExactMatch(e, home, away)) ??
-      events.find((e) => this.isContainsMatch(e, home, away)) ??
-      events.find((e) => this.isRelaxedMatch(e, home, away)) ??
+      // 2️⃣ Exact match
+      events.find(
+        (e) =>
+          normalizeTeamName(e.strHomeTeam) === homeNormalized &&
+          normalizeTeamName(e.strAwayTeam) === awayNormalized,
+      ) ??
+      // 3️⃣ Contains
+      events.find((e) =>
+        this.isContainsMatch(e, homeNormalized, awayNormalized),
+      ) ??
+      // 4️⃣ Relaxed
+      events.find((e) =>
+        this.isRelaxedMatch(e, homeNormalized, awayNormalized),
+      ) ??
       null
     );
   }
@@ -196,23 +251,39 @@ export class SoccerDiscoveryService {
   private async getLeagueMapping(
     apiSportsLeagueId: number,
     season?: number,
-  ): Promise<LeagueMapping | null> {
-    // 1. Chamamos o novo método que já devolve o mapeamento direto (ou null)
-    const mapping = await this.leagueDiscoveryService.getLeagueMappingByApiId(
-      apiSportsLeagueId,
-      season,
+  ): Promise<(LeagueMapping & { translatedLeague: DiscoverLeague }) | null> {
+    // Busca as ligas organizadas (que já chamam o Discovery internamente)
+    const organized = await this.leagueOrganizationService.getOrganizedLeagues({
+      season: season ?? 'current',
+    });
+
+    // Helper para procurar nos dois arrays (main e other)
+    const allLeagues = [
+      ...organized.mainCountries.flatMap((c) => c.leagues),
+      ...organized.otherCountries.flatMap((c) => c.leagues),
+    ];
+
+    const found = allLeagues.find(
+      (l) => l.apiSportsLeagueId === apiSportsLeagueId,
     );
 
-    console.log('Mapping:', mapping);
-    // 2. Verificação de nulidade (Resolve o erro "'leagues' é possivelmente 'null'")
-    if (!mapping) {
+    if (!found) {
+      this.logger.warn(
+        `Liga ${apiSportsLeagueId} não encontrada no mapeamento organizado.`,
+      );
+      return null;
+    }
+    if (!found.tsdbLeagueId || !found.seasonRange) {
+      this.logger.warn(
+        `Liga ${found.name} (ID: ${apiSportsLeagueId}) encontrada, mas sem mapeamento TSDB.`,
+      );
       return null;
     }
 
-    // 3. Retornamos o objeto mapeado (Resolve todos os erros de unsafe-member-access)
     return {
-      tsdbLeagueId: mapping.tsdbLeagueId,
-      seasonRange: mapping.seasonRange,
+      tsdbLeagueId: found.tsdbLeagueId,
+      seasonRange: found.seasonRange,
+      translatedLeague: found,
     };
   }
 

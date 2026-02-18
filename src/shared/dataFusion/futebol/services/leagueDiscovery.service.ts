@@ -38,10 +38,6 @@ export class LeagueDiscoveryService {
   ) {}
 
   async discoverLeagues(): Promise<DiscoverLeague[]> {
-    const cacheKey = 'discovery:leagues:all';
-    const cached = await this.cache.get<DiscoverLeague[]>(cacheKey);
-    if (cached) return cached;
-
     const apiLeaguesResponse = await this.apiSportsService.getLeagues();
     const apiLeagues = apiLeaguesResponse.response ?? [];
     if (!apiLeagues.length) return [];
@@ -54,27 +50,14 @@ export class LeagueDiscoveryService {
       return LeagueDiscoveryMapper.fromSources(apiLeague, tsdbMatch);
     });
 
-    await this.cache.set(cacheKey, discovered, CACHE_TTL.DISCOVERY_1_MONTH);
     return discovered;
   }
 
   async discoverLeaguesBySeason(
     season: number | 'current',
   ): Promise<DiscoverLeague[]> {
-    const cacheKey =
-      season === 'current'
-        ? `discovery:leagues:current`
-        : `discovery:leagues:season:${season}`;
-
-    const cached = await this.cache.get<DiscoverLeague[]>(cacheKey);
-    if (cached) return cached;
-
     const apiLeaguesResponse = await this.apiSportsService.getLeagues();
     const apiLeagues = apiLeaguesResponse.response ?? [];
-
-    // const filteredApiLeagues = apiLeagues.filter((league) =>
-    //   league.seasons?.some((s) => isActiveSeasonNow(s)),
-    // );
 
     const filteredApiLeagues = apiLeagues.filter((league) =>
       league.seasons?.some((s) => {
@@ -102,7 +85,6 @@ export class LeagueDiscoveryService {
       return LeagueDiscoveryMapper.fromSources(apiLeague, tsdbMatch);
     });
 
-    await this.cache.set(cacheKey, discovered, CACHE_TTL.DISCOVERY_1_MONTH);
     return discovered;
   }
 

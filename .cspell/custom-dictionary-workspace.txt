@@ -316,6 +316,7 @@ challengeleague
 challengerproleague
 chamadas
 chamador
+chamam
 Chamamos
 championnat
 championnatnational
@@ -513,6 +514,7 @@ deixei
 deletado
 Deletamos
 demais
+Democrática
 DEPENDE
 dependendo
 depositado
@@ -658,11 +660,13 @@ escolhida
 escolhido
 esconde
 escondeu
+Escopo
 escrituras
 esiliiga
 Eslovaca
 eslováquia
 Eslovena
+Eslovénia
 eslovênia
 espaço
 espaços
@@ -685,6 +689,7 @@ Estatísticas
 estava
 estender
 estendido
+Estónia
 estônia
 Estoniana
 estornado
@@ -705,6 +710,7 @@ Europeia
 Europeu
 euroqualifying
 eventtype
+evitado
 exatamente
 Exato
 Exatos
@@ -748,6 +754,8 @@ Fakaofo
 falham
 falharam
 falhe
+falso
+Falso
 falta
 faltam
 faltantes
@@ -855,6 +863,7 @@ Gaúcho
 Gelo
 gentílico
 gentílicos
+Geográfico
 geórgia
 Georgiana
 geração
@@ -923,7 +932,9 @@ Identificador
 Identificar
 idiomas
 iêmen
+ignorada
 ignorados
+ignoramos
 ignorando
 iiliga
 ileague
@@ -1010,6 +1021,7 @@ Irlandesa
 irreversível
 Islandesa
 islandia
+Islândia
 isolada
 isoladas
 Israelense
@@ -1054,6 +1066,7 @@ leoa
 lesoto
 leste
 Letã
+Letónia
 letônia
 letra
 letras
@@ -1408,6 +1421,7 @@ podemos
 pokal
 Pokalen
 Polonesa
+Polónia
 polônia
 poluir
 ponteiro
@@ -1451,6 +1465,7 @@ premierleague
 premierliga
 premiersoccerleague
 Prepara
+preparamos
 presente
 presentes
 Preserva
@@ -1475,6 +1490,7 @@ PROCESSAMENTO
 processamos
 Processando
 PROCURA
+procurar
 Profesional
 professionalleague
 profissional
@@ -1751,7 +1767,9 @@ tanzânia
 tarefas
 Tasmânia
 Tcheca
+Tchéquia
 técnica
+técnico
 temos
 temporadas
 TEMPORAIS
@@ -1798,6 +1816,7 @@ tradução
 traduções
 Traduz
 traduzido
+traduzidos
 traduzir
 transação
 Transações
@@ -1805,6 +1824,7 @@ transferências
 trás
 Tratamos
 tratando
+tratará
 trataremos
 Trava
 travar

@@ -494,63 +494,64 @@ model BankrollAlert {
 //                     DADOS DE BET 
 //=============================================================
 model Bets {
-  id               Int               @id @default(autoincrement())
-  bankrollId       Int
-  userId           Int
+  id                Int               @id @default(autoincrement())
+  bankrollId        Int
+  userId            Int
   // === REFERÊNCIA AO JOGO REAL (OPCIONAL) ===
-  externalMatchId  Int
-  apiSportsEventId String?           @db.VarChar(50) // Redundante mas útil para lookup
-  tsdbEventId      String?           @db.VarChar(50) // Redundante mas útil para lookup
+  externalMatchId   Int
+  apiSportsEventId  String?           @db.VarChar(50) // Redundante mas útil para lookup
+  tsdbEventId       String?           @db.VarChar(50) // Redundante mas útil para lookup
   // === CONTEXTO DO EVENTO (SNAPSHOT) ===
   // Guardamos snapshot para casos onde o jogo não existe mais na API
   // ou para manter histórico exato do momento da aposta
-  sport            String            @db.VarChar(50)
-  league           String            @db.VarChar(100)
-  eventDescription String            @db.VarChar(255) // "Flamengo vs Palmeiras"
-  eventDate        DateTime?
-  homeTeam         String?           @db.VarChar(100)
-  awayTeam         String?           @db.VarChar(100)
-  homeTeamBadge    String?           @db.VarChar(255)
-  awayTeamBadge    String?           @db.VarChar(255)
-  leagueBadge      String?           @db.VarChar(255)
+  sport             String            @db.VarChar(50)
+  league            String            @db.VarChar(100)
+  eventDescription  String            @db.VarChar(255) // "Flamengo vs Palmeiras"
+  eventDate         DateTime?
+  homeTeam          String?           @db.VarChar(100)
+  awayTeam          String?           @db.VarChar(100)
+  homeTeamBadge     String?           @db.VarChar(255)
+  awayTeamBadge     String?           @db.VarChar(255)
+  leagueBadge       String?           @db.VarChar(255)
+  leagueBadgeSource LogoSource?
   // === INFORMAÇÕES DO MERCADO ===
-  market           String            @db.VarChar(100) // "1X2", "Over/Under"
-  marketCategory   String            @db.VarChar(100) // "Resultado Final"
-  marketSub        String?           @db.VarChar(100)
-  selection        String            @db.VarChar(100) // "Casa", "Over 2.5"
+  market            String            @db.VarChar(100) // "1X2", "Over/Under"
+  marketCategory    String            @db.VarChar(100) // "Resultado Final"
+  marketSub         String?           @db.VarChar(100)
+  selection         String            @db.VarChar(100) // "Casa", "Over 2.5"
   // === VALORES DA APOSTA ===
-  odd              Decimal           @db.Decimal(10, 2)
-  stake            Decimal           @db.Decimal(15, 2)
-  potentialReturn  Decimal           @db.Decimal(15, 2) // stake * odd
-  actualReturn     Decimal?          @db.Decimal(15, 2)
+  odd               Decimal           @db.Decimal(10, 2)
+  stake             Decimal           @db.Decimal(15, 2)
+  potentialReturn   Decimal           @db.Decimal(15, 2) // stake * odd
+  actualReturn      Decimal?          @db.Decimal(15, 2)
   // === SNAPSHOT DA BANCA NO MOMENTO DA APOSTA ===
-  bankrollBalance  Decimal           @db.Decimal(15, 2)
-  unitValue        Decimal           @db.Decimal(15, 2)
-  stakeInUnits     Decimal           @db.Decimal(10, 2)
+  bankrollBalance   Decimal           @db.Decimal(15, 2)
+  unitValue         Decimal           @db.Decimal(15, 2)
+  stakeInUnits      Decimal           @db.Decimal(10, 2)
   // === STATUS E RESULTADO ===
-  result           Result            @default(pending)
+  result            Result            @default(pending)
   // === CAMPOS CALCULADOS ===
-  profit           Decimal?          @db.Decimal(15, 2) // actualReturn - stake
-  roi              Decimal?          @db.Decimal(10, 4) // (profit / stake) * 100
-  isWin            Boolean? // result == WON
+  profit            Decimal?          @db.Decimal(15, 2) // actualReturn - stake
+  roi               Decimal?          @db.Decimal(10, 4) // (profit / stake) * 100
+  isWin             Boolean? // result == WON
   // === DATAS ===
-  placedAt         DateTime          @default(now())
-  settledAt        DateTime?
+  placedAt          DateTime          @default(now())
+  settledAt         DateTime?
   // === METADADOS E ANÁLISE ===
-  confidence       Int?              @db.SmallInt // 1-10
-  expectedValue    Decimal?          @db.Decimal(10, 4)
-  betType          BetType           @default(SINGLE)
-  isLive           Boolean           @default(false)
-  tags             Json? // ["Value Bet", "Top League"]
-  notes            String?           @db.Text
+  confidence        Int?              @db.SmallInt // 1-10
+  expectedValue     Decimal?          @db.Decimal(10, 4)
+  betType           BetType           @default(SINGLE)
+  isLive            Boolean           @default(false)
+  tags              Json? // ["Value Bet", "Top League"]
+  notes             String?           @db.Text
   // === TIMESTAMPS ===
-  createdAt        DateTime          @default(now())
-  updatedAt        DateTime          @updatedAt
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
   // === RELACIONAMENTOS ===
-  bankroll         Bankroll          @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
-  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  externalMatch    ExternalMatch     @relation(fields: [externalMatchId], references: [id])
-  histories        BankrollHistory[]
+  bankroll          Bankroll          @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalMatch     ExternalMatch     @relation(fields: [externalMatchId], references: [id])
+  histories         BankrollHistory[]
 
   // === ÍNDICES ===
   @@index([bankrollId, userId])

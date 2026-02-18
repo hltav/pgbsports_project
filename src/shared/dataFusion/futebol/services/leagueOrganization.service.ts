@@ -4,12 +4,7 @@ import { CacheService } from './../../../../libs/services/cache/cache.service';
 import { CACHE_TTL } from './../../../../libs/utils/cache.constants';
 import { LeagueDiscoveryService } from './leagueDiscovery.service';
 import { LeagueTranslationService } from './leagueTranslation.service';
-import { countryLookup, baseNormalize } from '../utils/countryLookup';
-import { COUNTRY_CANONICAL_MAP } from '../utils/countryAliases';
-import {
-  COUNTRY_LABEL_PT,
-  MAIN_COUNTRIES,
-} from '../utils/internationalCompetitionsRegion';
+import { MAIN_COUNTRIES } from '../utils/internationalCompetitionsRegion';
 import {
   CountryGroup,
   OrganizedLeaguesResponse,
@@ -84,49 +79,29 @@ export class LeagueOrganizationService {
    */
   private applyTransforms(leagues: DiscoverLeague[]): DiscoverLeague[] {
     return leagues.map((league) => {
-      // Nome original (garantido pelo schema)
       const originalName = league.name;
-      // Tradução robusta da liga
-      const translation = this.leagueTranslation.getTranslation(originalName);
-      // Country normalizado
+
       const normalizedCountry = this.leagueTranslation.translateCountryName(
-        league.country,
+        league.country ?? '',
+      );
+
+      const translation = this.leagueTranslation.getTranslation(
+        originalName,
+        normalizedCountry,
       );
 
       return {
         ...league,
-        // País canônico (para agrupamento)
         country: normalizedCountry,
-        // Nome traduzido (mantém original se não houver tradução)
         name: translation.name ?? originalName,
-        // Prioriza assets da tradução se existirem
         logo:
-          this.leagueTranslation.getLeagueLogo(originalName, league.logo) ?? '',
+          this.leagueTranslation.getLeagueLogo(
+            originalName,
+            normalizedCountry,
+            league.logo,
+          ) ?? '',
       };
     });
-  }
-
-  /**
-   * Converte qualquer string de país (API / alias / ISO / PT)
-   * para um label consistente
-   */
-  private normalizeCountryLabel(country: string): string {
-    const normalized = baseNormalize(country);
-    const key = countryLookup.get(normalized);
-
-    console.log('Normalizing country:', { country, normalized, key });
-
-    if (!key) {
-      // Continentes ou valores fora do map
-      return country;
-    }
-
-    return (
-      COUNTRY_LABEL_PT[key] ??
-      COUNTRY_CANONICAL_MAP[key].theSportsDB ??
-      COUNTRY_CANONICAL_MAP[key].apiFootball ??
-      country
-    );
   }
 
   /**

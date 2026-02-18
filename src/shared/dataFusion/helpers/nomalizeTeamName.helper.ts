@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   COUNTRY_ADJECTIVES_MAP,
   specialCases,
@@ -56,26 +55,54 @@ export function isSameDay(dateA: Date, dateB: Date): boolean {
   );
 }
 
+// export function areTeamsEquivalent(team1: string, team2: string): boolean {
+//   const normalized1 = normalizeTeamName(team1);
+//   const normalized2 = normalizeTeamName(team2);
+//   // 1. Match exato
+//   if (normalized1 === normalized2) {
+//     return true;
+//   }
+//   // 2. Verifica se um é substring do outro
+//   if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
+//     return true;
+//   }
+
+//   // 3. Verifica aliases
+//   for (const [baseName, aliases] of Object.entries(TEAM_ALIASES)) {
+//     const hasTeam1 = aliases.some(
+//       (alias) => normalizeTeamName(alias) === normalized1,
+//     );
+//     const hasTeam2 = aliases.some(
+//       (alias) => normalizeTeamName(alias) === normalized2,
+//     );
+
+//     if (hasTeam1 && hasTeam2) {
+//       return true;
+//     }
+//   }
+
+//   return false;
+// }
 export function areTeamsEquivalent(team1: string, team2: string): boolean {
   const normalized1 = normalizeTeamName(team1);
   const normalized2 = normalizeTeamName(team2);
-  // 1. Match exato
+
+  // 1️⃣ Match exato
   if (normalized1 === normalized2) {
     return true;
   }
-  // 2. Verifica se um é substring do outro
+
+  // 2️⃣ Substring
   if (normalized1.includes(normalized2) || normalized2.includes(normalized1)) {
     return true;
   }
 
-  // 3. Verifica aliases
-  for (const [baseName, aliases] of Object.entries(TEAM_ALIASES)) {
-    const hasTeam1 = aliases.some(
-      (alias) => normalizeTeamName(alias) === normalized1,
-    );
-    const hasTeam2 = aliases.some(
-      (alias) => normalizeTeamName(alias) === normalized2,
-    );
+  // 3️⃣ Alias unificado
+  for (const group of Object.values(TEAM_ALIASES)) {
+    const normalizedAliases = group.aliases.map(normalizeTeamName);
+
+    const hasTeam1 = normalizedAliases.includes(normalized1);
+    const hasTeam2 = normalizedAliases.includes(normalized2);
 
     if (hasTeam1 && hasTeam2) {
       return true;
@@ -83,6 +110,20 @@ export function areTeamsEquivalent(team1: string, team2: string): boolean {
   }
 
   return false;
+}
+
+export function resolveCanonicalTeamName(name: string): string {
+  const normalized = normalizeTeamName(name);
+
+  for (const group of Object.values(TEAM_ALIASES)) {
+    const normalizedAliases = group.aliases.map(normalizeTeamName);
+
+    if (normalizedAliases.includes(normalized)) {
+      return group.display;
+    }
+  }
+
+  return name;
 }
 
 export function areSeasonsEquivalent(

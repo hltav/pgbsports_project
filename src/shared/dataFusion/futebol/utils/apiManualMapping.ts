@@ -41,20 +41,20 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
 
   //INGLATERRA
   // Ligas Nacionais
-  4328: 39, // English Premier League → Premier League
-  4329: 40, // English League Championship → Championship
-  4396: 41, // English League 1 → League One
-  4397: 42, // English League 2 → League Two
-  4590: 43, // English National League → National League
-  4681: 50, // English National League North → National League - North
-  4682: 51, // English National League South → National League - South
+  39: 4328, // English Premier League → Premier League
+  40: 4329, // English League Championship → Championship
+  41: 4396, // English League 1 → League One
+  42: 4397, // English League 2 → League Two
+  43: 4590, // English National League → National League
+  50: 4681, // English National League North → National League - North
+  51: 4682, // English National League South → National League - South
 
   // Copas
-  4482: 45, // FA Cup → FA Cup
-  4570: 48, // EFL Cup → League Cup
-  4571: 528, // FA Community Shield → Community Shield
-  4847: 46, // EFL Trophy → EFL Trophy
-  4788: 47, // FA Trophy → FA Trophy
+  45: 4482, // FA Cup → FA Cup
+  48: 4570, // EFL Cup → League Cup
+  528: 4571, // FA Community Shield → Community Shield
+  46: 4847, // EFL Trophy → EFL Trophy
+  47: 4788, // FA Trophy → FA Trophy
 
   // Ligas Femininas
   4849: 44, // English Womens Super League → FA WSL
