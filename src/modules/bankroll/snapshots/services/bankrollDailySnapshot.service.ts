@@ -251,28 +251,28 @@ export class BankrollDailySnapshotService {
     const endMonth = endDate.getMonth() + 1;
     const endDay = endDate.getDate();
 
+    // Converte para número inteiro comparável: YYYYMMDD
     const snapshots = await this.prisma.dailySnapshot.findMany({
       where: {
         bankrollId,
-        OR: [
-          { year: { gt: startYear, lt: endYear } },
+        AND: [
           {
-            year: startYear,
             OR: [
-              { month: { gt: startMonth } },
-              { month: startMonth, day: { gte: startDay } },
+              { year: { gt: startYear } },
+              { year: startYear, month: { gt: startMonth } },
+              { year: startYear, month: startMonth, day: { gte: startDay } },
             ],
           },
           {
-            year: endYear,
             OR: [
-              { month: { lt: endMonth } },
-              { month: endMonth, day: { lte: endDay } },
+              { year: { lt: endYear } },
+              { year: endYear, month: { lt: endMonth } },
+              { year: endYear, month: endMonth, day: { lte: endDay } },
             ],
           },
         ],
       },
-      orderBy: [{ year: 'desc' }, { month: 'desc' }, { day: 'desc' }],
+      orderBy: [{ year: 'asc' }, { month: 'asc' }, { day: 'asc' }],
     });
 
     return snapshots as unknown as GetDailySnapshotDTO[];
