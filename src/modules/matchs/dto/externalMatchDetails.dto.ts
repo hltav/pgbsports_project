@@ -30,7 +30,7 @@ export const ApiSportsFixtureResponseSchema = z.object({
     name: z.string(),
     country: z.string(),
     logo: z.string(),
-    flag: z.string(),
+    flag: z.string().nullable().optional(),
     season: z.number().int(),
     round: z.string(),
     standings: z.boolean().optional(),

@@ -83,6 +83,7 @@ altera
 alteração
 alterada
 ALTERADOS
+ALTERAR
 alternativa
 alternativo
 alternativos
@@ -1144,6 +1145,7 @@ Mandante
 mandar
 mandou
 manhã
+mantenho
 mantida
 manuais
 manutenível
@@ -1197,6 +1199,7 @@ METAS
 Métricas
 metropolitana
 Meus
+mexer
 méxico
 Mianmar
 micronésia
@@ -1418,6 +1421,7 @@ Persiste
 pertence
 Peruana
 pesado
+pessimista
 piauiense
 Pico
 picos

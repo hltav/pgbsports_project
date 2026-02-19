@@ -43,7 +43,7 @@ export const LeagueSchema = z.object({
   name: z.string(),
   country: z.string(),
   logo: z.string(),
-  flag: z.string(),
+  flag: z.string().nullable().optional(),
   season: z.number(),
   standings: z.array(z.array(StandingSchema)),
 });

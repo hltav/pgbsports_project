@@ -14,6 +14,7 @@ export const DiscoverLeagueSchema = z.object({
   flag: z
     .string()
     .url()
+    .nullable()
     .optional()
     .or(z.literal(''))
     .describe('URL da bandeira do país'),

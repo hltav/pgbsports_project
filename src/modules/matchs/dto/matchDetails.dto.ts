@@ -95,7 +95,7 @@ export const ApiSportsLeagueSchema = z.object({
   name: z.string(),
   country: z.string(),
   logo: z.string(),
-  flag: z.string(),
+  flag: z.string().nullable().optional(),
   season: zInt,
   round: z.string(),
   standings: zBool,
