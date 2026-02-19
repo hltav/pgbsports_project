@@ -10,23 +10,6 @@ import { translateCountry } from '../utils/translateCountryNames';
 export class LeagueTranslationService {
   private readonly logger = new Logger(LeagueTranslationService.name);
 
-  // ✅ Tradução “strict”: só aplica se for forte; senão devolve original
-  // getTranslation(originalName: string): LeagueTranslation {
-  //   const dbg = translateLeagueWithDebug(originalName);
-
-  //   const isStrong =
-  //     dbg.confidence === 'high' &&
-  //     (dbg.method === 'direct_exact' ||
-  //       dbg.method === 'via_alias' ||
-  //       dbg.method === 'normalized_direct');
-
-  //   if (!isStrong) {
-  //     return { name: originalName };
-  //   }
-
-  //   return dbg.translation;
-  // }
-
   getTranslation(
     originalName: string,
     currentCountry: string,
@@ -42,9 +25,6 @@ export class LeagueTranslationService {
       expectedCountry?: string;
     };
 
-    // 2. Validação de Escopo Geográfico (A CHAVE DO PROBLEMA)
-    // Se a tradução tem um "país esperado", mas a liga atual é de outro país,
-    // ignoramos a tradução pois é um "falso positivo" (Ex: FA Cup de Omã)
     if (translation.expectedCountry && currentCountry) {
       const normalizedCurrent = this.translateCountryName(currentCountry);
 

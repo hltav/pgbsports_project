@@ -77,7 +77,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   },
   'Dutch Eredivisie': {
     name: 'Eredivisie',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
     logo: `/badges_leagues/dutch_eredivisie.png`,
   },
   'Argentinian Primera Division': {
@@ -211,7 +211,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   },
   'KNVB Beker': {
     name: 'Copa da Holanda',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
     logo: `/badges_leagues/knvb_beker_holanda.png`,
   },
   'Copa Argentina': {
@@ -705,7 +705,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   'Greek Super League 2': { name: 'Super League 2', expectedCountry: 'Grécia' },
   'Dutch Eerste Divisie': {
     name: 'Eerste Divisie',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
   },
   'Icelandic Úrvalsdeild karla': {
     name: 'Úrvalsdeild',
@@ -1139,7 +1139,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   },
   'Dutch Tweede Divisie': {
     name: 'Tweede Divisie',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
   },
   'Croatian Druga HNL': {
     name: 'Druga HNL Croata',
@@ -1153,7 +1153,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     name: 'Liga Nacional',
     expectedCountry: 'República Tcheca',
   },
-  'Estonian Esiliiga': { name: 'Esiliiga', expectedCountry: 'Estónia' },
+  'Estonian Esiliiga': { name: 'Esiliiga', expectedCountry: 'Estônia' },
   'Faroe Islands 1. deild': {
     name: '1. Deild',
     expectedCountry: 'Ilhas Faroé',
@@ -1198,7 +1198,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     name: 'Segunda Liga',
     expectedCountry: 'Montenegro',
   },
-  'Polish II liga': { name: 'II Liga ', expectedCountry: 'Polónia' },
+  'Polish II liga': { name: 'II Liga ', expectedCountry: 'Polônia' },
   'Portuguese Liga 3': { name: 'Liga 3 ', expectedCountry: 'Portugal' },
   'Russian FNL 2 Group 1': { name: 'FNL 2 Grupo 1', expectedCountry: 'Rússia' },
   'Russian FNL 2 Group 2': { name: 'FNL 2 Grupo 2', expectedCountry: 'Rússia' },
@@ -1459,18 +1459,18 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'Espanha',
   },
 
-  // HOLANDA - Ligas Regionais
+  // Países Baixos - Ligas Regionais
   'Netherlands Derde Divisie Saturday': {
     name: 'Derde Divisie Sábado',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
   },
   'Netherlands Derde Divisie Sunday': {
     name: 'Derde Divisie Domingo',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
   },
   'Netherlands Eredivisie Women': {
     name: 'Eredivisie Feminina',
-    expectedCountry: 'Holanda',
+    expectedCountry: 'Países Baixos',
   },
 
   // ÁSIA

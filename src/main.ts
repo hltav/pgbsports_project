@@ -16,9 +16,6 @@ import { LoggingService } from './modules/monitoring/services/logging.service';
 import * as fs from 'fs';
 import * as path from 'path';
 import { SilentExceptionFilter } from './modules/auth/filter/exception.filter';
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 async function bootstrap() {
   const isDev = process.env.NODE_ENV !== 'production';

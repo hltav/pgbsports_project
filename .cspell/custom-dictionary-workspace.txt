@@ -1,6 +1,7 @@
 # Custom Dictionary Words
 Aaiun
 Ababa
+aberta
 abre
 abriu
 absoluto
@@ -216,6 +217,7 @@ biblioteca
 Biblioteca
 Bielorrussa
 bielorrússia
+BLOCO
 bolívar
 bolívia
 bósnia
@@ -634,6 +636,7 @@ entender
 entrando
 entregar
 entrou
+enviando
 enviou
 envolvido
 equador
@@ -1005,6 +1008,7 @@ interna
 Internacionais
 internamente
 internationalchampionscup
+interrompe
 INTERROMPIDO
 Intervalo
 invalidado
@@ -1181,6 +1185,7 @@ meia
 meistriliiga
 melhorada
 MELHORADO
+Melhorando
 memória
 MENSAIS
 Mercados
@@ -1340,6 +1345,7 @@ outra
 outsidebox
 OWNGOAL
 Pacífico
+pacotes
 padrões
 padronizados
 paginada
@@ -1421,8 +1427,8 @@ podemos
 pokal
 Pokalen
 Polonesa
-Polónia
 polônia
+Polônia
 poluir
 ponteiro
 ponto
@@ -1541,6 +1547,8 @@ recebam
 recebe
 reclamar
 reclamou
+reconectar
+reconexão
 reconhecer
 reconhecida
 reconhecido
@@ -1586,6 +1594,7 @@ reprocessamento
 república
 requer
 reservas
+resetada
 resilientes
 Resolvemos
 resolvendo
@@ -1890,6 +1899,7 @@ várias
 vários
 vasco
 vaticano
+vazios
 veikkausliiga
 veio
 velocidade
@@ -1955,3 +1965,4 @@ zâmbia
 zelândia
 zere
 zimbábue
+zset

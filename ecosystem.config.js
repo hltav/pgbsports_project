@@ -11,14 +11,14 @@ module.exports = {
       // Configuração para DESENVOLVIMENTO (--env development)
       env: {
         NODE_ENV: 'development',
-        FRONTEND_URL: 'https://localhost:3001', 
+        FRONTEND_URL: 'https://localhost:3001',
       },
       // Configuração para PRODUÇÃO (--env production)
       env_production: {
         NODE_ENV: 'production',
         FRONTEND_URL: 'https://rtsportsmanager.com/',
+        MAIL_FROM: 'Contato RT Sports Manager <contato@rtsportsmanager.com>',
       },
-      
     },
   ],
   env_file: '.env',

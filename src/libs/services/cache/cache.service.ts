@@ -18,11 +18,35 @@ export class CacheService {
       this.configService.get<string>('REDIS_URL') ||
       'redis://localhost:6379';
 
-    this.client = createClient({ url: redisUrl });
+    // this.client = createClient({ url: redisUrl });
 
-    this.client.on('error', (err) =>
-      this.logger.error('Redis Client Error', err),
-    );
+    // this.client.on('error', (err) =>
+    //   this.logger.error('Redis Client Error', err),
+    // );
+    this.client = createClient({
+      url: redisUrl,
+      socket: {
+        keepAlive: true,
+        reconnectStrategy: (retries) => {
+          return Math.min(retries * 100, 5000);
+        },
+        connectTimeout: 10000, // 10 segundos para o handshake inicial
+      },
+    });
+
+    // 3. Melhorando o log de erro para não poluir se for apenas reconexão
+    this.client.on('error', (err: unknown) => {
+      // Corrigido: Type Guard para acessar .code com segurança
+      const errorWithCode = err as { code?: string; message?: string };
+
+      if (errorWithCode.code === 'ECONNRESET') {
+        this.logger.warn(
+          'Redis: Conexão resetada pelo servidor. Tentando reconectar...',
+        );
+      } else {
+        this.logger.error('Redis Client Error', err);
+      }
+    });
   }
 
   async onModuleInit() {
