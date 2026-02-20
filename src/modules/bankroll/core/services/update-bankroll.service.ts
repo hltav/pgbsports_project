@@ -59,7 +59,7 @@ export class UpdateBankrollService {
   ): Promise<void> {
     await tx.$executeRaw`
       SELECT 1
-      FROM "bankroll"
+      FROM "bankrolls"
       WHERE "id" = ${bankrollId}
       FOR UPDATE
     `;
