@@ -75,6 +75,17 @@ import { JobsBankrollModule } from './jobs/jobsBankroll.module';
     UpdateBankrollService,
     DeleteBankrollService,
     FindBankrollHistoryService,
+    BankrollSnapshotsModule,
+    BankrollOperationsModule,
+    BankrollStatsModule,
+    BankrollAlertsModule,
+    BankrollGoalsModule,
+    BankrollRecordsModule,
+    BankrollQueryFiltersModule,
+    BankrollStreakModule,
+    PrismaModule,
+    BankrollPaginationModule,
+    JobsBankrollModule,
   ],
 })
 export class BankrollModule {}

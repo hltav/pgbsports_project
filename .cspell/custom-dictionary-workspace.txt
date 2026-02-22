@@ -41,6 +41,7 @@ adivisio
 adivision
 adjetivo
 adjetivos
+adquirir
 afcchampionsleague
 afcon
 afconqualifying
@@ -105,6 +106,7 @@ amplo
 Analisa
 Analisar
 análise
+Analizers
 andamento
 Andorrana
 Angolana
@@ -133,6 +135,8 @@ apostada
 apostado
 Apostas
 apostou
+appcat
+appmod
 apropriado
 aproximação
 Aquáticos
@@ -155,6 +159,7 @@ asiancupqualifying
 Asiática
 Asiático
 asiáticos
+assinatura
 Assíncrono
 associadas
 atalho
@@ -501,6 +506,7 @@ decidível
 decimais
 DECISÃO
 Decompõe
+decorrido
 dedicados
 deduplica
 deduplicação
@@ -525,6 +531,7 @@ depósito
 depósitos
 derde
 derdedivisie
+derivado
 DERROTA
 derrotas
 derrubar
@@ -732,6 +739,7 @@ exista
 existam
 existentes
 existia
+existiam
 existirem
 Exóticos
 expansión
@@ -770,8 +778,10 @@ faroeislands
 faroeislandspremierleague
 Faso
 fatrophy
+favorate
 fazem
 Fazemos
+faziam
 Fecha
 Federação
 federacion
@@ -937,6 +947,7 @@ Identificar
 idiomas
 iêmen
 ignorada
+ignorado
 ignorados
 ignoramos
 ignorando
@@ -1080,6 +1091,7 @@ Levantamento
 leve
 leves
 líbano
+Libera
 libéria
 libertadores
 libertadoresfemenina
@@ -1147,6 +1159,7 @@ mandou
 manhã
 mantenho
 mantida
+mantido
 manuais
 manutenível
 mapa
@@ -1203,6 +1216,7 @@ mexer
 méxico
 Mianmar
 micronésia
+microsegundos
 Mídia
 migração
 milhares
@@ -1436,6 +1450,7 @@ Polônia
 poluir
 ponteiro
 ponto
+popula
 populado
 Populando
 Populares
@@ -1493,6 +1508,7 @@ prioridade
 prioriza
 priorizando
 priorizar
+privilégio
 problema
 processada
 processado
@@ -1558,6 +1574,7 @@ reconhecida
 reconhecido
 recopa
 recopasudamericana
+recorde
 RECORDES
 Recupera
 recuperação
@@ -1592,6 +1609,7 @@ relativo
 relaxado
 relevantes
 remo
+removidas
 renderização
 reprocessadas
 reprocessamento
@@ -1654,6 +1672,7 @@ saques
 saúde
 saudiarabia
 saudita
+Scorein
 scottishchampionship
 scottishleagueone
 scottishleaguetwo
@@ -1935,6 +1954,7 @@ virar
 Visitante
 visto
 visualização
+visualizar
 Vitória
 vitórias
 vleague

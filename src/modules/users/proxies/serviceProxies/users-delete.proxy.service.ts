@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CacheService } from './../../../../libs/services/cache/cache.service';
 import { User } from './../../../../libs/common/dto/user';
 import { UsersService } from './../../../../modules/users/users.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class UsersDeleterService {
@@ -10,18 +11,27 @@ export class UsersDeleterService {
     private readonly cacheService: CacheService,
   ) {}
 
-  async delete(id: number): Promise<User> {
-    const deletedUser = await this.usersService.delete(id);
-    await this.invalidateCache(id);
+  async delete(
+    id: number,
+    currentUser: { id: number; role: Role },
+  ): Promise<User> {
+    const deletedUser = await this.usersService.delete(id, currentUser);
+
+    try {
+      await this.invalidateCache(id);
+    } catch (error) {
+      console.error('Cache invalidation failed:', error);
+    }
+
     return deletedUser;
   }
 
   private async invalidateCache(id: number) {
-    await this.cacheService.del(`users:id:${id}:any`);
-    await this.cacheService.del(`users:id:${id}:ADMIN`);
-    await this.cacheService.del(`users:id:${id}:USER`);
-    await this.cacheService.del(`users:all:any`);
-    await this.cacheService.del(`users:all:ADMIN`);
-    await this.cacheService.del(`users:all:USER`);
+    const roles = ['any', 'ADMIN', 'USER', 'SUPER_ADMIN'];
+
+    await Promise.all([
+      ...roles.map((r) => this.cacheService.del(`users:id:${id}:${r}`)),
+      ...roles.map((r) => this.cacheService.del(`users:all:${r}`)),
+    ]);
   }
 }

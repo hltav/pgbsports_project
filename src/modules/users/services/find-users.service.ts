@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { GetUserDTO } from './../../../libs';
 import { PrismaService } from './../../../libs/database';
 import { UserWithClientData } from './../../../libs';
-import { Role } from './../../../libs/common/enum/role.enum';
 import { EncryptionService } from './../../../libs/EncryptedData/services/encryptedData.service';
+import { Role } from '@prisma/client';
+import { AuthContext } from '../proxies/serviceProxies';
 
 @Injectable()
 export class UserFindService {
@@ -65,9 +65,23 @@ export class UserFindService {
     return decrypted;
   }
 
-  async findAllUsers(role?: Role): Promise<Partial<GetUserDTO>[]> {
+  async findAllUsers(currentUser: {
+    id: number;
+    role: Role;
+  }): Promise<Partial<GetUserDTO>[]> {
+    if (currentUser.role === Role.USER) {
+      throw new ForbiddenException('Usuário não pode listar todos os usuários');
+    }
+
+    let whereClause = {};
+
+    // ADMIN só pode listar usuários comuns
+    if (currentUser.role === Role.ADMIN) {
+      whereClause = { role: Role.USER };
+    }
+
     const users = await this.prisma.user.findMany({
-      where: role ? { role } : {},
+      where: whereClause,
       select: {
         id: true,
         firstname: true,
@@ -84,7 +98,7 @@ export class UserFindService {
 
   async findUserById(
     id: number,
-    role?: Role,
+    currentUser: { id: number; role: Role },
   ): Promise<Partial<GetUserDTO> | null> {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -101,10 +115,72 @@ export class UserFindService {
 
     if (!user) return null;
 
+    // 🔐 SUPER_ADMIN pode tudo
+    if (currentUser.role !== Role.SUPER_ADMIN) {
+      // USER só pode ver a si mesmo
+      if (currentUser.role === Role.USER) {
+        if (currentUser.id !== id) {
+          throw new ForbiddenException('Você não pode visualizar este usuário');
+        }
+      }
+
+      // ADMIN só pode ver USER
+      if (currentUser.role === Role.ADMIN) {
+        if (user.role !== Role.USER) {
+          throw new ForbiddenException(
+            'ADMIN não pode visualizar este usuário',
+          );
+        }
+      }
+    }
+
     return this.decryptUser(user);
   }
 
-  async findOneByEmail(email: string): Promise<UserWithClientData | null> {
+  async findOneByEmail(
+    email: string,
+    currentUser: AuthContext,
+  ): Promise<UserWithClientData | null> {
+    const searchableEmailHash = this.encryptionService.generateSearchableHash(
+      email.toLowerCase(),
+    );
+
+    const user = await this.prisma.user.findUnique({
+      where: { searchableEmailHash },
+      include: { clientData: { include: { address: true } } },
+    });
+
+    if (!user) return null;
+
+    // 🔐 SUPER_ADMIN pode tudo
+    if (currentUser.role === Role.SUPER_ADMIN) {
+      return this.decryptUser(user) as UserWithClientData;
+    }
+
+    // 🔐 ADMIN só pode buscar USER
+    if (currentUser.role === Role.ADMIN) {
+      if (user.role !== Role.USER) {
+        throw new ForbiddenException('ADMIN não pode visualizar este usuário');
+      }
+
+      return this.decryptUser(user) as UserWithClientData;
+    }
+
+    // 🔐 USER só pode buscar a si mesmo
+    if (currentUser.role === Role.USER) {
+      if (currentUser.id !== user.id) {
+        throw new ForbiddenException('Você não pode visualizar este usuário');
+      }
+
+      return this.decryptUser(user) as UserWithClientData;
+    }
+
+    throw new ForbiddenException('Acesso não permitido');
+  }
+
+  async findOneByEmailSystem(
+    email: string,
+  ): Promise<UserWithClientData | null> {
     const searchableEmailHash = this.encryptionService.generateSearchableHash(
       email.toLowerCase(),
     );

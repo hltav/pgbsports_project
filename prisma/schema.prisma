@@ -13,7 +13,9 @@ datasource db {
 enum Role {
   USER
   TEST_USER
+  SUPPORT
   ADMIN
+  SUPER_ADMIN
 }
 
 enum BetType {
@@ -115,6 +117,7 @@ model User {
   searchableEmailHash String               @unique @db.VarChar(64)
   password            String
   role                Role                 @default(USER)
+  isActive            Boolean              @default(true)
   emailVerifications  EmailVerification[]
   clientData          ClientData?
   emailVerifiedAt     DateTime?
@@ -221,6 +224,9 @@ model BankrollHistory {
   // Referências
   betId           Int? // Se for relacionado a um Event
   description     String?       @db.VarChar(500)
+  //audit
+  adminId         Int?
+  ipAddress       String?       @db.VarChar(45)
   createdAt       DateTime      @default(now())
   // Relacionamento
   bankroll        Bankroll      @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
@@ -230,6 +236,7 @@ model BankrollHistory {
   @@index([bankrollId, date(sort: Desc)])
   @@index([bankrollId, type, date(sort: Desc)])
   @@index([betId])
+  @@index([adminId])
   @@map("bankroll_histories")
 }
 

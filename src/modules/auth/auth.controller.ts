@@ -9,7 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard, Roles, RolesGuard } from '../../libs/common';
+import { Roles, RolesGuard } from '../../libs/common';
 import {
   User,
   CreateUserDTO,
@@ -17,8 +17,11 @@ import {
   ResetPasswordDTO,
 } from './../../libs/common/dto/user';
 import { JwtPayload } from './dto/jwt-payload.dto';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply } from 'fastify';
 import { SilentJwtAuthGuard } from './guards/silentJwtAuthGuard.guard';
+import { Request } from './../../libs/common/interface/request.interface';
+import { AuthCookieService } from './services/authCookies.service';
+import { Role } from '@prisma/client';
 
 interface AuthenticatedRequest extends Request {
   user: User;
@@ -27,33 +30,11 @@ interface AuthenticatedRequest extends Request {
 @Controller('auth')
 export class AuthController {
   private cookieDomain: string;
-  constructor(private readonly authService: AuthService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly authCookieService: AuthCookieService,
+  ) {
     this.cookieDomain = process.env.COOKIE_DOMAIN || 'localhost';
-  }
-
-  private getCookieOptions(req?: FastifyRequest) {
-    const isProduction = process.env.NODE_ENV === 'production';
-    const requestOrigin = req?.headers?.origin;
-    const isHttpsFrontend = requestOrigin?.startsWith('https://');
-
-    // Para desenvolvimento com frontend HTTPS + backend HTTPS
-    if (isHttpsFrontend || isProduction) {
-      return {
-        path: '/',
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none' as const,
-        domain: isProduction ? this.cookieDomain : 'localhost',
-      };
-    } else {
-      // Desenvolvimento padrão (ambos HTTP)
-      return {
-        path: '/',
-        httpOnly: true,
-        secure: false,
-        sameSite: 'lax' as const,
-      };
-    }
   }
 
   @Post('register')
@@ -65,7 +46,7 @@ export class AuthController {
   async login(
     @Body('email') email: string,
     @Body('password') pass: string,
-    @Req() req: FastifyRequest,
+    @Req() req: Request,
     @Res() res: FastifyReply,
   ) {
     const { accessToken, refreshToken, user } = await this.authService.signIn(
@@ -73,36 +54,21 @@ export class AuthController {
       pass,
     );
 
-    res.setCookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: this.cookieDomain,
-      path: '/',
-      maxAge: 60 * 15, // 15 minutos
-    });
-
-    res.setCookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'none',
-      domain: this.cookieDomain,
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 dias,
-    });
+    this.authCookieService.setAuthCookies(
+      res,
+      { accessToken, refreshToken },
+      req,
+    );
 
     return res.send({
       accessToken,
       refreshToken,
-      user: {
-        id: user.id,
-        email: user.email,
-      },
+      user: { id: user.id, email: user.email, role: user.role },
     });
   }
 
   @Get('me')
-  async me(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
+  async me(@Req() req: Request, @Res() res: FastifyReply) {
     const accessToken = req.cookies?.access_token;
 
     if (!accessToken) {
@@ -123,8 +89,8 @@ export class AuthController {
   }
 
   @Get('validate')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'USER')
+  @UseGuards(SilentJwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.SUPPORT, Role.TEST_USER, Role.USER)
   validate(@Req() req: AuthenticatedRequest) {
     if (!req.user) {
       throw new UnauthorizedException('Session not valid');
@@ -134,9 +100,9 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(SilentJwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'USER')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.SUPPORT, Role.TEST_USER, Role.USER)
   async logout(
-    @Req() req: FastifyRequest & { user?: JwtPayload },
+    @Req() req: Request & { user?: JwtPayload },
     @Res() reply: FastifyReply,
   ) {
     if (!req.user) {
@@ -144,21 +110,14 @@ export class AuthController {
     }
 
     const userId = Number(req.user.sub);
-    await this.authService.signOut(userId);
+    const currentUser = req.user;
 
-    const cookieOptions = this.getCookieOptions(req);
-
-    reply.clearCookie('access_token', {
-      ...cookieOptions,
-      expires: new Date(0),
-      maxAge: 0,
+    await this.authService.signOut(userId, {
+      id: currentUser.id,
+      role: currentUser.role,
     });
 
-    reply.clearCookie('refresh_token', {
-      ...cookieOptions,
-      expires: new Date(0),
-      maxAge: 0,
-    });
+    this.authCookieService.clearAuthCookies(reply, req);
 
     return reply.send({ message: 'Logged out successfully' });
   }
@@ -188,35 +147,65 @@ export class AuthController {
     return this.authService.resetPassword(resetPasswordDto);
   }
 
-  @Post('refresh')
-  async refresh(@Req() req: FastifyRequest, @Res() res: FastifyReply) {
-    const refresh_token = req.cookies?.refresh_token;
-    const cookieOptions = this.getCookieOptions(req);
+  // @Post('refresh')
+  // async refresh(@Req() req: Request, @Res() res: FastifyReply) {
+  //   const refresh_token = req.cookies?.refresh_token;
+  //   const cookieOptions = this.getCookieOptions(req);
 
-    if (!refresh_token) {
-      res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
-      res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
+  //   if (!refresh_token) {
+  //     res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
+  //     res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
+  //     throw new UnauthorizedException('Refresh token não encontrado');
+  //   }
+
+  //   try {
+  //     const currentUser = req.user;
+
+  //     const { accessToken, refreshToken: newRefreshToken } =
+  //       await this.authService.refreshToken(refresh_token, {
+  //         id: currentUser.id,
+  //         role: currentUser.role,
+  //       });
+
+  //     res.setCookie('access_token', accessToken, {
+  //       ...cookieOptions,
+  //       maxAge: 15 * 60 * 1000, // 15 minutos
+  //     });
+
+  //     res.setCookie('refresh_token', newRefreshToken, {
+  //       ...cookieOptions,
+  //       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+  //     });
+
+  //     return res.send({ message: 'Token renovado com sucesso' });
+  //   } catch {
+  //     res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
+  //     res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
+  //     throw new UnauthorizedException('Refresh token inválido');
+  //   }
+  // }
+  @Post('refresh')
+  async refresh(@Req() req: Request, @Res() res: FastifyReply) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) {
+      this.authCookieService.clearAuthCookies(res, req);
       throw new UnauthorizedException('Refresh token não encontrado');
     }
 
     try {
       const { accessToken, refreshToken: newRefreshToken } =
-        await this.authService.refreshToken(refresh_token);
+        await this.authService.refreshToken(refreshToken);
 
-      res.setCookie('access_token', accessToken, {
-        ...cookieOptions,
-        maxAge: 15 * 60 * 1000, // 15 minutos
-      });
-
-      res.setCookie('refresh_token', newRefreshToken, {
-        ...cookieOptions,
-        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-      });
+      this.authCookieService.setAuthCookies(
+        res,
+        { accessToken, refreshToken: newRefreshToken },
+        req,
+      );
 
       return res.send({ message: 'Token renovado com sucesso' });
     } catch {
-      res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
-      res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
+      this.authCookieService.clearAuthCookies(res, req);
       throw new UnauthorizedException('Refresh token inválido');
     }
   }

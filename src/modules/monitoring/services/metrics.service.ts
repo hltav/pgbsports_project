@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as os from 'os';
 import { PrismaService } from './../../../libs/database/prisma';
+import { DatabaseMetricsResponseDto } from '../schemas/databaseMetrics.schema';
 
 interface RequestMetric {
   method: string;
@@ -81,34 +82,66 @@ export class MetricsService {
     };
   }
 
-  async getDatabaseMetrics() {
+  // async getDatabaseMetrics() {
+  //   try {
+  //     const startTime = Date.now();
+
+  //     // Test database connection
+  //     await this.prisma.$queryRaw`SELECT 1`;
+
+  //     const responseTime = Date.now() - startTime;
+
+  //     // Get database size (PostgreSQL specific)
+  //     const dbSize = await this.prisma.$queryRaw<Array<{ size: bigint }>>`
+  //       SELECT pg_database_size(current_database()) as size
+  //     `;
+
+  //     // Get connection count
+  //     const connections = await this.prisma.$queryRaw<Array<{ count: bigint }>>`
+  //       SELECT count(*) as count FROM pg_stat_activity WHERE datname = current_database()
+  //     `;
+
+  //     return {
+  //       status: 'connected',
+  //       responseTime: `${responseTime}ms`,
+  //       size: this.formatBytes(Number(dbSize[0]?.size || 0)),
+  //       activeConnections: Number(connections[0]?.count || 0),
+  //     };
+  //   } catch {
+  //     return {
+  //       status: 'error',
+  //     };
+  //   }
+  // }
+  async getDatabaseMetrics(): Promise<DatabaseMetricsResponseDto> {
     try {
       const startTime = Date.now();
 
-      // Test database connection
       await this.prisma.$queryRaw`SELECT 1`;
 
-      const responseTime = Date.now() - startTime;
+      const latencyMs = Date.now() - startTime;
 
-      // Get database size (PostgreSQL specific)
       const dbSize = await this.prisma.$queryRaw<Array<{ size: bigint }>>`
-        SELECT pg_database_size(current_database()) as size
-      `;
+      SELECT pg_database_size(current_database()) as size
+    `;
 
-      // Get connection count
       const connections = await this.prisma.$queryRaw<Array<{ count: bigint }>>`
-        SELECT count(*) as count FROM pg_stat_activity WHERE datname = current_database()
-      `;
+      SELECT count(*) as count
+      FROM pg_stat_activity
+      WHERE datname = current_database()
+    `;
 
       return {
         status: 'connected',
-        responseTime: `${responseTime}ms`,
-        size: this.formatBytes(Number(dbSize[0]?.size || 0)),
+        latencyMs,
+        sizeBytes: Number(dbSize[0]?.size || 0),
         activeConnections: Number(connections[0]?.count || 0),
+        timestamp: new Date(),
       };
     } catch {
       return {
         status: 'error',
+        timestamp: new Date(),
       };
     }
   }

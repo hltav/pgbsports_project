@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../../users/users.service';
 import { JwtPayload } from '../dto/jwt-payload.dto';
 import { FastifyRequest } from 'fastify';
+import { AuthContext } from './../../../modules/users/proxies/serviceProxies/users-finders.proxy.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -33,7 +34,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    const user = await this.usersService.findUserById(payload.sub);
+    const authenticatedCaller: AuthContext = {
+      id: payload.sub,
+      role: payload.role, // já obrigatório agora que removemos o optional()
+    };
+
+    const user = await this.usersService.findUserById(
+      payload.sub,
+      authenticatedCaller,
+    );
     if (!user) {
       throw new UnauthorizedException('User not found');
     }

@@ -24,10 +24,11 @@ import {
   GetBankrollHistoryDTO,
 } from '../../z.dto';
 import { FindBankrollHistoryService } from '../services/findBankrollHistory.service';
+import { Role } from '@prisma/client';
 
 @Controller('bankrolls')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollCoreController {
   constructor(
     private readonly bankrollService: BankrollService,

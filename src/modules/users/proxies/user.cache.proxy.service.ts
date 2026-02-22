@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import {
+  AuthContext,
   UsersDeleterService,
   UsersFinderService,
   UsersUpdaterService,
 } from './serviceProxies';
 import { UpdateUserDTO } from './../../../libs';
-import { Role } from './../../../libs';
 
 @Injectable()
 export class UsersServiceProxy {
@@ -17,27 +17,31 @@ export class UsersServiceProxy {
 
   /** FIND METHODS **/
 
-  findAllUsers(role?: Role) {
-    return this.finderService.findAllUsers(role);
+  findAllUsers(currentUser: AuthContext) {
+    return this.finderService.findAllUsers(currentUser);
   }
 
-  findUserById(id: number, role?: Role) {
-    return this.finderService.findUserById(id, role);
+  findUserById(id: number, currentUser: AuthContext) {
+    return this.finderService.findUserById(id, currentUser);
   }
 
-  findOneByEmail(email: string) {
-    return this.finderService.findOneByEmail(email);
+  findOneByEmail(email: string, currentUser: AuthContext) {
+    return this.finderService.findOneByEmail(email, currentUser);
   }
 
   /** UPDATE METHODS **/
 
-  update(id: number, updateUser: Partial<UpdateUserDTO>) {
-    return this.updaterService.update(id, updateUser);
+  update(
+    id: number,
+    updateUser: Partial<UpdateUserDTO>,
+    currentUser: AuthContext,
+  ) {
+    return this.updaterService.update(id, updateUser, currentUser);
   }
 
   /** DELETE METHODS **/
 
-  delete(id: number) {
-    return this.deleterService.delete(id);
+  delete(id: number, currentUser: AuthContext) {
+    return this.deleterService.delete(id, currentUser);
   }
 }

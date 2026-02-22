@@ -7,10 +7,11 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../../../libs';
 import { BankrollPeriodStatsService } from '../services/bankrollPeriodStates.service';
+import { Role } from '@prisma/client';
 
 @Controller('period')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollPeriodStatsController {
   constructor(private readonly statsService: BankrollPeriodStatsService) {}
 

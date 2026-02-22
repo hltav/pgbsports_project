@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
 import { Request } from './../../../libs/common/interface/request.interface';
 import { IS_PUBLIC_KEY } from '../decorator/public.decorator';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -34,7 +35,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       const user = request.user;
 
       if (user) {
-        user.role = user.role || 'USER';
+        user.role = user.role || Role.USER;
       }
 
       return !!user;

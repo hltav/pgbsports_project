@@ -9,6 +9,7 @@ import {
 import { FastifyRequest } from 'fastify';
 import { JwtAuthGuard, RolesGuard, Roles } from './../../../../libs';
 import { BankrollStatsService } from '../services/bankrollStats.service';
+import { Role } from '@prisma/client';
 
 interface RequestWithUser extends FastifyRequest {
   user: {
@@ -18,7 +19,7 @@ interface RequestWithUser extends FastifyRequest {
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollStatsController {
   constructor(private readonly statsService: BankrollStatsService) {}
 

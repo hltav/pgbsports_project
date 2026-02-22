@@ -24,6 +24,8 @@ import { EncryptionService } from './../../libs/EncryptedData/services/encrypted
 import { EncryptedDataModule } from './../../libs/EncryptedData/services/encryptedData.module';
 import { EmailVerificationService } from '../../libs/services/mailer/services/emailVerification.service';
 import { ResendEmailConfirmationService } from './services/resendEmailConfirmation.service';
+import { AuthCookieService } from './services/authCookies.service';
+import { BankrollModule } from '../bankroll/bankroll.module';
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import { ResendEmailConfirmationService } from './services/resendEmailConfirmati
     PrismaModule,
     EncryptedDataModule,
     MailModule,
+    BankrollModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -60,6 +63,7 @@ import { ResendEmailConfirmationService } from './services/resendEmailConfirmati
     ResetPasswordService,
     EmailVerificationService,
     ResendEmailConfirmationService,
+    AuthCookieService,
   ],
   exports: [
     AuthService,
@@ -73,6 +77,7 @@ import { ResendEmailConfirmationService } from './services/resendEmailConfirmati
     ResetPasswordService,
     ResendEmailConfirmationService,
     EmailVerificationService,
+    AuthCookieService,
   ],
 })
 export class AuthModule {}

@@ -237,6 +237,8 @@ export class UpdateBankrollService {
         amount: historyAmount,
         betId: data.betId ?? null,
         description: data.description ?? data.eventName ?? null,
+        adminId: data.adminId ?? null,
+        ipAddress: data.ipAddress ?? null,
       };
 
       await prismaTx.bankrollHistory.create({ data: history });

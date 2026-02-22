@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   ParseIntPipe,
   Put,
@@ -16,68 +15,88 @@ import { RolesGuard } from './../../libs/common/guards/roles.guard';
 import { GetUserDTO, UpdateUserDTO, User } from './../../libs/common/dto/user';
 import { Roles } from './../../libs/common/decorator/roles.decorator';
 import { Request } from './../../libs/common/interface/request.interface';
-import { Role } from './../../libs/common/enum/role.enum';
 import { UsersServiceProxy } from './proxies/user.cache.proxy.service';
+import { Role } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersServiceProxy) {}
 
+  // ❌ USER NÃO pode listar todos
   @Get('')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {
-    const user = req.user;
-    const role: Role = user?.role as Role;
-    return this.usersService.findAllUsers(role);
+    const currentUser = req.user;
+
+    return this.usersService.findAllUsers({
+      id: currentUser.id,
+      role: currentUser.role,
+    });
   }
 
+  // ✅ USER pode buscar a si mesmo (regra contextual no service)
   @Get(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN', 'USER')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.USER)
   async findUserById(
     @Param('id', ParseIntPipe) id: number,
     @Req() req: Request,
   ): Promise<Partial<GetUserDTO> | null> {
-    const user = req.user;
-    const role: Role = user?.role as Role;
-    return this.usersService.findUserById(+id, role);
+    const currentUser = req.user;
+
+    return this.usersService.findUserById(id, {
+      id: currentUser.id,
+      role: currentUser.role,
+    });
   }
 
+  // ❌ USER NÃO pode buscar por email
   @Get('email')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async findOneByEmail(
     @Query('email') email: string,
+    @Req() req: Request,
   ): Promise<GetUserDTO | null> {
-    return this.usersService.findOneByEmail(email);
+    const currentUser = req.user;
+
+    return this.usersService.findOneByEmail(email, {
+      id: currentUser.id,
+      role: currentUser.role,
+    });
   }
 
+  // ✅ USER pode atualizar a si mesmo
   @Put(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.USER)
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateUser: Partial<UpdateUserDTO>,
+    @Req() req: Request,
   ): Promise<GetUserDTO> {
-    const updatedUser = await this.usersService.update(Number(id), updateUser);
-    if (!updatedUser) {
-      throw new NotFoundException('User not found');
-    }
+    const currentUser = req.user;
 
-    return updatedUser;
+    return this.usersService.update(id, updateUser, {
+      id: currentUser.id,
+      role: currentUser.role,
+    });
   }
 
+  // ⚙️ Opcional: permitir USER deletar a própria conta
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('USER')
-  async delete(@Param('id') id: number): Promise<User> {
-    const deletedUser = await this.usersService.delete(Number(id));
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request,
+  ): Promise<User> {
+    const currentUser = req.user;
 
-    if (!deletedUser) {
-      throw new NotFoundException('User not found');
-    }
-
-    return deletedUser;
+    return this.usersService.delete(id, {
+      id: currentUser.id,
+      role: currentUser.role,
+    });
   }
 }

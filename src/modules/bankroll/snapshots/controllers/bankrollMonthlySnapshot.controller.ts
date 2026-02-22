@@ -17,6 +17,7 @@ import { FastifyRequest } from 'fastify';
 import { JwtAuthGuard, RolesGuard, Roles } from '../../../../libs';
 import { BankrollMonthlySnapshotService } from '../services/bankrollMonthlySnapshot.service';
 import { CreateMonthlySnapshotDTO } from '../dto/monthlySnapshot.dto';
+import { Role } from '@prisma/client';
 
 interface RequestWithUser extends FastifyRequest {
   user: {
@@ -26,7 +27,7 @@ interface RequestWithUser extends FastifyRequest {
 
 @Controller('monthly')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollMonthlySnapshotController {
   constructor(
     private readonly snapshotService: BankrollMonthlySnapshotService,

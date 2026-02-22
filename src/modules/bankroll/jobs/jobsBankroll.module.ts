@@ -8,7 +8,6 @@ import { BankrollWeeklySnapshotService } from '../snapshots/services/bankrollWee
 import { BankrollWeeklySnapshotJob } from './bankrollWeeklySnapshot.job';
 import { BankrollYearlySnapshotService } from '../snapshots/services/bankrollYearlySnapshot.service';
 import { BankrollYearlySnapshotJob } from './bankrollYearlySnapshot.job';
-import { SnapshotJobController } from './controllers/jobs.controller';
 import { BankrollHourlySnapshotJob } from './bankrollHourlySnapshot.job';
 import { BankrollHourlySnapshotService } from '../snapshots/services/bankrollHourlySnapshot.service';
 
@@ -27,13 +26,18 @@ import { BankrollHourlySnapshotService } from '../snapshots/services/bankrollHou
     BankrollYearlySnapshotService,
     PrismaService,
   ],
-  controllers: [SnapshotJobController],
+  controllers: [],
   exports: [
     BankrollHourlySnapshotJob,
     BankrollDailySnapshotJob,
     BankrollWeeklySnapshotJob,
     BankrollMonthlySnapshotJob,
     BankrollYearlySnapshotJob,
+    BankrollHourlySnapshotService,
+    BankrollDailySnapshotService,
+    BankrollWeeklySnapshotService,
+    BankrollMonthlySnapshotService,
+    BankrollYearlySnapshotService,
   ],
 })
 export class JobsBankrollModule {}

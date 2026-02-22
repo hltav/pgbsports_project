@@ -18,11 +18,6 @@ export class CacheService {
       this.configService.get<string>('REDIS_URL') ||
       'redis://localhost:6379';
 
-    // this.client = createClient({ url: redisUrl });
-
-    // this.client.on('error', (err) =>
-    //   this.logger.error('Redis Client Error', err),
-    // );
     this.client = createClient({
       url: redisUrl,
       socket: {
@@ -128,5 +123,18 @@ export class CacheService {
     }
 
     return results;
+  }
+
+  async setIfNotExists(
+    key: string,
+    value: string,
+    ttlSeconds: number,
+  ): Promise<boolean> {
+    const result = await this.client.set(key, value, {
+      NX: true,
+      EX: ttlSeconds,
+    });
+
+    return result === 'OK';
   }
 }

@@ -17,9 +17,11 @@ export const CreateBankrollHistorySchema = z.object({
   amount: decimalSchema,
   unidValueBefore: decimalSchema,
   unidValueAfter: decimalSchema,
-
   betId: optionalNumberSchema,
   description: optionalStringSchema,
+  //audit
+  adminId: optionalNumberSchema,
+  ipAddress: optionalStringSchema,
 });
 
 export type CreateBankrollHistoryDTO = SafeInfer<

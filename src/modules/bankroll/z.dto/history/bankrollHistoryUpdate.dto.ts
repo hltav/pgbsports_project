@@ -11,13 +11,10 @@ export const BankrollUpdateSchema = z.object({
   // === Campos obrigatórios do BankrollHistory ===
   bankrollId: z.number(),
   type: HistoryTypeEnum,
-
   amount: decimalSchema, // Valor da operação (depósito, saque, stake, retorno)
-
   // === Referências opcionais ===
   betId: optionalNumberSchema, // Referência ao Event (quando aplicável)
   description: optionalStringSchema,
-
   // === Campos auxiliares do Event (para processamento, não salvos no History) ===
   // Esses campos vêm do Event e são usados apenas para cálculos/exibição
   eventName: optionalStringSchema, // Event.event (nome do jogo)
@@ -25,6 +22,9 @@ export const BankrollUpdateSchema = z.object({
   odd: optionalDecimalSchema, // Event.odd (cotação)
   potentialReturn: optionalDecimalSchema, // Event.potentialWin (ganho potencial)
   actualReturn: optionalDecimalSchema, // Event.actualReturn (retorno real)
+  //audit
+  adminId: optionalNumberSchema,
+  ipAddress: optionalStringSchema,
 });
 
 export type BankrollUpdateData = SafeInfer<typeof BankrollUpdateSchema>;

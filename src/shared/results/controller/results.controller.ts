@@ -1,10 +1,11 @@
-import { Controller, Post } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ResultSchedulerService } from '../services/resultScheduler.service';
-// import { JwtAuthGuard, RolesGuard, Roles } from './../../../libs';
+import { JwtAuthGuard, RolesGuard, Roles } from './../../../libs';
+import { Role } from '@prisma/client';
 
 @Controller('admin/results')
-// @UseGuards(JwtAuthGuard, RolesGuard)
-// @Roles('ADMIN')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.SUPER_ADMIN, Role.ADMIN)
 export class ResultsController {
   constructor(private readonly resultScheduler: ResultSchedulerService) {}
 

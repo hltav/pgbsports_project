@@ -18,6 +18,7 @@ import {
   GetBankrollStreakDTO,
 } from '../dto/streak.dto';
 import { FastifyRequest } from 'fastify';
+import { Role } from '@prisma/client';
 
 interface RequestWithUser extends FastifyRequest {
   user: {
@@ -27,7 +28,7 @@ interface RequestWithUser extends FastifyRequest {
 
 @Controller('bankroll_streaks')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollStreakController {
   constructor(private readonly service: BankrollStreakService) {}
 

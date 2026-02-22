@@ -6,7 +6,7 @@ import {
   UserFindService,
   UserUpdateService,
 } from './services';
-import { Role } from './../../libs/common/enum/role.enum';
+import { AuthContext } from './proxies/serviceProxies';
 
 @Injectable()
 export class UsersService {
@@ -16,29 +16,39 @@ export class UsersService {
     private readonly userDeleteService: UserDeleteService,
   ) {}
 
-  async findAllUsers(role?: Role): Promise<Partial<GetUserDTO>[]> {
-    return this.userFindService.findAllUsers(role);
+  async findAllUsers(currentUser: AuthContext): Promise<Partial<GetUserDTO>[]> {
+    return this.userFindService.findAllUsers(currentUser);
   }
 
   async findUserById(
     id: number,
-    role?: Role,
+    currentUser: AuthContext,
   ): Promise<Partial<GetUserDTO> | null> {
-    return this.userFindService.findUserById(id, role);
+    return this.userFindService.findUserById(id, currentUser);
   }
 
-  async findOneByEmail(email: string): Promise<UserWithClientData | null> {
-    return this.userFindService.findOneByEmail(email);
+  async findOneByEmail(
+    email: string,
+    currentUser: AuthContext,
+  ): Promise<UserWithClientData | null> {
+    return this.userFindService.findOneByEmail(email, currentUser);
+  }
+
+  async findOneByEmailSystem(
+    email: string,
+  ): Promise<UserWithClientData | null> {
+    return this.userFindService.findOneByEmailSystem(email);
   }
 
   async update(
     id: number,
     updateUser: Partial<UpdateUserDTO>,
+    currentUser: AuthContext,
   ): Promise<GetUserDTO> {
-    return this.userUpdateService.update(id, updateUser);
+    return this.userUpdateService.update(id, updateUser, currentUser);
   }
 
-  async delete(id: number): Promise<User> {
-    return this.userDeleteService.delete(id);
+  async delete(id: number, currentUser: AuthContext): Promise<User> {
+    return this.userDeleteService.delete(id, currentUser);
   }
 }

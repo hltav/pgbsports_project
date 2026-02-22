@@ -12,6 +12,7 @@ import { SignOutService } from './services/signOut.service';
 import { SignInVerifyService } from './services/signInVerify.service';
 import { ConfirmEmailService, ResetPasswordService } from './services';
 import { ResendEmailConfirmationService } from './services/resendEmailConfirmation.service';
+import { AuthContext } from '../users/proxies/serviceProxies/users-finders.proxy.service';
 
 @Injectable()
 export class AuthService {
@@ -39,8 +40,8 @@ export class AuthService {
     return this.signInServiceVerify.execute(email);
   }
 
-  signOut(userId: number) {
-    return this.signOutService.execute(userId);
+  signOut(userId: number, currentUser: AuthContext) {
+    return this.signOutService.execute(userId, currentUser);
   }
 
   forgotPassword(dto: ForgotPasswordDTO) {

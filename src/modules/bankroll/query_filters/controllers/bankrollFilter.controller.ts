@@ -7,7 +7,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Result, MatchStatus, OperationType } from '@prisma/client';
+import { Result, MatchStatus, OperationType, Role } from '@prisma/client';
 import { FastifyRequest } from 'fastify';
 import { BankrollFilterService } from '../services/bankrollFilter.service';
 import { JwtAuthGuard, RolesGuard, Roles } from 'src/libs';
@@ -26,7 +26,7 @@ interface RequestWithUser extends FastifyRequest {
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollFilterController {
   constructor(private readonly filterService: BankrollFilterService) {}
 

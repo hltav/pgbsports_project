@@ -16,6 +16,7 @@ import { FastifyRequest } from 'fastify';
 import { BankrollGoalService } from '../services/bankrollGoal.service';
 import { JwtAuthGuard, RolesGuard, Roles } from '../../../../libs';
 import { CreateBankrollGoalDTO, UpdateBankrollGoalDTO } from '../dto/goal.dto';
+import { Role } from '@prisma/client';
 
 interface RequestWithUser extends FastifyRequest {
   user: {
@@ -25,7 +26,7 @@ interface RequestWithUser extends FastifyRequest {
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class BankrollGoalController {
   constructor(private readonly goalService: BankrollGoalService) {}
 
