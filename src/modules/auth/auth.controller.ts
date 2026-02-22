@@ -54,11 +54,7 @@ export class AuthController {
       pass,
     );
 
-    this.authCookieService.setAuthCookies(
-      res,
-      { accessToken, refreshToken },
-      req,
-    );
+    this.authCookieService.setAuthCookies(res, { accessToken, refreshToken });
 
     return res.send({
       accessToken,
@@ -117,7 +113,7 @@ export class AuthController {
       role: currentUser.role,
     });
 
-    this.authCookieService.clearAuthCookies(reply, req);
+    this.authCookieService.clearAuthCookies(reply);
 
     return reply.send({ message: 'Logged out successfully' });
   }
@@ -147,49 +143,12 @@ export class AuthController {
     return this.authService.resetPassword(resetPasswordDto);
   }
 
-  // @Post('refresh')
-  // async refresh(@Req() req: Request, @Res() res: FastifyReply) {
-  //   const refresh_token = req.cookies?.refresh_token;
-  //   const cookieOptions = this.getCookieOptions(req);
-
-  //   if (!refresh_token) {
-  //     res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
-  //     res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
-  //     throw new UnauthorizedException('Refresh token não encontrado');
-  //   }
-
-  //   try {
-  //     const currentUser = req.user;
-
-  //     const { accessToken, refreshToken: newRefreshToken } =
-  //       await this.authService.refreshToken(refresh_token, {
-  //         id: currentUser.id,
-  //         role: currentUser.role,
-  //       });
-
-  //     res.setCookie('access_token', accessToken, {
-  //       ...cookieOptions,
-  //       maxAge: 15 * 60 * 1000, // 15 minutos
-  //     });
-
-  //     res.setCookie('refresh_token', newRefreshToken, {
-  //       ...cookieOptions,
-  //       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
-  //     });
-
-  //     return res.send({ message: 'Token renovado com sucesso' });
-  //   } catch {
-  //     res.clearCookie('access_token', { ...cookieOptions, maxAge: 0 });
-  //     res.clearCookie('refresh_token', { ...cookieOptions, maxAge: 0 });
-  //     throw new UnauthorizedException('Refresh token inválido');
-  //   }
-  // }
   @Post('refresh')
   async refresh(@Req() req: Request, @Res() res: FastifyReply) {
     const refreshToken = req.cookies?.refresh_token;
 
     if (!refreshToken) {
-      this.authCookieService.clearAuthCookies(res, req);
+      this.authCookieService.clearAuthCookies(res);
       throw new UnauthorizedException('Refresh token não encontrado');
     }
 
@@ -197,15 +156,14 @@ export class AuthController {
       const { accessToken, refreshToken: newRefreshToken } =
         await this.authService.refreshToken(refreshToken);
 
-      this.authCookieService.setAuthCookies(
-        res,
-        { accessToken, refreshToken: newRefreshToken },
-        req,
-      );
+      this.authCookieService.setAuthCookies(res, {
+        accessToken,
+        refreshToken: newRefreshToken,
+      });
 
       return res.send({ message: 'Token renovado com sucesso' });
     } catch {
-      this.authCookieService.clearAuthCookies(res, req);
+      this.authCookieService.clearAuthCookies(res);
       throw new UnauthorizedException('Refresh token inválido');
     }
   }

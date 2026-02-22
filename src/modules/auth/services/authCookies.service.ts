@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
-import { Request } from './../../../libs/common/interface/request.interface';
 
 export type AuthTokens = {
   accessToken: string;
@@ -15,35 +14,20 @@ export class AuthCookieService {
     this.cookieDomain = process.env.COOKIE_DOMAIN || 'localhost';
   }
 
-  private getCookieOptions(req?: Request) {
+  private getCookieOptions() {
     const isProduction = process.env.NODE_ENV === 'production';
-    const requestOrigin = req?.headers?.origin;
-    const isHttpsFrontend = !!requestOrigin?.startsWith('https://');
 
-    // Se frontend é https (mesmo em dev) ou prod => precisa SameSite=None + Secure
-    if (isHttpsFrontend || isProduction) {
-      return {
-        path: '/',
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none' as const,
-        // Em prod você quer domain real; em dev pode ser localhost (ou nem setar domain)
-        domain: isProduction ? this.cookieDomain : 'localhost',
-      };
-    }
-
-    // Dev http padrão
     return {
       path: '/',
       httpOnly: true,
-      secure: false,
-      sameSite: 'lax' as const,
-      // sem domain em dev http (melhor)
+      secure: true, // você usa https
+      sameSite: 'none' as const,
+      ...(isProduction && { domain: this.cookieDomain }),
     };
   }
 
-  setAuthCookies(reply: FastifyReply, tokens: AuthTokens, req?: Request) {
-    const opts = this.getCookieOptions(req);
+  setAuthCookies(reply: FastifyReply, tokens: AuthTokens) {
+    const opts = this.getCookieOptions();
 
     reply.setCookie('access_token', tokens.accessToken, {
       ...opts,
@@ -56,8 +40,8 @@ export class AuthCookieService {
     });
   }
 
-  clearAuthCookies(reply: FastifyReply, req?: Request) {
-    const opts = this.getCookieOptions(req);
+  clearAuthCookies(reply: FastifyReply) {
+    const opts = this.getCookieOptions();
 
     reply.clearCookie('access_token', {
       ...opts,

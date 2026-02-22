@@ -28,22 +28,6 @@ export class PerformanceService {
   private lastCpuUsage = process.cpuUsage();
   private lastCpuTime = Date.now();
 
-  // private takeSnapshot() {
-  //   const memUsage = process.memoryUsage();
-  //   const cpuUsage = process.cpuUsage();
-
-  //   const snapshot: PerformanceSnapshot = {
-  //     timestamp: new Date(),
-  //     memoryUsage: memUsage.heapUsed,
-  //     cpuUsage: cpuUsage.user + cpuUsage.system,
-  //     activeRequests: 0, // Could be tracked with middleware
-  //   };
-
-  //   this.snapshots.push(snapshot);
-  //   if (this.snapshots.length > this.MAX_SNAPSHOTS) {
-  //     this.snapshots.shift();
-  //   }
-  // }
   private takeSnapshot() {
     const memUsage = process.memoryUsage();
 
