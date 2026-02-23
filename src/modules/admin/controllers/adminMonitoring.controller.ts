@@ -4,6 +4,7 @@ import { JwtAuthGuard, RolesGuard, Roles } from '../../../libs';
 import { MetricsService } from '../../monitoring/services/metrics.service';
 import { PerformanceService } from '../../monitoring/services/performance.service';
 import { DatabaseMetricsResponseDto } from './../../../modules/monitoring/schemas/databaseMetrics.schema';
+import { CacheService } from './../../../libs/services/cache/cache.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SUPPORT, Role.SUPER_ADMIN)
@@ -12,6 +13,7 @@ export class AdminMonitoringController {
   constructor(
     private readonly metricsService: MetricsService,
     private readonly performanceService: PerformanceService,
+    private readonly cacheService: CacheService,
   ) {}
 
   @Get('metrics')
@@ -27,6 +29,25 @@ export class AdminMonitoringController {
   @Get('database')
   getDatabaseMetrics(): Promise<DatabaseMetricsResponseDto> {
     return this.metricsService.getDatabaseMetrics();
+  }
+
+  @Get('cache')
+  async getCacheMetrics() {
+    const metrics = await this.cacheService.getMetrics();
+
+    const hitRate =
+      metrics.keyspaceHits + metrics.keyspaceMisses > 0
+        ? (metrics.keyspaceHits /
+            (metrics.keyspaceHits + metrics.keyspaceMisses)) *
+          100
+        : 0;
+
+    return {
+      status: 'connected',
+      ...metrics,
+      hitRate: Number(hitRate.toFixed(2)),
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Get('requests')

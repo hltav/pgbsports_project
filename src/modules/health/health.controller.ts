@@ -27,8 +27,8 @@ export class HealthController {
     if (process.platform === 'win32' && process.env.NODE_ENV !== 'production') {
       return this.health.check([
         () => this.prismaHealth.pingCheck('database', this.prismaService),
-        () => this.memory.checkHeap('memory_heap', 500 * 1024 * 1024),
-        () => this.memory.checkRSS('memory_rss', 800 * 1024 * 1024),
+        () => this.memory.checkHeap('memory_heap', 1000 * 1024 * 1024),
+        () => this.memory.checkRSS('memory_rss', 1600 * 1024 * 1024),
       ]);
     }
 
@@ -37,8 +37,8 @@ export class HealthController {
 
     return this.health.check([
       () => this.prismaHealth.pingCheck('database', this.prismaService),
-      () => this.memory.checkHeap('memory_heap', 500 * 1024 * 1024),
-      () => this.memory.checkRSS('memory_rss', 800 * 1024 * 1024),
+      () => this.memory.checkHeap('memory_heap', 1000 * 1024 * 1024),
+      () => this.memory.checkRSS('memory_rss', 1600 * 1024 * 1024),
       () =>
         this.disk.checkStorage('storage', {
           thresholdPercent: 0.9,

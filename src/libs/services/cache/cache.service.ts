@@ -137,4 +137,32 @@ export class CacheService {
 
     return result === 'OK';
   }
+
+  async getMetrics() {
+    const infoRaw = await this.client.info();
+
+    const info: Record<string, string> = {};
+
+    infoRaw.split('\n').forEach((line) => {
+      if (!line || line.startsWith('#')) return;
+
+      const [key, value] = line.split(':');
+      if (key && value) {
+        info[key] = value.trim();
+      }
+    });
+
+    return {
+      uptimeInSeconds: Number(info.uptime_in_seconds),
+      connectedClients: Number(info.connected_clients),
+      usedMemoryBytes: Number(info.used_memory),
+      usedMemoryHuman: info.used_memory_human,
+      totalCommandsProcessed: Number(info.total_commands_processed),
+      keyspaceHits: Number(info.keyspace_hits),
+      keyspaceMisses: Number(info.keyspace_misses),
+      evictedKeys: Number(info.evicted_keys),
+      expiredKeys: Number(info.expired_keys),
+      memoryFragmentationRatio: Number(info.mem_fragmentation_ratio),
+    };
+  }
 }
