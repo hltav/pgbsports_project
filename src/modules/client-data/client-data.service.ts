@@ -23,12 +23,37 @@ export class ClientDataService {
     return this.createClientDataService.execute(createClientDataDto);
   }
 
+  async upsertClientData(
+    userId: number,
+    dto: CreateClientDataDTO,
+  ): Promise<ClientDataDTO> {
+    const existing = await this.myGetClientDataService.execute(userId);
+
+    if (existing) {
+      return this.updateClientDataService.execute(existing.id, dto);
+    }
+
+    return this.createClientDataService.execute({
+      ...dto,
+      userId,
+    });
+  }
+
   async getMyClientData(userId: number): Promise<ClientDataDTO> {
     return this.myGetClientDataService.execute(userId);
   }
 
   async getClientData(id: number): Promise<ClientDataDTO> {
     return this.getClientDataService.execute(id);
+  }
+
+  async updateClientDataByUser(
+    userId: number,
+    dto: UpdateClientDataDTO,
+  ): Promise<ClientDataDTO> {
+    const existing = await this.myGetClientDataService.execute(userId);
+
+    return this.updateClientDataService.execute(existing.id, dto);
   }
 
   async updateClientData(

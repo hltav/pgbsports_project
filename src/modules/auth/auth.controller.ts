@@ -95,14 +95,14 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(SilentJwtAuthGuard, RolesGuard)
-  @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.SUPPORT, Role.TEST_USER, Role.USER)
+  @UseGuards(SilentJwtAuthGuard)
   async logout(
     @Req() req: Request & { user?: JwtPayload },
     @Res() reply: FastifyReply,
   ) {
     if (!req.user) {
-      throw new UnauthorizedException('User not found in request');
+      this.authCookieService.clearAuthCookies(reply);
+      return reply.send({ message: 'Cookies cleared' });
     }
 
     const userId = Number(req.user.sub);
