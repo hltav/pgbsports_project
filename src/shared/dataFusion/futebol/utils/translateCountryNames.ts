@@ -1,9 +1,9 @@
 import * as countries from 'i18n-iso-countries';
-import ptLocale from 'i18n-iso-countries/langs/pt.json';
 import { COUNTRY_CANONICAL_MAP } from './countryAliases';
 import { baseNormalize } from './countryLookup'; // ou onde estiver seu baseNormalize
+import { getMergedPtLocale } from './../../../../shared/i18n/i18nCustom';
 
-countries.registerLocale(ptLocale as unknown as countries.LocaleData);
+countries.registerLocale(getMergedPtLocale());
 
 function toTitleCase(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
