@@ -81,7 +81,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     logo: `/badges_leagues/dutch_eredivisie.png`,
   },
   'Argentinian Primera Division': {
-    name: 'Primeira Divisão ',
+    name: 'Liga Profissional Argentina ',
     expectedCountry: 'Argentina',
     logo: `/badges_leagues/liga_profissional_argentina.png`,
   },
@@ -215,7 +215,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     logo: `/badges_leagues/knvb_beker_holanda.png`,
   },
   'Copa Argentina': {
-    name: 'Copa Argentina',
+    name: 'Copa da Argentina',
     expectedCountry: 'Argentina',
     logo: `/badges_leagues/copa_argentina.png`,
   },
@@ -1897,7 +1897,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'França',
   },
   'Germany Women Bundesliga': {
-    name: 'Bundesliga Feminina da Alemanha',
+    name: 'Bundesliga Feminina',
     expectedCountry: 'Alemanha',
   },
   'Italy Serie A Women': {
@@ -2006,7 +2006,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'Mundo',
   },
   'Argentinian Copa de la Liga Profesional': {
-    name: 'Copa da Liga Profissional Argentina',
+    name: 'Copa de La Liga Argentina',
     expectedCountry: 'Argentina',
   },
   'CONMEBOL Pre-Olympic Tournament': {

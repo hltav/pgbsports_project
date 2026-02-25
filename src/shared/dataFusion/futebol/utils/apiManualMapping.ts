@@ -57,13 +57,13 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
   47: 4788, // FA Trophy → FA Trophy
 
   // Ligas Femininas
-  4849: 44, // English Womens Super League → FA WSL
+  44: 4849, // English Womens Super League → FA WSL
   5212: 44, // English Womens Super League 2 → FA WSL (aproximação)
 
   // Ligas Não-Ligas (Non-League)
-  4646: 59, // English Northern Premier League Premier Division → Non League Premier - Northern
-  4647: 58, // English Isthmian League Premier Division → Non League Premier - Isthmian
-  4648: 60, // English Southern Premier League South Division → Non League Premier - Southern South
+  59: 4646, // English Northern Premier League Premier Division → Non League Premier - Northern
+  58: 4647, // English Isthmian League Premier Division → Non League Premier - Isthmian
+  60: 4648, // English Southern Premier League South Division → Non League Premier - Southern South
 
   // Ligações regionais específicas
   5324: 931, // English Southern Premier League Central Division → Non League Premier - Southern Central
@@ -79,9 +79,12 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
   5228: 933, // England Non League Div One Southern Central → Non League Div One - Southern Central
 
   // ARGENTINA
-  4406: 128, // Argentinian Primera Division → Liga Profesional Argentina
-  4616: 129, // Argentinian Primera B Nacional → Primera Nacional
-  4500: 130, // Copa Argentina → Copa Argentina
+  128: 4406, // Argentinian Primera Division → Liga Profesional Argentina
+  129: 4616, // Argentinian Primera B Nacional → Primera Nacional
+  130: 4500, // Copa Argentina → Copa Argentina
+
+  // ARÁBIA SAUDITA
+  307: 4668,
 
   // MÉXICO
   4350: 262, // Mexican Primera League → Liga MX

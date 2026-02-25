@@ -529,7 +529,7 @@ export const COUNTRY_CANONICAL_MAP: Record<string, CountryData> = {
   'northern ireland': {
     apiFootball: 'Northern-ireland',
     theSportsDB: 'Northern Ireland',
-    aliases: ['irlanda do norte', 'northern-ireland', 'gb-nir', 'n2'],
+    aliases: ['irlanda do norte', 'northern-ireland', 'gb-nir', 'n2', 'ia'],
   },
   iceland: {
     apiFootball: 'Iceland',
