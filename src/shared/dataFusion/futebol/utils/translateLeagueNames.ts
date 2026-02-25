@@ -80,11 +80,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'Países Baixos',
     logo: `/badges_leagues/dutch_eredivisie.png`,
   },
-  'Argentinian Primera Division': {
-    name: 'Primeira Divisão ',
-    expectedCountry: 'Argentina',
-    logo: `/badges_leagues/liga_profissional_argentina.png`,
-  },
+
   'Uruguayan Primera Division': {
     name: 'Liga AUF ',
     expectedCountry: 'Uruguai',
@@ -580,6 +576,43 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'Brasil',
   },
 
+  // Ligas Argentinas
+
+  'Argentinian Primera B Nacional': {
+    name: 'Primeira B Nacional Argentina',
+    expectedCountry: 'Argentina',
+  },
+  'Argentina Primera B Metropolitana': {
+    name: 'Primera B Metropolitana da Argentina',
+    expectedCountry: 'Argentina',
+  },
+
+  'Copa de la Liga Profesional': {
+    name: 'Copa da Liga Argentina',
+    expectedCountry: 'Argentina',
+  },
+  'Argentina Torneo Federal A': {
+    name: 'Torneio Federal A da Argentina',
+    expectedCountry: 'Argentina',
+  },
+  'Argentinian Primera C': {
+    name: 'Primera C Argentina',
+    expectedCountry: 'Argentina',
+  },
+  'Argentinian Supercopa Internacional': {
+    name: 'Supercopa Internacional Argentina',
+    expectedCountry: 'Argentina',
+  },
+  'Argentinian Trofeo de Campeones': {
+    name: 'Troféu de Campeões Argentina',
+    expectedCountry: 'Argentina',
+  },
+  'Argentinian Primera Division': {
+    name: 'Primeira Divisão ',
+    expectedCountry: 'Argentina',
+    logo: `/badges_leagues/liga_profissional_argentina.png`,
+  },
+
   // Ligas Específicas
   'Moroccan Championship': {
     name: 'Campeonato Marroquino',
@@ -624,10 +657,6 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   'English National League': {
     name: 'National League Inglesa',
     expectedCountry: 'Inglaterra',
-  },
-  'Argentinian Primera B Nacional': {
-    name: 'Primeira B Nacional Argentina',
-    expectedCountry: 'Argentina',
   },
   'Albanian Superliga': { name: 'Superliga ', expectedCountry: 'Albânia' },
   'Andorran 1a Divisió': {
@@ -1913,10 +1942,6 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     name: 'Damallsvenskan',
     expectedCountry: 'Suécia',
   },
-  'Argentina Primera B Metropolitana': {
-    name: 'Primera B Metropolitana da Argentina',
-    expectedCountry: 'Argentina',
-  },
   'Portugal Liga 3': {
     name: 'Liga 3 de Portugal',
     expectedCountry: 'Portugal',
@@ -2004,10 +2029,6 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   'UEFA Youth League': {
     name: 'UEFA Youth League',
     expectedCountry: 'Mundo',
-  },
-  'Argentinian Copa de la Liga Profesional': {
-    name: 'Copa da Liga Profissional Argentina',
-    expectedCountry: 'Argentina',
   },
   'CONMEBOL Pre-Olympic Tournament': {
     name: 'Torneio Pré-Olímpico CONMEBOL',
@@ -2098,14 +2119,6 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'Mundo',
     logo: `/badges_leagues/concacaf-logo.svg`,
   },
-  'Argentina Torneo Federal A': {
-    name: 'Torneio Federal A da Argentina',
-    expectedCountry: 'Argentina',
-  },
-  'Argentinian Primera C': {
-    name: 'Primera C Argentina',
-    expectedCountry: 'Argentina',
-  },
   'Copa AUF Uruguay': { name: 'Copa AUF Uruguai', expectedCountry: 'Uruguai' },
   'Canadian Northern Super League': {
     name: 'Canadian Northern Super League',
@@ -2156,14 +2169,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     name: 'Copa dos Campeões do México',
     expectedCountry: 'México',
   },
-  'Argentinian Supercopa Internacional': {
-    name: 'Supercopa Internacional Argentina',
-    expectedCountry: 'Argentina',
-  },
-  'Argentinian Trofeo de Campeones': {
-    name: 'Troféu de Campeões Argentina',
-    expectedCountry: 'Argentina',
-  },
+
   'Recopa Sudamericana': {
     name: 'Recopa Sul-Americana',
     expectedCountry: 'Mundo',
