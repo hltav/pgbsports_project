@@ -83,8 +83,22 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
   129: 4616, // Argentinian Primera B Nacional → Primera Nacional
   130: 4500, // Copa Argentina → Copa Argentina
 
+  // ÁFRICA DO SUL
+  288: 4802,
+
+  // ALBÂNIA
+  311: 4907,
+
   // ARÁBIA SAUDITA
   307: 4668,
+
+  // CHÉQUIA
+  345: 4631,
+  346: 4954,
+
+  // COLÔMBIA
+  239: 4497,
+  240: 4951,
 
   // MÉXICO
   4350: 262, // Mexican Primera League → Liga MX
@@ -118,4 +132,7 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
   4565: 8, // FIFA Womens World Cup → World Cup - Women
   4724: 11, // Copa Sudamericana → CONMEBOL Sudamericana
   5071: 848, // UEFA Conference League → UEFA Europa Conference League
+
+  // URUGUAI
+  268: 4432,
 };

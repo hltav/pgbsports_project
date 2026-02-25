@@ -959,7 +959,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   'Austrian Erste Liga': { name: 'Erste Liga', expectedCountry: 'Áustria' },
   'Indian I-League': { name: 'I-League', expectedCountry: 'Índia' },
   'South African Premier Soccer League': {
-    name: 'Premier Soccer League',
+    name: 'Premiership',
     expectedCountry: 'África do Sul',
   },
   'Vietnamese V.League 1': { name: 'V.League 1', expectedCountry: 'Vietnã' },
@@ -1235,7 +1235,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   },
   'Andorran Cup': { name: 'Copa de Andorra', expectedCountry: 'Andorra' },
   'Albanian Kategoria e Parë': {
-    name: 'Segunda Divisão',
+    name: 'Kategoria e Parë',
     expectedCountry: 'Albânia',
   },
   'Armenian First League': {
@@ -1897,7 +1897,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     expectedCountry: 'França',
   },
   'Germany Women Bundesliga': {
-    name: 'Bundesliga Feminina',
+    name: 'Frauen Bundesliga',
     expectedCountry: 'Alemanha',
   },
   'Italy Serie A Women': {
@@ -1980,7 +1980,10 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
     name: 'Amistosos Internacionais Femininos',
     expectedCountry: 'Mundo',
   },
-  'DFB-Pokal Frauen': { name: 'Copa da Alemanha Feminina' },
+  'DFB-Pokal Frauen': {
+    name: 'Copa da Alemanha Feminina',
+    expectedCountry: 'Alemanha',
+  },
   'Campeonato Nacional Feminino': {
     name: 'Campeonato Nacional Feminino',
     expectedCountry: 'Portugal',
