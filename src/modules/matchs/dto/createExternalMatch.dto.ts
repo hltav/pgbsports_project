@@ -65,6 +65,42 @@ export const CreateExternalMatchSchema = z.object({
     .min(0, 'Placar não pode ser negativo')
     .optional()
     .nullable(),
+  homeScoreET: z
+    .number()
+    .int()
+    .min(0, 'Placar não pode ser negativo')
+    .optional()
+    .nullable(),
+  awayScoreET: z
+    .number()
+    .int()
+    .min(0, 'Placar não pode ser negativo')
+    .optional()
+    .nullable(),
+  homeScorePEN: z
+    .number()
+    .int()
+    .min(0, 'Placar não pode ser negativo')
+    .optional()
+    .nullable(),
+  awayScorePEN: z
+    .number()
+    .int()
+    .min(0, 'Placar não pode ser negativo')
+    .optional()
+    .nullable(),
+  homeScoreFinal: z
+    .number()
+    .int()
+    .min(0, 'Placar não pode ser negativo')
+    .optional()
+    .nullable(),
+  awayScoreFinal: z
+    .number()
+    .int()
+    .min(0, 'Placar não pode ser negativo')
+    .optional()
+    .nullable(),
   status: z.string().optional().nullable().default('SCHEDULED'),
   eventDateLocal: z.date().optional().nullable(),
   timezone: z.string().trim().max(50).optional().nullable(),
@@ -116,6 +152,12 @@ export const UpdateExternalMatchSchema = z.object({
   awayScoreHT: z.number().int().min(0).optional().nullable(),
   homeScoreFT: z.number().int().min(0).optional().nullable(),
   awayScoreFT: z.number().int().min(0).optional().nullable(),
+  homeScoreET: z.number().int().min(0).optional().nullable(),
+  awayScoreET: z.number().int().min(0).optional().nullable(),
+  homeScorePEN: z.number().int().min(0).optional().nullable(),
+  awayScorePEN: z.number().int().min(0).optional().nullable(),
+  homeScoreFinal: z.number().int().min(0).optional().nullable(),
+  awayScoreFinal: z.number().int().min(0).optional().nullable(),
   status: z.string().optional().nullable(),
   eventDate: z.date().optional(),
   eventDateLocal: z.date().optional().nullable(),
@@ -139,6 +181,12 @@ export const UpdateMatchScoresSchema = z.object({
   awayScoreHT: z.number().int().min(0).optional().nullable(),
   homeScoreFT: z.number().int().min(0).optional().nullable(),
   awayScoreFT: z.number().int().min(0).optional().nullable(),
+  homeScoreET: z.number().int().min(0).optional().nullable(),
+  awayScoreET: z.number().int().min(0).optional().nullable(),
+  homeScorePEN: z.number().int().min(0).optional().nullable(),
+  awayScorePEN: z.number().int().min(0).optional().nullable(),
+  homeScoreFinal: z.number().int().min(0).optional().nullable(),
+  awayScoreFinal: z.number().int().min(0).optional().nullable(),
   status: z.string().optional().nullable(),
 });
 

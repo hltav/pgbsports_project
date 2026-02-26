@@ -601,6 +601,12 @@ model ExternalMatch {
   awayScoreHT          Int?
   homeScoreFT          Int? // Full Time
   awayScoreFT          Int?
+  homeScoreET          Int? // Extra Time (apenas gols na prorrogação)
+  awayScoreET          Int?
+  homeScorePEN         Int? // Penaltis
+  awayScorePEN         Int?
+  homeScoreFinal       Int? // Placar final consolidado (inclui ET e PEN)
+  awayScoreFinal       Int?
   // === STATUS E DATAS ===
   status               MatchStatus           @default(SCHEDULED)
   eventDate            DateTime

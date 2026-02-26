@@ -422,6 +422,7 @@ considerado
 considerando
 considerar
 consistentes
+consolidado
 Construtor
 contador
 contagem
@@ -1412,6 +1413,7 @@ pedir
 pela
 pelos
 Pênalti
+Penaltis
 PENDENTE
 pendentes
 percentual
@@ -1532,6 +1534,7 @@ promessas
 promotionleague
 prontos
 próprios
+prorrogação
 proteção
 protocolo
 protótipo
