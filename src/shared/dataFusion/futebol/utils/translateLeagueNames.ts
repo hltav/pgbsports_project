@@ -26,7 +26,7 @@ export const leagueTranslations: Record<string, LeagueTranslation> = {
   'UEFA Conference League': {
     name: 'UEFA Conference League',
     expectedCountry: 'Mundo',
-    logo: `/badges_leagues/uefa_conference_league.png`,
+    logo: `/badges_leagues/UEFA_Europa_Conference_League_2021.svg`,
   },
   'Copa Libertadores': {
     name: 'Conmebol Libertadores',

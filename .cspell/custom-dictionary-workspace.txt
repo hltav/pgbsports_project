@@ -4,6 +4,7 @@ Ababa
 aberta
 abre
 abriu
+absoluta
 absoluto
 acabou
 aceitar
@@ -318,6 +319,7 @@ Cenário
 centralamericancup
 centralizada
 centro
+certeza
 certificado
 chade
 challengeleague
@@ -1203,6 +1205,7 @@ MELHORADO
 Melhorando
 memória
 MENSAIS
+mentiu
 Mercados
 Mescla
 meses
@@ -1604,6 +1607,7 @@ registros
 Regras
 Regrava
 reino
+rejeita
 rejeitado
 relacionadas
 relacionado
@@ -1769,6 +1773,7 @@ sugeridas
 sugerido
 Sugestão
 suíça
+sujo
 sulmatogrossense
 summerseries
 supercopa
@@ -1939,6 +1944,7 @@ Venceu
 vencida
 Venezuelana
 Verão
+verdade
 Verificamos
 Vermelho
 versão
