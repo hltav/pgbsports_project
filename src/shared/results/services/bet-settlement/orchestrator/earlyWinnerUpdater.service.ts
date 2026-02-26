@@ -31,7 +31,13 @@ export class EarlyWinnerUpdateService {
         where: {
           result: Result.pending,
           market: { contains: 'Resultado Antecipado', mode: 'insensitive' },
-          externalMatch: { is: {} },
+          externalMatch: {
+            is: {
+              status: {
+                notIn: [MatchStatus.SCHEDULED, MatchStatus.NOT_STARTED],
+              },
+            },
+          },
         },
         include: {
           externalMatch: {
