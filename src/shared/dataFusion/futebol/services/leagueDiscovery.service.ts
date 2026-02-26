@@ -11,7 +11,6 @@ import {
 import { CacheService } from './../../../../libs/services/cache/cache.service';
 import { SoccerService } from './../../../../shared/api-sports/api/soccer/services/soccer.service';
 import { LeagueResponseItem } from './../../../../shared/api-sports/api/soccer/schemas/leagues/leagues.schema';
-import { CACHE_TTL } from './../../../../libs/utils/cache.constants';
 import { normalizeCountry } from '../../helpers/normalizeCountryName.helper';
 import { extractCountryFromLeagueName } from '../utils/countryAdjectivesMap';
 import { parseSeason } from './../../../../shared/thesportsdb-api/utils/parseSeason.util';
@@ -77,7 +76,7 @@ export class LeagueDiscoveryService {
 
     if (!filteredApiLeagues.length) return [];
 
-    const tsdbLeagues = await this.tsdbLeaguesService.getAllLeagues();
+    const tsdbLeagues = await this.tsdbLeaguesService.getSoccerLeagues();
     const maps = this.buildTsdbMap(tsdbLeagues);
 
     const discovered = filteredApiLeagues.map((apiLeague) => {

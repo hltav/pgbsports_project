@@ -67,6 +67,8 @@ export class SoccerDiscoveryService {
       season,
     );
 
+    console.log('O que retorna?', context);
+
     // 4. Fusão final com dados traduzidos
     const fused = apiFixtures.map((fixture) => {
       const tsdbMatch = this.findMatch(fixture, context);
@@ -146,34 +148,6 @@ export class SoccerDiscoveryService {
   }
 
   // 🔍 MATCH ENGINE
-  // private findMatch(
-  //   fixture: ApiSportsFixture,
-  //   context: DiscoveryContext,
-  // ): LookupEvent | null {
-  //   const dateKey = new Date(fixture.fixture.date).toISOString().slice(0, 10);
-  //   const events = context.tsdbEventsByDate.get(dateKey) ?? [];
-
-  //   if (!events.length) return null;
-
-  //   const homeOriginal = fixture.teams.home.name;
-  //   const awayOriginal = fixture.teams.away.name;
-  //   const home = normalizeTeamName(homeOriginal);
-  //   const away = normalizeTeamName(awayOriginal);
-
-  //   // Ordem de prioridade: ALIAS > EXACT > CONTAINS > RELAXED
-  //   return (
-  //     events.find(
-  //       (e) =>
-  //         areTeamsEquivalent(e.strHomeTeam, homeOriginal) &&
-  //         areTeamsEquivalent(e.strAwayTeam, awayOriginal),
-  //     ) ??
-  //     events.find((e) => this.isExactMatch(e, home, away)) ??
-  //     events.find((e) => this.isContainsMatch(e, home, away)) ??
-  //     events.find((e) => this.isRelaxedMatch(e, home, away)) ??
-  //     null
-  //   );
-  // }
-
   private findMatch(
     fixture: ApiSportsFixture,
     context: DiscoveryContext,

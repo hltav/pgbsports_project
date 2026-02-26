@@ -66,16 +66,16 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
   60: 4648, // English Southern Premier League South Division → Non League Premier - Southern South
 
   // Ligações regionais específicas
-  5324: 931, // English Southern Premier League Central Division → Non League Premier - Southern Central
-  5325: 932, // English Northern Premier League Division One East → Non League Div One - Northern East
-  5326: 933, // English Northern Premier League Division One Midlands → Non League Div One - Northern Midlands
+  931: 5324, // English Southern Premier League Central Division → Non League Premier - Southern Central
+  932: 5325, // English Northern Premier League Division One East → Non League Div One - Northern East
+  933: 5326, // English Northern Premier League Division One Midlands → Non League Div One - Northern Midlands
   5327: 931, // English Southern Premier League Central Division One → Non League Div One - Southern Central
-  5328: 54, // English Northern Premier League Division One West → Non League Div One - Northern West
+  54: 5328, // English Northern Premier League Division One West → Non League Div One - Northern West
 
   // Ligações inferiores
-  5225: 52, // England Non League Div One Isthmian North → Non League Div One - Isthmian North
-  5226: 57, // England Non League Div One Isthmian South → Non League Div One - Isthmian South East
-  5227: 56, // England Non League Div One Southern SW → Non League Div One - Southern South
+  52: 5225, // England Non League Div One Isthmian North → Non League Div One - Isthmian North
+  57: 5226, // England Non League Div One Isthmian South → Non League Div One - Isthmian South East
+  56: 5227, // England Non League Div One Southern SW → Non League Div One - Southern South
   5228: 933, // England Non League Div One Southern Central → Non League Div One - Southern Central
 
   // ARGENTINA
@@ -101,37 +101,37 @@ export const API1_TO_API2_MAPPING: Record<number, number> = {
   240: 4951,
 
   // MÉXICO
-  4350: 262, // Mexican Primera League → Liga MX
-  4654: 263, // Mexican Liga de Expansión MX → Liga de Expansión MX
+  262: 4350, // Mexican Primera League → Liga MX
+  263: 4654, // Mexican Liga de Expansión MX → Liga de Expansión MX
 
   // EUA/CANADÁ
-  4346: 253, // American Major League Soccer → Major League Soccer
-  4820: 479, // Canadian Premier League → Canadian Premier League
-  4684: 255, // American USL Championship → USL Championship
+  253: 4346, // American Major League Soccer → Major League Soccer
+  479: 4820, // Canadian Premier League → Canadian Premier League
+  255: 4684, // American USL Championship → USL Championship
 
   // JAPÃO
-  4633: 98, // Japanese J1 League → J1 League
-  4824: 99, // Japanese J2 League → J2 League
-  4967: 100, // Japanese J3 League → J3 League
+  98: 4633, // Japanese J1 League → J1 League
+  99: 4824, // Japanese J2 League → J2 League
+  100: 4967, // Japanese J3 League → J3 League
 
   // CORÉIA DO SUL
-  4689: 292, // South Korean K League 1 → K League 1
-  4822: 293, // South Korean K League 2 → K League 2
+  292: 4689, // South Korean K League 1 → K League 1
+  293: 4822, // South Korean K League 2 → K League 2
 
   // COMPETIÇÕES INTERNACIONAIS
-  4429: 1, // FIFA World Cup → World Cup
-  4480: 2, // UEFA Champions League → UEFA Champions League
-  4481: 3, // UEFA Europa League → UEFA Europa League
-  4490: 5, // UEFA Nations League → UEFA Nations League
-  4496: 6, // African Cup of Nations → Africa Cup of Nations
-  4499: 9, // Copa America → Copa America
-  4501: 13, // Copa Libertadores → CONMEBOL Libertadores
-  4502: 4, // UEFA European Championships → Euro Championship
-  4503: 15, // FIFA Club World Cup → FIFA Club World Cup
-  4512: 531, // UEFA Super Cup → UEFA Super Cup
-  4565: 8, // FIFA Womens World Cup → World Cup - Women
-  4724: 11, // Copa Sudamericana → CONMEBOL Sudamericana
-  5071: 848, // UEFA Conference League → UEFA Europa Conference League
+  1: 4429, // FIFA World Cup → World Cup
+  2: 4480, // UEFA Champions League → UEFA Champions League
+  3: 4481, // UEFA Europa League → UEFA Europa League
+  4: 4502, // UEFA European Championships → Euro Championship
+  5: 4490, // UEFA Nations League → UEFA Nations League
+  6: 4496, // African Cup of Nations → Africa Cup of Nations
+  8: 4565, // FIFA Womens World Cup → World Cup - Women
+  9: 4499, // Copa America → Copa America
+  11: 4724, // Copa Sudamericana → CONMEBOL Sudamericana
+  13: 4501, // Copa Libertadores → CONMEBOL Libertadores
+  15: 4503, // FIFA Club World Cup → FIFA Club World Cup
+  531: 4512, // UEFA Super Cup → UEFA Super Cup
+  848: 5071, // UEFA Conference League → UEFA Europa Conference League
 
   // URUGUAI
   268: 4432,

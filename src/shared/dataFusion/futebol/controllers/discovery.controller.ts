@@ -37,10 +37,6 @@ export class SoccerDiscoveryController {
     private readonly leagueOrgService: LeagueOrganizationService,
   ) {}
 
-  // ========================================
-  // ENDPOINTS EXISTENTES (não modificados)
-  // ========================================
-
   @Get('next-fixtures')
   @HttpCode(HttpStatus.OK)
   async getNextFixtures(
@@ -71,30 +67,29 @@ export class SoccerDiscoveryController {
     return this.leagueDiscoveryService.discoverLeaguesByQuery(season);
   }
 
-  // ========================================
-  // 🆕 NOVOS ENDPOINTS (com validação Zod)
-  // ========================================
-
-  /**
-   * Ligas organizadas por país
-   * Validação automática com Zod
-   */
+  //Ligas organizadas por país
+  // Validação automática com Zod
   @Get('leagues/organized')
-  @HttpCode(HttpStatus.OK)
   async getOrganizedLeagues(
     @Query(new ZodValidationPipe(GetOrganizedLeaguesDtoSchema))
     dto: GetOrganizedLeaguesDto,
+    @Query('scope') scope?: 'current' | 'all',
   ): Promise<OrganizedLeaguesResponse> {
+    const season =
+      scope === 'current'
+        ? 'current'
+        : scope === 'all'
+          ? undefined
+          : parseSeason(dto.season);
+
     return this.leagueOrgService.getOrganizedLeagues({
-      season: parseSeason(dto.season),
+      season,
       forceRefresh: dto.refresh || false,
     });
   }
 
-  /**
-   * Pré-aquece o cache (admin)
-   * Executa em background
-   */
+  // Pré-aquece o cache (admin)
+  // Executa em background
   @Post('cache/warmup')
   @HttpCode(HttpStatus.ACCEPTED)
   async warmupCache() {
@@ -105,10 +100,8 @@ export class SoccerDiscoveryController {
     return { message: 'Cache warmup started' };
   }
 
-  /**
-   * Invalida cache de ligas organizadas (admin)
-   * Validação automática com Zod
-   */
+  // Invalida cache de ligas organizadas (admin)
+  // Validação automática com Zod
   @Delete('cache/organized')
   @HttpCode(HttpStatus.NO_CONTENT)
   async invalidateOrganizedCache(

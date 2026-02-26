@@ -27,9 +27,7 @@ export class LeagueOrganizationService {
     private readonly leagueTranslation: LeagueTranslationService,
   ) {}
 
-  /**
-   * 🎯 MÉTODO PRINCIPAL
-   */
+  // 🎯 MÉTODO PRINCIPAL
   async getOrganizedLeagues(params?: {
     season?: number | 'current';
     forceRefresh?: boolean;
@@ -60,9 +58,7 @@ export class LeagueOrganizationService {
     return organized;
   }
 
-  /**
-   * Busca ligas
-   */
+  // Busca ligas
   private async fetchLeagues(
     season?: number | 'current',
   ): Promise<DiscoverLeague[]> {
@@ -72,11 +68,9 @@ export class LeagueOrganizationService {
     return this.leagueDiscoveryService.discoverLeagues();
   }
 
-  /**
-   * ✅ Aplica:
-   * - country canonical
-   * - tradução robusta do nome da liga
-   */
+  // Aplica:
+  // country canonical
+  // tradução robusta do nome da liga
   private applyTransforms(leagues: DiscoverLeague[]): DiscoverLeague[] {
     return leagues.map((league) => {
       const originalName = league.name;
@@ -104,9 +98,7 @@ export class LeagueOrganizationService {
     });
   }
 
-  /**
-   * Organização pura
-   */
+  // Organização pura
   private organizeLeagues(leagues: DiscoverLeague[]): OrganizedLeaguesResponse {
     const groupedByCountry = this.groupByCountry(leagues);
 
@@ -176,9 +168,7 @@ export class LeagueOrganizationService {
     );
   }
 
-  /**
-   * Cache versionado
-   */
+  // Cache versionado
   private generateCacheKey(season?: number | 'current'): string {
     const v = 'v2';
 
@@ -191,9 +181,7 @@ export class LeagueOrganizationService {
     return `discovery:leagues:organized:${v}:all`;
   }
 
-  /**
-   * Warmup
-   */
+  // Warmup
   async warmupCache() {
     this.logger.log('🔥 Iniciando warmup do cache de ligas organizadas...');
 

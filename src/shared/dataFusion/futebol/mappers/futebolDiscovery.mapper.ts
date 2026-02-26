@@ -54,18 +54,6 @@ export class SoccerDiscoveryMapper {
         (tsdbMatch?.strTimestamp ? `${tsdbMatch.strTimestamp}Z` : ''),
       status: apiFixture?.fixture.status.short ?? tsdbMatch?.strStatus ?? 'UNK',
 
-      // teams: {
-      //   home: {
-      //     name:
-      //       apiFixture?.teams.home.name ?? tsdbMatch?.strHomeTeam ?? 'Unknown',
-      //     logo: apiFixture?.teams.home.logo ?? undefined,
-      //   },
-      //   away: {
-      //     name:
-      //       apiFixture?.teams.away.name ?? tsdbMatch?.strAwayTeam ?? 'Unknown',
-      //     logo: apiFixture?.teams.away.logo ?? undefined,
-      //   },
-      // },
       teams: {
         home: {
           name: resolveCanonicalTeamName(

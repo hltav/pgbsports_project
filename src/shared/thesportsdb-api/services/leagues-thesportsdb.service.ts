@@ -38,10 +38,6 @@ export class TheSportsDbLeaguesService {
       return sport === 'soccer' || sport === 'football';
     });
 
-    console.log(
-      `⚽ Filtered ${soccerLeagues.length} soccer leagues from ${parsed.all.length} total`,
-    );
-
     return soccerLeagues;
   }
 
