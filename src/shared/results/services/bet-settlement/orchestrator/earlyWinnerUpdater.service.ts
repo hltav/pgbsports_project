@@ -243,7 +243,9 @@ export class EarlyWinnerUpdateService {
         canonicalStatus === MatchStatus.HALF_TIME ||
         canonicalStatus === MatchStatus.SECOND_HALF;
 
-      const isNotStarted = canonicalStatus === MatchStatus.NOT_STARTED;
+      const isNotStarted =
+        canonicalStatus === MatchStatus.NOT_STARTED ||
+        canonicalStatus === MatchStatus.SCHEDULED;
 
       if (!isOngoing && !isNotStarted) {
         this.logger.debug(
@@ -261,47 +263,6 @@ export class EarlyWinnerUpdateService {
         `📊 Event ${tsdbEventId} status: ${canonicalStatus} | ${homeTeam} ${homeScore}-${awayScore} ${awayTeam}`,
       );
 
-      // await Promise.allSettled(
-      //   eventBets.map(async (bet) => {
-      //     const eventData: EventLiveScoreDTO = {
-      //       ...bet,
-      //       intHomeScore: homeScore.toString(),
-      //       intAwayScore: awayScore.toString(),
-      //       strStatus: canonicalStatus,
-      //       homeScoreHT: 0,
-      //       awayScoreHT: 0,
-      //       homeScoreFT: homeScore,
-      //       awayScoreFT: awayScore,
-      //       optionMarket: bet.selection,
-      //     } as EventLiveScoreDTO;
-
-      //     const validation =
-      //       this.settlementService.validateEventData(eventData);
-
-      //     if (!validation.isValid) {
-      //       this.logger.debug(
-      //         `Bet ${bet.id} validation failed: ${validation.reason}`,
-      //       );
-      //       return;
-      //     }
-
-      //     const analysis = analyzeVencedorAntecipado(
-      //       bet.selection,
-      //       homeScore,
-      //       awayScore,
-      //       canonicalStatus,
-      //     );
-
-      //     this.logger.debug(
-      //       `Analyzing bet ${bet.id}: market="${bet.market}", selection="${bet.selection}", ${homeTeam} ${homeScore}-${awayScore} ${awayTeam}, shouldUpdate=${analysis.shouldUpdate}`,
-      //     );
-
-      //     if (!analysis.shouldUpdate) return;
-
-      //     await this.settlementService.settleBet(bet, eventData, analysis);
-      //     processed++;
-      //   }),
-      // );
       const results = await Promise.allSettled(
         eventBets.map(async (bet) => {
           const eventData: EventLiveScoreDTO = {
@@ -309,8 +270,6 @@ export class EarlyWinnerUpdateService {
             intHomeScore: homeScore.toString(),
             intAwayScore: awayScore.toString(),
             strStatus: canonicalStatus,
-            // Se você não tem HT real aqui, prefira null (se o DTO permitir).
-            // Se NÃO permitir, mantenha 0, mas saiba que é “placeholder”.
             homeScoreHT: 0,
             awayScoreHT: 0,
             homeScoreFT: homeScore,
@@ -348,7 +307,6 @@ export class EarlyWinnerUpdateService {
             analysis,
           );
 
-          // settleBet retorna boolean no seu service — use isso pra contar com precisão
           return settled ? 1 : 0;
         }),
       );
