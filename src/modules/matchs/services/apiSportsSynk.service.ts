@@ -3,6 +3,8 @@ import { UpdateMatchDTO } from '../dto';
 import { SoccerService } from './../../../shared/api-sports/api/soccer/services/soccer.service';
 import { UpdateMatchService } from './updateMatchs.service';
 import { ApiSportsFixtureResponseItem } from '../dto/matchDetails.dto';
+import { mapStrStatusToMatchStatus } from './../../../shared/thesportsdb-api/helpers/mapStatusToEvent.helper';
+import { MatchStatus } from '@prisma/client';
 
 @Injectable()
 export class ApiSportsSyncService {
@@ -36,7 +38,13 @@ export class ApiSportsSyncService {
       const fixture = fixtureResponse.response[0];
 
       // 2️⃣ Verifica se está finalizada
-      const isFinished = fixture.fixture.status.short === 'FT';
+      const canonicalStatus = mapStrStatusToMatchStatus(
+        fixture.fixture.status.short,
+      );
+
+      // const isFinished = fixture.fixture.status.short === 'FT';
+
+      const isFinished = canonicalStatus === MatchStatus.FINISHED;
 
       this.logger.debug(
         `Fixture raw status: short=${fixture.fixture.status.short}, long=${fixture.fixture.status.long}`,
