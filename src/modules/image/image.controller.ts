@@ -12,12 +12,13 @@ import {
 import { Request } from './../../libs/common/interface/request.interface';
 import { ClientDataService } from '../client-data/client-data.service';
 import { ImageService } from './image.service';
-import { JwtAuthGuard } from './../../libs/common/guards/jwt-auth.guard';
 import { FastifyRequest } from 'fastify';
 import { JwtPayload } from '../auth/dto/jwt-payload.dto';
+import { JwtAuthGuard, RolesGuard } from './../../libs';
 
 type AuthenticatedRequest = FastifyRequest & { user: JwtPayload };
 @Controller('client-image')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ClientImageController {
   constructor(
     private readonly imageService: ImageService,

@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request } from './../../../../libs/common/interface/request.interface';
-import { JwtAuthGuard, Roles, RolesGuard } from './../../../../libs';
+import { JwtAuthGuard, RolesGuard } from './../../../../libs';
 import { ZodValidationPipe } from 'src/libs/utils/zodValidation.pipe';
 import { FavoritesLeaguesService } from '../services/favoritesLeagues.service';
 import {
@@ -26,7 +26,6 @@ import { UserFavoriteLeague } from '@prisma/client';
 
 @Controller('leagues/favorites')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN', 'USER', 'TEST_USER')
 export class FavoritesLeaguesController {
   constructor(private readonly favoritesService: FavoritesLeaguesService) {}
 

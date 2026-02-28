@@ -1,7 +1,16 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { FutebolFusionService } from '../services/futebolFusion.service';
+import { JwtAuthGuard, RolesGuard } from './../../../../libs';
 
 @Controller('soccer/fusion')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class FutebolFusionController {
   constructor(private readonly fusionService: FutebolFusionService) {}
 

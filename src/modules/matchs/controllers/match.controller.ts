@@ -10,12 +10,15 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { MatchStatus } from '@prisma/client';
 import { CreateMatchDTO, UpdateMatchDTO } from '../dto';
 import { MatchService } from '../match.service';
+import { JwtAuthGuard, RolesGuard } from './../../../libs';
 
 @Controller('matches')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class MatchController {
   constructor(private readonly matchService: MatchService) {}
 

@@ -9,11 +9,10 @@ import {
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import axios, { AxiosResponse } from 'axios';
-import { JwtAuthGuard, Roles, RolesGuard } from '../../../../libs';
+import { JwtAuthGuard, RolesGuard } from '../../../../libs';
 
 @Controller('proxy')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER')
 export class ImageProxyController {
   @Get('league-logo/:encodedUrl')
   async getLeagueLogo(

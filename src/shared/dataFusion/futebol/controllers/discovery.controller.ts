@@ -11,13 +11,14 @@ import {
   Post,
   Delete,
   UsePipes,
+  UseGuards,
 } from '@nestjs/common';
 import { DiscoverFixture } from '../schemas/discoveryFixture.schema';
 import { DiscoverLeague } from '../schemas/discoveryLeague.schema';
 import { LeagueDiscoveryService } from '../services/leagueDiscovery.service';
 import { SoccerDiscoveryService } from '../services/soccerDiscovery.service';
 import { LeagueOrganizationService } from '../services/leagueOrganization.service';
-import { ZodValidationPipe } from 'src/libs/utils/zodValidation.pipe';
+import { ZodValidationPipe } from './../../../../libs/utils/zodValidation.pipe';
 import {
   GetOrganizedLeaguesDtoSchema,
   GetOrganizedLeaguesDto,
@@ -26,8 +27,10 @@ import {
   InvalidateCacheDto,
 } from '../schemas/organizationLeagues.schema';
 import { OrganizedLeaguesResponse } from '../interfaces/organized.interface';
+import { JwtAuthGuard, RolesGuard } from './../../../../libs';
 
 @Controller('soccer/discovery')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class SoccerDiscoveryController {
   private readonly logger = new Logger(SoccerDiscoveryController.name);
 

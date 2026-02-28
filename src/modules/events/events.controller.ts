@@ -17,11 +17,11 @@ import { EventsService } from './events.service';
 import { JwtAuthGuard, Roles, RolesGuard } from './../../libs/common';
 import { CreateBetDTO, UpdateBetDTO } from './dto/create-event.dto';
 import { AuthenticatedRequest } from '../auth/dto/auth.schema';
-import { Bets, $Enums } from '@prisma/client';
+import { Bets, $Enums, Role } from '@prisma/client';
 
 @Controller('bets')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER', 'TEST_USER')
+@Roles(Role.USER, Role.TEST_USER)
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 

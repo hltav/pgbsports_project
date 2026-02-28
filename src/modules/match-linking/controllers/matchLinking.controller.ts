@@ -5,11 +5,11 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard } from './../../../libs';
+import { JwtAuthGuard, RolesGuard } from './../../../libs';
 import { MatchLinkingService } from '../services/matchLinking.service';
 
 @Controller('match-linking')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class MatchLinkingController {
   constructor(private readonly matchLinkingService: MatchLinkingService) {}
 

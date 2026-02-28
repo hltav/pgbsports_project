@@ -4,7 +4,7 @@ import {
   GetStandingsDto,
 } from '../schemas/getStandings.dto';
 import { GetTeamsSchema, GetTeamsDto } from '../schemas/getTeams.dto';
-import { JwtAuthGuard, Roles, RolesGuard } from '../../../../../libs';
+import { JwtAuthGuard, RolesGuard } from '../../../../../libs';
 import {
   GetFixturesSchema,
   GetFixturesDto,
@@ -26,7 +26,6 @@ export interface SimplifiedLeagueResponse {
 
 @Controller('soccer')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('USER')
 export class SoccerController {
   constructor(private readonly soccerService: SoccerService) {}
 

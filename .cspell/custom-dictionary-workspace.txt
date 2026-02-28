@@ -324,6 +324,7 @@ certificado
 chade
 challengeleague
 challengerproleague
+Chamada
 chamadas
 chamador
 chamam
@@ -433,6 +434,7 @@ Continentes
 continuamente
 contrato
 controlada
+controlado
 controle
 Converte
 convertemos
@@ -469,6 +471,7 @@ corrigida
 CORRIGIDOS
 COSAFA
 costuma
+cota
 cotação
 coupedefrance
 coupedelaligue
@@ -1387,6 +1390,7 @@ paraense
 paraguai
 Paraguaia
 paraibano
+paralelismo
 paralelo
 paranaense
 parar

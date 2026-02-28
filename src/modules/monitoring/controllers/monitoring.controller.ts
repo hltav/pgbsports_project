@@ -3,10 +3,11 @@ import { MetricsService } from '../services/metrics.service';
 import { Roles } from './../../../libs/common/decorator/roles.decorator';
 import { PerformanceService } from '../services/performance.service';
 import { JwtAuthGuard, RolesGuard } from './../../../libs';
+import { Role } from '@prisma/client';
 
 @Controller('monitoring')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN')
+@Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.SUPPORT)
 export class MonitoringController {
   constructor(
     private metricsService: MetricsService,

@@ -5,11 +5,14 @@ import {
   Res,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 import axios, { AxiosResponse } from 'axios';
+import { JwtAuthGuard, RolesGuard } from './../../../libs';
 
 @Controller('proxy/badges')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class TSDBImageProxyController {
   @Get('thesportsdb/:encodedUrl')
   async getTheSportsDbImage(

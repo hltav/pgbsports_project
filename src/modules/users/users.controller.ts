@@ -19,12 +19,12 @@ import { UsersServiceProxy } from './proxies/user.cache.proxy.service';
 import { Role } from '@prisma/client';
 
 @Controller('users')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersServiceProxy) {}
 
   // ❌ USER NÃO pode listar todos
   @Get('')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async index(@Req() req: Request): Promise<Partial<GetUserDTO>[]> {
     const currentUser = req.user;
@@ -37,7 +37,6 @@ export class UsersController {
 
   // ✅ USER pode buscar a si mesmo (regra contextual no service)
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.USER)
   async findUserById(
     @Param('id', ParseIntPipe) id: number,
@@ -53,7 +52,6 @@ export class UsersController {
 
   // ❌ USER NÃO pode buscar por email
   @Get('email')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async findOneByEmail(
     @Query('email') email: string,
@@ -69,7 +67,6 @@ export class UsersController {
 
   // ✅ USER pode atualizar a si mesmo
   @Put(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.USER)
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -86,7 +83,6 @@ export class UsersController {
 
   // ⚙️ Opcional: permitir USER deletar a própria conta
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   async delete(
     @Param('id', ParseIntPipe) id: number,

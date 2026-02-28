@@ -1,7 +1,11 @@
-import { Controller, Post, Get, Query, Body } from '@nestjs/common';
+import { Controller, Post, Get, Query, Body, UseGuards } from '@nestjs/common';
 import { CacheService } from '../cache.service';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard, RolesGuard, Roles } from './../../../../libs/common';
 
 @Controller('cache-test')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.SUPER_ADMIN, Role.ADMIN, Role.SUPPORT)
 export class CacheTestController {
   constructor(private readonly cacheService: CacheService) {}
 

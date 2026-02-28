@@ -11,11 +11,9 @@ import { TheSportsDbSportsService } from '../services/sports-thesportsdb.service
 import { TheSportsDbLeaguesService } from '../services/leagues-thesportsdb.service';
 import { TheSportsDbEventsService } from '../services/events-thesportsdb.service';
 import { JwtAuthGuard, RolesGuard } from './../../../libs/common/guards';
-import { Roles } from './../../../libs/common/decorator';
 
 @Controller('sportsdb')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN', 'USER')
 export class TheSportsDbController {
   private readonly logger = new Logger(TheSportsDbController.name);
   constructor(

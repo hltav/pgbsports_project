@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import {
   HealthCheck,
   HealthCheckService,
@@ -8,8 +8,12 @@ import {
 } from '@nestjs/terminus';
 import { PrismaService } from './../../libs/database/prisma/prisma.service';
 import { Public } from './../../libs/common/decorator/public.decorator';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard, RolesGuard, Roles } from './../../libs';
 
 @Controller('health')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.SUPER_ADMIN, Role.ADMIN)
 export class HealthController {
   constructor(
     private health: HealthCheckService,
