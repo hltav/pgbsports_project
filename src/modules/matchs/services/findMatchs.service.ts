@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { MatchStatus, Prisma } from '@prisma/client';
-import { PrismaService } from './../../../libs/database';
+import { PrismaService } from '../../../libs/database';
 import { GetMatchDTO } from '../dto';
 
 @Injectable()

@@ -8,9 +8,10 @@ import { GetBetService } from './services/getBet.service';
 import { UpdateBetService } from './services/updateBet.service';
 import { DeleteBetService } from './services/deleteBet.service';
 import { MatchsModule } from '../matchs/matchs.module';
+import { QueueModule } from './../../libs/services/queue/queue.module';
 
 @Module({
-  imports: [PrismaModule, BankrollModule, MatchsModule],
+  imports: [PrismaModule, BankrollModule, MatchsModule, QueueModule],
   providers: [
     EventsService,
     PrismaService,

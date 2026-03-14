@@ -16,6 +16,7 @@ lerna-debug.log*
 .DS_Store
 
 # Tests
+/cert/
 /scripts/
 /coverage
 /.nyc_output
@@ -45,10 +46,11 @@ src/scripts/futebolTestes/
 # dotenv environment variable files
 .env
 .env.development.local
+.env.development
 .env.test.local
 .env.production.local
 .env.local
-.env.development
+
 
 # temp directory
 .temp

@@ -14,8 +14,18 @@ export class ResultsController {
     return await this.resultScheduler.triggerManualUpdate();
   }
 
+  @Post('forceSyncDirect')
+  async forceSyncAllUpdate() {
+    return await this.resultScheduler.triggerManualUpdateDirect();
+  }
+
   @Post('force-api-sync') async forceApiSportsSync() {
     await this.resultScheduler.triggerApiSportsUpdate();
+    return { message: 'API-Sports sync triggered', timestamp: new Date() };
+  }
+
+  @Post('forceSyncApiSports') async forceApiSportsUpdate() {
+    await this.resultScheduler.triggerApiSportsUpdateSync();
     return { message: 'API-Sports sync triggered', timestamp: new Date() };
   }
 }

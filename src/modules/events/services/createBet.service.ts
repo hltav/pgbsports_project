@@ -3,7 +3,7 @@ import { Bets, Prisma } from '@prisma/client';
 import { PrismaService, Decimal } from './../../../libs/database';
 import { UpdateBankrollService } from './../../../modules/bankroll/core/services/update-bankroll.service';
 import { CreateBetDTO } from '../dto/create-event.dto';
-import { CreateMatchService } from './../../..//modules/matchs/services/createMatchs.service';
+import { CreateMatchService } from '../../matchs/services/createMatchs.service';
 
 @Injectable()
 export class CreateBetService {

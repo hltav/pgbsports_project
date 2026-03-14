@@ -1,8 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PrismaService, Decimal } from '../../../libs/database';
 import { BankrollMonthlySnapshotService } from '../snapshots/services/bankrollMonthlySnapshot.service';
 import { CreateMonthlySnapshotDTO } from '../snapshots/dto/monthlySnapshot.dto';
+import { QueueService } from './../../../libs/services/queue/queue.service';
 
 type PreviousMonthlySnapshotData = {
   balance: Decimal;
@@ -31,56 +32,31 @@ export class BankrollMonthlySnapshotJob {
   constructor(
     private readonly prisma: PrismaService,
     private readonly snapshotService: BankrollMonthlySnapshotService,
+    @Inject(forwardRef(() => QueueService))
+    private readonly queueService: QueueService,
   ) {}
 
-  /**
-   * Executa no primeiro dia de cada mês às 00:01
-   * Gera snapshot do mês anterior
-   */
+  // Executa no primeiro dia de cada mês às 00:01
+  // Gera snapshot do mês anterior
   @Cron('1 0 1 * *', {
     name: 'monthly-bankroll-snapshot',
     timeZone: 'America/Sao_Paulo',
   })
   async handleMonthlySnapshot(): Promise<void> {
-    const startTime = Date.now();
-    this.logger.log('📅 Iniciando geração de snapshots mensais (batch)...');
-
     const now = new Date();
     const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
     const year = lastMonth.getFullYear();
     const month = lastMonth.getMonth() + 1;
-
-    // Calcular range de semanas do mês
-    const { firstWeek, lastWeek } = this.getMonthWeekRange(year, month);
-
-    this.logger.log(
-      `📊 Processando mês ${month}/${year} (semanas ${firstWeek}-${lastWeek})`,
-    );
-
-    try {
-      const stats = await this.processMonthlySnapshots(
-        year,
-        month,
-        firstWeek,
-        lastWeek,
-      );
-
-      const duration = Date.now() - startTime;
-      this.logger.log(
-        `✅ Snapshot mensal concluído em ${duration}ms:\n` +
-          `   - Total processado: ${stats.totalProcessed}\n` +
-          `   - Criados: ${stats.totalCreated}\n` +
-          `   - Já existentes: ${stats.totalSkipped}\n` +
-          `   - Sem dados: ${stats.totalNoData}\n` +
-          `   - Erros: ${stats.totalErrors}`,
-      );
-    } catch (error) {
-      this.logger.error('💥 Erro fatal no job mensal:', error);
-      throw error;
-    }
+    await this.queueService.enqueueMonthlySnapshot(year, month);
+    this.logger.log(`📬 monthly-snapshot ${month}/${year} enqueued`);
   }
 
-  private async processMonthlySnapshots(
+  async processMonthlySnapshot(year: number, month: number): Promise<void> {
+    const { firstWeek, lastWeek } = this.getMonthWeekRange(year, month);
+    await this.processMonthlySnapshots(year, month, firstWeek, lastWeek);
+  }
+
+  async processMonthlySnapshots(
     year: number,
     month: number,
     firstWeek: number,

@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from './../../../libs/database';
 import { Bets } from '@prisma/client';
-import { SoccerService } from '../../../shared/api-sports/api/soccer/services/soccer.service';
-import { CreateMatchService } from './../../../modules/matchs/services/createMatchs.service';
+import { SoccerService } from './../../../shared/api-sports/api/soccer/services/soccer.service';
+import { CreateMatchService } from '../../matchs/services/createMatchs.service';
 import { mapStrStatusToMatchStatus } from './../../../shared/thesportsdb-api/helpers/mapStatusToEvent.helper';
+import { QueueService } from './../../../libs/services/queue/queue.service';
 
 interface MatchCriteria {
   homeTeam: string;
@@ -20,55 +21,49 @@ export class MatchLinkingService {
     private readonly prisma: PrismaService,
     private readonly soccerService: SoccerService,
     private readonly createMatchService: CreateMatchService,
+    @Inject(forwardRef(() => QueueService))
+    private readonly queueService: QueueService,
   ) {}
 
-  /**
-   * Processa apostas sem ExternalMatch vinculado
-   * Busca na API-Sports e cria o match se encontrar correspondência
-   */
+  // Processa apostas sem ExternalMatch vinculado
+  // Busca na API-Sports e cria o match se encontrar correspondência
   async processPendingBets(limit = 50): Promise<void> {
-    this.logger.log(
-      `🔍 Iniciando processamento de apostas pendentes (limite: ${limit})`,
-    );
+    this.logger.log(`🔍 Buscando apostas pendentes (limite: ${limit})`);
 
-    // Busca apostas sem externalMatchId e com dados mínimos necessários
     const pendingBets = await this.prisma.bets.findMany({
       where: {
         homeTeam: { not: null },
         awayTeam: { not: null },
         eventDate: { not: null },
-        sport: 'Soccer', // Por enquanto só futebol
+        sport: 'Soccer',
       },
       take: limit,
       orderBy: { createdAt: 'desc' },
+      select: { id: true }, // ← só precisa do ID agora
     });
 
     if (pendingBets.length === 0) {
-      this.logger.log('✅ Nenhuma aposta pendente para processar');
+      this.logger.log('✅ Nenhuma aposta pendente');
       return;
     }
 
-    this.logger.log(
-      `📋 ${pendingBets.length} apostas encontradas para processar`,
-    );
+    const betIds = pendingBets.map((b) => b.id);
+    const { queued } = await this.queueService.enqueueLinkBetBatch(betIds);
 
-    for (const bet of pendingBets) {
-      try {
-        await this.linkBetToMatch(bet);
-      } catch (error) {
-        this.logger.error(
-          `❌ Erro ao processar bet ${bet.id}: ${error}`,
-          error,
-        );
-      }
-    }
-
-    this.logger.log('✅ Processamento concluído');
+    this.logger.log(`📬 ${queued} link-bet jobs enqueued`);
   }
 
-  /**
-   * Processa uma aposta específica
-   */
+  // Chamada pelo worker
+  async linkBetToMatchById(betId: number): Promise<void> {
+    const bet = await this.prisma.bets.findUnique({ where: { id: betId } });
+    if (!bet) {
+      this.logger.warn(`Bet ${betId} not found`);
+      return;
+    }
+    return this.linkBetToMatch(bet); // ← método já existente, sem mudança
+  }
+
+  // Processa uma aposta específica
   async linkBetToMatch(bet: Bets): Promise<void> {
     if (!bet.homeTeam || !bet.awayTeam || !bet.eventDate) {
       this.logger.warn(`⚠️  Bet ${bet.id} sem dados suficientes para matching`);
@@ -139,9 +134,7 @@ export class MatchLinkingService {
     this.logger.log(`✅ Bet ${bet.id} vinculada ao novo match ${newMatch.id}`);
   }
 
-  /**
-   * Busca match existente no banco baseado nos critérios
-   */
+  // Busca match existente no banco baseado nos critérios
   private async findExistingMatch(criteria: MatchCriteria) {
     const startDate = new Date(criteria.eventDate);
     startDate.setHours(0, 0, 0, 0);
@@ -162,9 +155,7 @@ export class MatchLinkingService {
     });
   }
 
-  /**
-   * Busca match na API-Sports usando critérios de matching
-   */
+  // Busca match na API-Sports usando critérios de matching
   private async searchApiSportsMatch(criteria: MatchCriteria) {
     const dateStr = criteria.eventDate.toISOString().split('T')[0]; // YYYY-MM-DD
 
@@ -200,9 +191,7 @@ export class MatchLinkingService {
     }
   }
 
-  /**
-   * Matching fuzzy simples - pode ser melhorado com libs como fuzzball
-   */
+  // Matching fuzzy simples - pode ser melhorado com libs como fuzzball
   private fuzzyMatch(str1: string, str2: string): boolean {
     const normalize = (s: string) =>
       s
@@ -237,9 +226,7 @@ export class MatchLinkingService {
     return str1.slice(0, i);
   }
 
-  /**
-   * Vincula bet ao match
-   */
+  // Vincula bet ao match
   private async linkBet(betId: number, matchId: number): Promise<void> {
     await this.prisma.bets.update({
       where: { id: betId },

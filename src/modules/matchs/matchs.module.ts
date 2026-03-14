@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { PrismaModule, PrismaService } from './../../libs/database/prisma';
+import { forwardRef, Module } from '@nestjs/common';
+import { PrismaModule, PrismaService } from '../../libs/database/prisma';
 import { MatchController } from './controllers/match.controller';
 import { MatchService } from './match.service';
 import { SyncMatchSService } from './services/syncMatchs.service';
@@ -9,11 +9,12 @@ import { DeleteMatchService } from './services/deleteMatchs.service';
 import { FindMatchService } from './services/findMatchs.service';
 import { UpdateMatchService } from './services/updateMatchs.service';
 import { ApiSportsSyncService } from './services/apiSportsSynk.service';
-import { SoccerModule } from './../../shared/api-sports/api/soccer/soccer.module';
+import { SoccerModule } from '../../shared/api-sports/api/soccer/soccer.module';
 import { SyncMatchDetailsService } from './services/syncMatchDetails.service';
+import { QueueModule } from '../../libs/services/queue/queue.module';
 
 @Module({
-  imports: [PrismaModule, SoccerModule],
+  imports: [PrismaModule, SoccerModule, forwardRef(() => QueueModule)],
   controllers: [MatchController],
   providers: [
     PrismaService,

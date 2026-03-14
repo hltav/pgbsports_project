@@ -9,7 +9,7 @@ import { TheSportsDbModule } from '../thesportsdb-api/theSportsDb.module';
 import { BetSettlementService } from './services/betSettlement.service';
 import { BetSettlementOrchestratorService } from './services/betSettlementOrchestrator.service';
 import { EventDataResolverService } from './services/eventDataResolver.service';
-import { MatchsModule } from 'src/modules/matchs/matchs.module';
+import { MatchsModule } from './../../modules/matchs/matchs.module';
 import { EarlyWinnerSchedulerService } from './services/earlyWinnerScheduler.service';
 import { EarlyWinnerUpdateService } from './services/bet-settlement/orchestrator/earlyWinnerUpdater.service';
 import { CancelledHandlerService } from './services/bet-settlement/orchestrator/cancelledHandler.service';
@@ -22,6 +22,8 @@ import { EarlyWinnerEventsAnalyzerService } from './services/bet-settlement/orch
 import { CalculateARService } from './services/bet-settlement/settlement/calculate.service';
 import { ValidateEventService } from './services/bet-settlement/settlement/validateEvent.service';
 import { CanFinalizeBetService } from './services/bet-settlement/settlement/canFinalize.service';
+import { ResultsFrequentWorker } from './services/workers/resultsFrequent.worker';
+import { QueueModule } from './../../libs/services/queue/queue.module';
 
 @Global()
 @Module({
@@ -33,6 +35,7 @@ import { CanFinalizeBetService } from './services/bet-settlement/settlement/canF
     TheSportsDbModule,
     EventsModule,
     MatchsModule,
+    QueueModule,
   ],
   controllers: [ResultsController],
   providers: [
@@ -54,6 +57,7 @@ import { CanFinalizeBetService } from './services/bet-settlement/settlement/canF
     CalculateARService,
     ValidateEventService,
     CanFinalizeBetService,
+    ResultsFrequentWorker,
   ],
   exports: [
     BetSettlementOrchestratorService,

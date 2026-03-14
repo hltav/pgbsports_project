@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { BankrollService } from './bankroll.service';
 import { PrismaModule, PrismaService } from './../../libs/database/prisma';
 import { BankrollController } from './bankroll.controller';
@@ -19,6 +19,7 @@ import { BankrollGoalsModule } from './goal/bankrollGoal.module';
 import { BankrollQueryFiltersModule } from './query_filters/bankrollQueryFilters.module';
 import { BankrollPaginationModule } from './pagination/bankrollPagination.module';
 import { JobsBankrollModule } from './jobs/jobsBankroll.module';
+import { QueueModule } from './../../libs/services/queue/queue.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { JobsBankrollModule } from './jobs/jobsBankroll.module';
     PrismaModule,
     BankrollPaginationModule,
     JobsBankrollModule,
+    forwardRef(() => QueueModule),
   ],
 
   providers: [

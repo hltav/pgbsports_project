@@ -1,5 +1,5 @@
 import { Injectable, Logger, ConflictException } from '@nestjs/common';
-import { PrismaService } from './../../../libs/database';
+import { PrismaService } from '../../../libs/database';
 import { CreateMatchDTO, GetMatchDTO } from '../dto';
 import { MatchStatus } from '@prisma/client';
 

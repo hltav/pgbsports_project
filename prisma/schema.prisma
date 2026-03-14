@@ -325,20 +325,17 @@ model BankrollGoal {
 model HourlySnapshot {
   id              Int      @id @default(autoincrement())
   bankrollId      Int
-  // “Bucket” da hora (início da hora)
   bucketStart     DateTime
-  // Métricas
   balance         Decimal  @db.Decimal(15, 2)
   unidValue       Decimal  @db.Decimal(15, 2)
   hourlyProfit    Decimal  @db.Decimal(15, 2)
   hourlyROI       Decimal  @db.Decimal(10, 4)
   unitsChange     Decimal  @db.Decimal(10, 2)
-  // Drawdown (naquela hora)
+  cumulativeUnits Decimal? @db.Decimal(12, 4)
   peakBalance     Decimal  @db.Decimal(15, 2)
   maxDrawdown     Decimal  @db.Decimal(15, 2)
   hourlyDrawdown  Decimal  @db.Decimal(15, 2)
   drawdownPercent Decimal  @db.Decimal(5, 2)
-  // Apostas (naquela hora)
   betsPlaced      Int      @default(0)
   betsWon         Int      @default(0)
   betsLost        Int      @default(0)
@@ -358,59 +355,50 @@ model DailySnapshot {
   year            Int
   month           Int
   day             Int
-  // Métricas do dia
   balance         Decimal  @db.Decimal(15, 2)
   unidValue       Decimal  @db.Decimal(15, 2)
   dailyProfit     Decimal  @db.Decimal(15, 2)
   dailyROI        Decimal  @db.Decimal(10, 4)
   unitsChange     Decimal  @db.Decimal(10, 2)
-  // Drawdown
+  cumulativeUnits Decimal? @db.Decimal(12, 4)
   peakBalance     Decimal  @db.Decimal(15, 2)
   maxDrawdown     Decimal  @db.Decimal(15, 2)
   dailyDrawdown   Decimal  @db.Decimal(15, 2)
   drawdownPercent Decimal  @db.Decimal(5, 2)
-  // Apostas do dia
   betsPlaced      Int      @default(0)
   betsWon         Int      @default(0)
   betsLost        Int      @default(0)
   winRate         Decimal  @db.Decimal(6, 3)
   createdAt       DateTime @default(now())
-  // Relacionamento
   bankroll        Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
 
-  // Índices
   @@unique([bankrollId, year, month, day])
   @@index([bankrollId, year, month, day(sort: Desc)])
   @@map("snapshots_daily")
 }
 
 // SNAPSHOTS SEMANAIS
-
 model WeeklySnapshot {
   id              Int      @id @default(autoincrement())
   bankrollId      Int
   year            Int
-  week            Int // 1-53
-  // Métricas da semana
+  week            Int
   balance         Decimal  @db.Decimal(15, 2)
   unidValue       Decimal  @db.Decimal(15, 2)
   weeklyProfit    Decimal  @db.Decimal(15, 2)
   weeklyROI       Decimal  @db.Decimal(10, 4)
   unitsChange     Decimal  @db.Decimal(10, 2)
-  // Drawdown
+  cumulativeUnits Decimal? @db.Decimal(12, 4)
   peakBalance     Decimal  @db.Decimal(15, 2)
   maxDrawdown     Decimal  @db.Decimal(15, 2)
   drawdownPercent Decimal  @db.Decimal(5, 2)
-  // Apostas da semana
   betsPlaced      Int      @default(0)
   betsWon         Int      @default(0)
   betsLost        Int      @default(0)
   winRate         Decimal  @db.Decimal(6, 3)
   createdAt       DateTime @default(now())
-  // Relacionamento
   bankroll        Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
 
-  // Índices
   @@unique([bankrollId, year, week])
   @@index([bankrollId, year, week(sort: Desc)])
   @@map("snapshots_weekly")
@@ -422,26 +410,22 @@ model MonthlySnapshot {
   bankrollId      Int
   year            Int
   month           Int
-  // Métricas do mês
   balance         Decimal  @db.Decimal(15, 2)
   unidValue       Decimal  @db.Decimal(15, 2)
   monthlyProfit   Decimal  @db.Decimal(15, 2)
   monthlyROI      Decimal  @db.Decimal(10, 4)
   unitsChange     Decimal  @db.Decimal(10, 2)
-  // Drawdown
+  cumulativeUnits Decimal? @db.Decimal(12, 4)
   peakBalance     Decimal  @db.Decimal(15, 2)
   maxDrawdown     Decimal  @db.Decimal(15, 2)
   drawdownPercent Decimal  @db.Decimal(5, 2)
-  // Apostas do mês
   betsPlaced      Int      @default(0)
   betsWon         Int      @default(0)
   betsLost        Int      @default(0)
   winRate         Decimal  @db.Decimal(6, 3)
   createdAt       DateTime @default(now())
-  // Relacionamento
   bankroll        Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
 
-  // Índices
   @@unique([bankrollId, year, month])
   @@index([bankrollId, year, month(sort: Desc)])
   @@map("snapshots_monthly")
@@ -452,26 +436,22 @@ model YearlySnapshot {
   id              Int      @id @default(autoincrement())
   bankrollId      Int
   year            Int
-  // Métricas do ano
   balance         Decimal  @db.Decimal(15, 2)
   unidValue       Decimal  @db.Decimal(15, 2)
   yearlyProfit    Decimal  @db.Decimal(15, 2)
   yearlyROI       Decimal  @db.Decimal(10, 4)
   unitsChange     Decimal  @db.Decimal(10, 2)
-  // Drawdown
+  cumulativeUnits Decimal? @db.Decimal(12, 4)
   peakBalance     Decimal  @db.Decimal(15, 2)
   maxDrawdown     Decimal  @db.Decimal(15, 2)
   drawdownPercent Decimal  @db.Decimal(5, 2)
-  // Apostas do ano
   betsPlaced      Int      @default(0)
   betsWon         Int      @default(0)
   betsLost        Int      @default(0)
   winRate         Decimal  @db.Decimal(6, 3)
   createdAt       DateTime @default(now())
-  // Relacionamento
   bankroll        Bankroll @relation(fields: [bankrollId], references: [id], onDelete: Cascade)
 
-  // Índices
   @@unique([bankrollId, year])
   @@index([bankrollId, year(sort: Desc)])
   @@map("snapshots_yearly")

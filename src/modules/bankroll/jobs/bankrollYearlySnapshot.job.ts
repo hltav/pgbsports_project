@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { Prisma } from '@prisma/client';
-import { PrismaService, Decimal } from '../../../libs/database';
+import { PrismaService, Decimal } from './../../../libs/database';
 import { BankrollYearlySnapshotService } from '../snapshots/services/bankrollYearlySnapshot.service';
 import { CreateYearlySnapshotDTO } from '../snapshots/dto/yearlySnapshot.dto';
+import { QueueService } from './../../../libs/services/queue/queue.service';
 
 type MonthlySnapshotData = {
   bankrollId: number;
@@ -38,6 +39,8 @@ export class BankrollYearlySnapshotJob {
   constructor(
     private readonly prisma: PrismaService,
     private readonly snapshotService: BankrollYearlySnapshotService,
+    @Inject(forwardRef(() => QueueService))
+    private readonly queueService: QueueService,
   ) {}
 
   @Cron('3 0 1 1 *', {
@@ -45,28 +48,16 @@ export class BankrollYearlySnapshotJob {
     timeZone: 'America/Sao_Paulo',
   })
   async handleYearlySnapshot(): Promise<void> {
-    const startTime = Date.now();
     const lastYear = new Date().getFullYear() - 1;
-
-    this.logger.log(`📅 Iniciando snapshots anuais para o ano: ${lastYear}`);
-
-    try {
-      const stats = await this.processYearlySnapshots(lastYear);
-
-      const duration = Date.now() - startTime;
-      this.logger.log(
-        `✅ Snapshots anuais concluídos em ${duration}ms:\n` +
-          `    - Total processado: ${stats.totalProcessed}\n` +
-          `    - Criados: ${stats.totalCreated}\n` +
-          `    - Erros: ${stats.totalErrors}`,
-      );
-    } catch (error) {
-      this.logger.error('💥 Erro fatal no job anual:', error);
-      throw error;
-    }
+    await this.queueService.enqueueYearlySnapshot(lastYear);
+    this.logger.log(`📬 yearly-snapshot ${lastYear} enqueued`);
   }
 
-  private async processYearlySnapshots(year: number) {
+  async processYearlySnapshot(year: number): Promise<void> {
+    await this.processYearlySnapshots(year);
+  }
+
+  async processYearlySnapshots(year: number) {
     // 1. Identificar quem já tem snapshot para evitar duplicatas
     const existingSnapshots = await this.prisma.yearlySnapshot.findMany({
       where: { year },

@@ -1,8 +1,8 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { MatchStatus, Prisma } from '@prisma/client';
-import { PrismaService } from './../../../libs/database';
+import { PrismaService } from '../../../libs/database';
 import { UpdateMatchDTO, GetMatchDTO } from '../dto';
-import { mapStrStatusToMatchStatus } from './../../../shared/thesportsdb-api/helpers/mapStatusToEvent.helper';
+import { mapStrStatusToMatchStatus } from '../../../shared/thesportsdb-api/helpers/mapStatusToEvent.helper';
 import { FindMatchService } from './findMatchs.service';
 import { SyncMatchDetailsService } from './syncMatchDetails.service';
 import { ApiSportsFixtureResponseItem } from '../dto/matchDetails.dto';

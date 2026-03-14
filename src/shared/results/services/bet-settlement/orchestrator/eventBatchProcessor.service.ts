@@ -10,12 +10,14 @@ import { CancelledHandlerService } from './cancelledHandler.service';
 import { ExternalMatchSyncService } from './externalMatchSync.service';
 import { SingleBetService } from './singleBetProcessor.service';
 import { StatsUpdateService } from './statsUpdater.service';
+import { PrismaService } from './../../../../../libs/database/prisma/prisma.service';
 
 @Injectable()
 export class EventBatchProcessorService {
   private readonly logger = new Logger(EventBatchProcessorService.name);
 
   constructor(
+    private readonly prisma: PrismaService,
     private readonly dataResolver: EventDataResolverService,
     private readonly cancelledHandler: CancelledHandlerService,
     private readonly externalMatch: ExternalMatchSyncService,
@@ -167,5 +169,22 @@ export class EventBatchProcessorService {
       stats.errors += bets.length;
       return stats;
     }
+  }
+
+  async processEventBatchByIds(
+    eventKey: string,
+    betIds: number[],
+  ): Promise<SettlementStats> {
+    const bets = await this.prisma.bets.findMany({
+      where: { id: { in: betIds } },
+      include: { externalMatch: true },
+    });
+
+    if (!bets.length) return createStats();
+
+    return this.processEventBatch(
+      eventKey,
+      bets as unknown as BetWithExternalMatch[],
+    );
   }
 }

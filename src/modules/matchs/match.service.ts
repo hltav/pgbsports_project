@@ -87,11 +87,17 @@ export class MatchService {
     return this.findMatchStatsService.getStatistics(matchId);
   }
 
-  async syncFixtureById(apiSportsEventId: string) {
+  async syncFixtureById(apiSportsEventId: string): Promise<boolean> {
     return this.apiSportsSynk.syncFixtureById(apiSportsEventId);
   }
 
-  async syncMultipleFixtures(apiSportsEventId: string[]) {
-    return this.apiSportsSynk.syncMultipleFixtures(apiSportsEventId);
+  async enqueueBatchSync(
+    apiSportsEventIds: string[],
+  ): Promise<{ queued: number; jobIds: string[] }> {
+    return this.apiSportsSynk.enqueueBatchSync(apiSportsEventIds);
+  }
+
+  async enqueueSync(apiSportsEventId: string): Promise<string> {
+    return this.apiSportsSynk.enqueueSync(apiSportsEventId);
   }
 }

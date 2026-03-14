@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Prisma } from '@prisma/client';
-import { Decimal, PrismaService } from '../../../libs/database';
+import { Decimal, PrismaService } from './../../../libs/database';
 import { BankrollWeeklySnapshotService } from '../snapshots/services/bankrollWeeklySnapshot.service';
 import { CreateWeeklySnapshotDTO } from '../snapshots/dto/weeklySnapshot.dto';
+import { QueueService } from './../../../libs/services/queue/queue.service';
 
 type DailySnapshotAggregateInput = {
   bankrollId: number;
@@ -31,6 +32,8 @@ export class BankrollWeeklySnapshotJob {
   constructor(
     private readonly prisma: PrismaService,
     private readonly snapshotService: BankrollWeeklySnapshotService,
+    @Inject(forwardRef(() => QueueService))
+    private readonly queueService: QueueService,
   ) {}
 
   /**
@@ -42,46 +45,20 @@ export class BankrollWeeklySnapshotJob {
     timeZone: 'America/Sao_Paulo',
   })
   async handleWeeklySnapshot(): Promise<void> {
-    const startTime = Date.now();
-    this.logger.log(
-      '📅 Iniciando geração de snapshots semanais (agregando DailySnapshot)...',
-    );
-
     const now = new Date();
     const lastWeek = new Date(now);
     lastWeek.setDate(now.getDate() - 7);
-
     const { year, week } = this.getISOWeek(lastWeek);
-    const { startOfWeek, endOfWeek } = this.getWeekBounds(year, week);
-
-    this.logger.log(
-      `📊 Processando semana ${week}/${year} (${this.formatDate(startOfWeek)} - ${this.formatDate(endOfWeek)})`,
-    );
-
-    try {
-      const stats = await this.processWeeklySnapshots(
-        year,
-        week,
-        startOfWeek,
-        endOfWeek,
-      );
-
-      const duration = Date.now() - startTime;
-      this.logger.log(
-        `✅ Snapshots semanais concluídos em ${duration}ms:\n` +
-          `   - Total processado: ${stats.totalProcessed}\n` +
-          `   - Criados: ${stats.totalCreated}\n` +
-          `   - Já existentes: ${stats.totalSkipped}\n` +
-          `   - Sem dados: ${stats.totalNoData}\n` +
-          `   - Erros: ${stats.totalErrors}`,
-      );
-    } catch (error) {
-      this.logger.error('💥 Erro fatal no job semanal:', error);
-      throw error;
-    }
+    await this.queueService.enqueueWeeklySnapshot(year, week);
+    this.logger.log(`📬 weekly-snapshot ${week}/${year} enqueued`);
   }
 
-  private async processWeeklySnapshots(
+  async processWeeklySnapshot(year: number, week: number): Promise<void> {
+    const { startOfWeek, endOfWeek } = this.getWeekBounds(year, week);
+    await this.processWeeklySnapshots(year, week, startOfWeek, endOfWeek);
+  }
+
+  async processWeeklySnapshots(
     year: number,
     week: number,
     startOfWeek: Date,

@@ -7,23 +7,15 @@ export const CreateDailySnapshotSchema = z.object({
   year: z.number().int().min(1900),
   month: z.number().int().min(1).max(12),
   day: z.number().int().min(1).max(31),
-
-  // Balanços
   balance: decimalSchema,
   unidValue: decimalSchema,
-
-  // Performance diária
   dailyProfit: decimalSchema,
   dailyROI: decimalSchema,
   unitsChange: decimalSchema,
-
-  // Drawdown
   peakBalance: decimalSchema,
   maxDrawdown: decimalSchema,
   dailyDrawdown: decimalSchema,
   drawdownPercent: decimalSchema,
-
-  // Apostas
   betsPlaced: z.number().int().default(0),
   betsWon: z.number().int().default(0),
   betsLost: z.number().int().default(0),
@@ -36,6 +28,7 @@ export type CreateDailySnapshotDTO = SafeInfer<
 
 export const GetDailySnapshotSchema = CreateDailySnapshotSchema.extend({
   id: z.number().int(),
+  cumulativeUnits: decimalSchema.optional(),
   createdAt: z.coerce.date(),
 });
 

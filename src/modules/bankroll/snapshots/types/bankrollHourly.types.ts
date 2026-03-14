@@ -21,6 +21,7 @@ export type PreviousSnapshotRow = {
   betsWon: number;
   betsLost: number;
   winRate: Decimal;
+  cumulativeUnits?: Decimal;
 } | null;
 
 export type DecimalLike = Decimal | string | number;

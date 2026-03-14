@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Decimal, PrismaService } from '../../../libs/database';
+import { Decimal, PrismaService } from './../../../libs/database';
 import { BankrollDailySnapshotService } from '../snapshots/services/bankrollDailySnapshot.service';
 import { BankrollHistoryDTO } from '../z.dto/history/bankrollHistory.dto';
 import { Prisma } from '@prisma/client';
@@ -11,6 +11,7 @@ import {
   PreviousHourlyStateRow,
   PreviousSnapshotData,
 } from '../snapshots/types/bankrollDaily.types';
+import { QueueService } from './../../../libs/services/queue/queue.service';
 
 @Injectable()
 export class BankrollDailySnapshotJob {
@@ -21,6 +22,8 @@ export class BankrollDailySnapshotJob {
   constructor(
     private readonly prisma: PrismaService,
     private readonly snapshotService: BankrollDailySnapshotService,
+    @Inject(forwardRef(() => QueueService))
+    private readonly queueService: QueueService,
   ) {}
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
@@ -28,6 +31,15 @@ export class BankrollDailySnapshotJob {
     timeZone: BankrollDailySnapshotJob.TIME_ZONE,
   })
   async handleDailySnapshot(): Promise<void> {
+    await this.queueService.enqueueDailySnapshot(new Date());
+    this.logger.log('📬 daily-snapshot job enqueued');
+  }
+
+  async processDailySnapshot(): Promise<void> {
+    return this.runDailySnapshot();
+  }
+
+  private async runDailySnapshot(): Promise<void> {
     this.logger.log('🕐 Iniciando geração de snapshots diários (batch)...');
 
     const yesterdayBase = DateTime.now()
@@ -77,10 +89,8 @@ export class BankrollDailySnapshotJob {
           continue;
         }
 
-        /**
-         * 1) Preferência: calcular via hourly snapshots do dia
-         * 2) Fallback: usar bankroll_histories como hoje (caso não existam hourlies)
-         */
+        // 1) Preferência: calcular via hourly snapshots do dia
+        // 2) Fallback: usar bankroll_histories como hoje (caso não existam hourlies)
         const [
           hourliesOfDay,
           previousHourlyStates,
@@ -341,11 +351,6 @@ export class BankrollDailySnapshotJob {
     const unidValueEnd =
       dailyHistories.at(-1)?.unidValueAfter ?? unidValueStart;
 
-    // const dailyProfit = balanceEnd.minus(balanceStart);
-
-    // const dailyROI = balanceStart.isZero()
-    //   ? ZERO
-    //   : dailyProfit.dividedBy(balanceStart).times(100);
     const BET_TYPES = [
       'BET_PLACED',
       'BET_WIN',

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBetDTO } from './../../../libs';
-import { PrismaService } from './../../../libs/database';
+import { CreateBetDTO } from '../../../libs';
+import { PrismaService } from '../../../libs/database';
 
 @Injectable()
 export class MatchResolverService {

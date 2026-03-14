@@ -5,22 +5,14 @@ import z from 'zod';
 export const CreateYearlySnapshotSchema = z.object({
   bankrollId: z.number().int().positive(),
   year: z.number().int(),
-
-  // Balanços
   balance: decimalSchema,
   unidValue: decimalSchema,
-
-  // Performance
   yearlyProfit: decimalSchema,
   yearlyROI: decimalSchema,
   unitsChange: decimalSchema,
-
-  // Drawdown
   peakBalance: decimalSchema,
   maxDrawdown: decimalSchema,
   drawdownPercent: decimalSchema,
-
-  // Apostas
   betsPlaced: z.number().int().default(0),
   betsWon: z.number().int().default(0),
   betsLost: z.number().int().default(0),

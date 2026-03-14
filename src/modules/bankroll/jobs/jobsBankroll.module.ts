@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../../../libs/database';
+import { PrismaService } from './../../../libs/database';
 import { BankrollDailySnapshotService } from '../snapshots/services/bankrollDailySnapshot.service';
 import { BankrollDailySnapshotJob } from './bankrollDailySnapshot.job';
 import { BankrollMonthlySnapshotService } from '../snapshots/services/bankrollMonthlySnapshot.service';
@@ -10,9 +10,10 @@ import { BankrollYearlySnapshotService } from '../snapshots/services/bankrollYea
 import { BankrollYearlySnapshotJob } from './bankrollYearlySnapshot.job';
 import { BankrollHourlySnapshotJob } from './bankrollHourlySnapshot.job';
 import { BankrollHourlySnapshotService } from '../snapshots/services/bankrollHourlySnapshot.service';
+import { QueueModule } from './../../../libs/services/queue/queue.module';
 
 @Module({
-  imports: [],
+  imports: [QueueModule],
   providers: [
     BankrollHourlySnapshotJob,
     BankrollDailySnapshotJob,

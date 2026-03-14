@@ -2,7 +2,7 @@ import { StatPeriod } from '@prisma/client';
 import { mapStrToStatPeriod } from '../helpers/mapStrToStatPeriod.helper';
 import { mapApiSportsEventType } from '../helpers/mapStrToEventType.helper';
 import { z } from 'zod';
-import { Decimal } from './../../../libs/database/prisma';
+import { Decimal } from '../../../libs/database/prisma';
 import {
   ApiSportsEventSchema,
   ApiSportsLineupSchema,

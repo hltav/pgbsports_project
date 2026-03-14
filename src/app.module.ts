@@ -18,23 +18,18 @@ import { ExceptionLoggerFilter } from './modules/monitoring/filters/exception-lo
 import { ResultsModule } from './shared/results/results.module';
 import { FutebolFusionModule } from './shared/dataFusion/futebol/futebolFusion.module';
 import { MyCacheModule } from './libs/services/cache/cache.module';
+import { WorkerBootstrapModule } from './libs/services/queue/workers/bootstrapsWorkers.module';
 
 @Module({
   imports: [
-    // 1. Schedule primeiro
     ScheduleModule.forRoot(),
 
-    // 2. Config global
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
-
-    // 3. SEU MÓDULO DE CACHE CUSTOMIZADO
-    // ✅ Este é o único CacheModule que você precisa!
     MyCacheModule,
-
-    // 4. Feature modules
+    WorkerBootstrapModule,
     ModulesModule,
     CryptoModule,
     CompetitionsModule,

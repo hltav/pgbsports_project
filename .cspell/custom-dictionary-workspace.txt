@@ -345,6 +345,7 @@ chinesesuperleague
 chipre
 Chuuk
 Ciclismo
+ciclo
 Cipriota
 classe
 Classificação
@@ -486,6 +487,7 @@ crítica
 Crítico
 croácia
 Croata
+cuida
 cuidado
 cumprir
 cumpriram
@@ -542,7 +544,9 @@ DERROTA
 derrotas
 derrubar
 desativa
+desce
 descobrir
+descomente
 descontado
 desde
 desejado
@@ -644,6 +648,8 @@ encerrou
 Encontra
 encontre
 encontrou
+Enfileira
+enfileirar
 englishpremierleague
 entenda
 entender
@@ -673,6 +679,7 @@ Escanteio
 Escanteios
 ESCAVAÇÃO
 escócia
+escolher
 escolhida
 escolhido
 esconde
@@ -714,6 +721,8 @@ estornar
 Estornar
 estorno
 estou
+estourar
+estranho
 ESTRATÉGIA
 estratégias
 estruturadas
@@ -905,6 +914,7 @@ Golfo
 gols
 Gols
 graça
+graciosamente
 Grama
 granadinas
 gravação
@@ -999,6 +1009,7 @@ individuais
 indonésia
 Inferência
 inferido
+Inferidos
 inferiores
 infinitamente
 informado
@@ -1011,9 +1022,11 @@ injetada
 Injetar
 inserção
 Insere
+inseridos
 insidebox
 inspeção
 inspecionar
+instanciados
 instantâneo
 insuficientes
 integra
@@ -1230,6 +1243,7 @@ milhares
 milissegundos
 mineiro
 Minh
+mínimo
 mínimos
 minúsculas
 Minutagem
@@ -1327,6 +1341,7 @@ nosso
 Novos
 npfl
 nulidade
+nulos
 numérica
 NÚMEROS
 nunca
@@ -1413,6 +1428,7 @@ passou
 Patinação
 pato
 paulista
+Pausar
 pedir
 pela
 pelos
@@ -1524,6 +1540,7 @@ processado
 PROCESSAMENTO
 processamos
 Processando
+processe
 PROCURA
 procurar
 Profesional
@@ -1542,11 +1559,13 @@ prorrogação
 proteção
 protocolo
 protótipo
+provê
 próximas
 Próximo
 Prva
 prvahnl
 pstats
+públicos
 puder
 pulados
 pular
@@ -1566,10 +1585,12 @@ Radicais
 rapida
 rápida
 rápido
+reais
 Realiza
 realizada
 realmente
 Rebaixamento
+recalc
 recalcula
 Recalculando
 RECALCULAR
@@ -1597,6 +1618,7 @@ Referências
 refinado
 reflete
 refletido
+refletir
 REGENERAÇÃO
 regenerado
 regiões
@@ -1636,6 +1658,7 @@ resolvendo
 resolvida
 resolvidas
 resolvido
+respeita
 respeitando
 responsabilidade
 resultante
@@ -1644,6 +1667,7 @@ Resumo
 retirada
 retirado
 retirando
+Retomar
 retornada
 retornam
 Retornamos
@@ -1699,6 +1723,7 @@ seguindo
 segunda
 Segundas
 seguras
+seguros
 seicheles
 sejam
 Seleção
@@ -1715,6 +1740,7 @@ Separa
 separação
 Separação
 sequência
+sequencial
 SEQUÊNCIAS
 sergipano
 seria
@@ -1742,13 +1768,16 @@ Simplificando
 simplificar
 sinal
 Sinchonizer
+sincronia
 Sincroniza
 SINCRONIZAÇÃO
+sincronizadas
 síncrono
 singapura
 Sinuca
 síria
 sistemas
+sobe
 sobreposição
 Sobrescreve
 sobrescrevemos
@@ -1760,10 +1789,12 @@ solução
 SOLUÇÃO
 somália
 southernpremierleaguecentral
+sozinho
 srpska
 starsleague
 stdivision
 suba
+subir
 substituições
 Subtrai
 subtraído
@@ -1868,6 +1899,7 @@ transação
 Transações
 transferências
 trás
+tratado
 Tratamos
 tratando
 tratará
@@ -1939,6 +1971,7 @@ vaticano
 vazios
 veikkausliiga
 veio
+veja
 velocidade
 Vence
 vencedor
@@ -1950,6 +1983,7 @@ Vencer
 Venceu
 vencida
 Venezuelana
+venha
 Verão
 verdade
 Verificamos

@@ -13,7 +13,9 @@ import { MyCacheModule } from './../../libs/services/cache/cache.module';
 import { UsersModule } from '../users/users.module';
 import { MonitoringModule } from '../monitoring/monitoring.module';
 import { HealthModule } from '../health/health.module';
-// import { JobsBankrollModule } from '../bankroll/jobs/jobsBankroll.module';
+import { QueueModule } from './../../libs/services/queue/queue.module';
+import { AdminQueueController } from './controllers/adminQueue.controller';
+import { AdminQueueService } from './services/adminQueue.service';
 
 @Module({
   imports: [
@@ -22,12 +24,14 @@ import { HealthModule } from '../health/health.module';
     MyCacheModule,
     MonitoringModule,
     HealthModule,
+    QueueModule,
   ],
   providers: [
     AdminService,
     AdminFinanceService,
     AdminJobRunnerService,
     AdminUsersService,
+    AdminQueueService,
   ],
   controllers: [
     AdminController,
@@ -35,12 +39,14 @@ import { HealthModule } from '../health/health.module';
     AdminJobsController,
     AdminMonitoringController,
     AdminUsersController,
+    AdminQueueController,
   ],
   exports: [
     AdminService,
     AdminFinanceService,
     AdminJobRunnerService,
     AdminUsersService,
+    AdminQueueService,
   ],
 })
 export class AdminModule {}

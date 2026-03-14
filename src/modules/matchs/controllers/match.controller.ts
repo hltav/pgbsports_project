@@ -15,7 +15,7 @@ import {
 import { MatchStatus } from '@prisma/client';
 import { CreateMatchDTO, UpdateMatchDTO } from '../dto';
 import { MatchService } from '../match.service';
-import { JwtAuthGuard, RolesGuard } from './../../../libs';
+import { JwtAuthGuard, RolesGuard } from '../../../libs';
 
 @Controller('matches')
 @UseGuards(JwtAuthGuard, RolesGuard)

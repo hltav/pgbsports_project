@@ -2,12 +2,10 @@ import { PrismaService } from './../../libs/database/prisma';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BankrollController } from './bankroll.controller';
 import { BankrollService } from './bankroll.service';
-import {
-  CreateBankrollService,
-  FindBankrollService,
-  UpdateBankrollService,
-  DeleteBankrollService,
-} from './services';
+import { CreateBankrollService } from './core/services/create-bankroll.service';
+import { DeleteBankrollService } from './core/services/delete-bankroll.service';
+import { FindBankrollService } from './core/services/find-bankroll.service';
+import { UpdateBankrollService } from './core/services/update-bankroll.service';
 
 describe('BankrollController', () => {
   let controller: BankrollController;

@@ -17,6 +17,10 @@ export class BetSettlementOrchestratorService {
     return this.updatePending.updateAllPendingBets();
   }
 
+  async updateAllPendingBetsDirect(): Promise<SettlementStats> {
+    return this.updatePending.updateAllPendingBetsDirect();
+  }
+
   async updateEarlyWinnerBets(): Promise<number> {
     return this.earlyWinner.updateEarlyWinnerBets();
   }
